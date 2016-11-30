@@ -1,0 +1,1 @@
+cmd_net/bridge/netfilter/ebtable_filter.ko := mips-buildroot-linux-gnu-ld -r  -m elf32btsmip -T /opt/tclinux_phoenix/linux-2.6.36/scripts/module-common.lds --build-id  -o net/bridge/netfilter/ebtable_filter.ko net/bridge/netfilter/ebtable_filter.o net/bridge/netfilter/ebtable_filter.mod.o

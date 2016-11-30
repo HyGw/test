@@ -1,0 +1,14 @@
+prefix=/mnt/data/apsync/SSW_China/User/jlliu_nj/Perforce/main/tclinux_phoenix/apps/public/libusb-compat-0.1.3/install
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+emulated=1
+emulated_by=libusb-1.0
+
+Name: libusb
+Description: USB access library (libusb-1.0 compat wrapper)
+Version: 0.1.12
+Libs: -L${libdir} -lusb
+Cflags: -I${includedir}
+

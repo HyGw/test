@@ -1,0 +1,1 @@
+cmd_net/sched/built-in.o :=  mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o net/sched/built-in.o net/sched/sch_generic.o net/sched/sch_mq.o net/sched/sch_api.o net/sched/sch_blackhole.o net/sched/cls_api.o net/sched/act_api.o net/sched/sch_fifo.o 

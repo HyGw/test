@@ -1,0 +1,8 @@
+obj-$(CONFIG_VIDEO_V3TV) += v3tv.o vpx3224.o i2c-voodoo3.o
+
+#  *** Local Variables: ***
+#  *** mode: Makefile ***
+#  *** fill-column: 75 ***
+#  *** indent-tabs-mode: nil ***
+#  *** End: ***
+#  vim:expandtab:textwidth=75

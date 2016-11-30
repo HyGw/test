@@ -1,0 +1,10 @@
+kernel/fs/mbcache.ko
+kernel/fs/ext2/ext2.ko
+kernel/fs/ext3/ext3.ko
+kernel/fs/fat/fat.ko
+kernel/fs/fat/vfat.ko
+kernel/fs/jbd/jbd.ko
+kernel/fs/jffs2/jffs2.ko
+kernel/fs/nls/nls_base.ko
+kernel/fs/ntfs/ntfs.ko
+kernel/fs/squashfs/squashfs.ko

@@ -1,0 +1,1 @@
+cmd_/opt/tclinux_phoenix/modules/private/tc3162l2hp2h/tcledctrl.o := mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o /opt/tclinux_phoenix/modules/private/tc3162l2hp2h/tcledctrl.o /opt/tclinux_phoenix/modules/private/tc3162l2hp2h/ledctrl.o 

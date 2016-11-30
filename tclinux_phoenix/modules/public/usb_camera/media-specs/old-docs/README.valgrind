@@ -1,0 +1,13 @@
+valgrind-1.0pre3-dvb.patch enables checking correct usage
+of the the Linux DVB API ioctls with valgrind
+(http://developer.kde.org/~sewardj/). Or, more to the point,
+it allows you to check your DVB software with valgrind
+without getting all those "unknown ioctl" warnings.
+
+Notes:
+- only frontend and demux ioctls are currently implemented
+- some ioctls take structs as arguments; due to padding, valgrind
+  will complain about uninitialized data passed to the ioctl unless
+  you memset() the whole struct to some defined value
+
+Johannes Stezenbach <js@convergence.de>

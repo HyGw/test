@@ -1,0 +1,1 @@
+cmd_net/netfilter/xt_layer7.ko := mips-buildroot-linux-gnu-ld -r  -m elf32btsmip -T /opt/tclinux_phoenix/linux-2.6.36/scripts/module-common.lds --build-id  -o net/netfilter/xt_layer7.ko net/netfilter/xt_layer7.o net/netfilter/xt_layer7.mod.o

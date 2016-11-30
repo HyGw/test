@@ -1,0 +1,6 @@
+* implement decent error handling on the parsing functions
+* test the library's ability to handle Unicode
+* implement info->cursor cleanup in all json_parse_string() returns
+* check whenever it is ok to accept empty strings ""
+* implement text redundancy memory reduction
+* implement a error code analyzer function that outputs informative error messages regarding JSON document errors

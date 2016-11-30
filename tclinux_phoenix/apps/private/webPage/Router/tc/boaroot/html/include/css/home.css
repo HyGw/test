@@ -1,0 +1,61 @@
+/*
+
+TABLE OF CONTENTS (SEARCH)
+	@HOME
+		@HOME:STRUCTURE
+		@HOME:CONTENT
+
+*/
+
+
+/*------------------ @HOME ------------------*/
+
+
+/* @HOME:STRUCTURE */
+div.home_structure{
+	width: 50%;
+	height: 100%;
+	float: left;
+	min-height: 670px;
+}
+
+div#home_structure_left{
+	background: url(../../include/images/layout_divisor.gif) top right repeat-y;
+}
+
+
+/* @HOME:CONTENT */
+div.home_content{
+	position: absolute;
+	height: 404px;
+	top: 50%;
+	margin-top: -220px;
+}
+
+div#home_content_house{
+	width: 208px;
+	left: 25%;
+	margin-left: -104px;
+}
+
+div#home_content_company{
+	width: 274px;
+	left: 75%;
+	margin-left: -137px;
+}
+
+div.home_content_brand{
+	text-align: center;
+	margin-bottom: 60px;
+}
+
+div.home_content_txt_oi{
+	margin-bottom: 11px;
+}
+
+div.home_content_txt_option{
+	margin-bottom: 27px;
+}
+
+div.home_content_btn{
+}

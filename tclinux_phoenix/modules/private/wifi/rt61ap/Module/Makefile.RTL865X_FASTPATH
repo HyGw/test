@@ -1,0 +1,123 @@
+
+# Support AP client function
+#HAS_APCLIENT=y
+
+# Support IGMP snooping function
+#HAS_IGMPSNOOPING=y
+
+# Support Block Net-If during TxSw queue full.
+#HAS_BLOCK_NET_IF=y
+
+# Support Carrier Detection
+#HAS_CARRIER_DETECTION=y
+
+#ifdef WSC_SUPPORT
+# Support WSC function
+HAS_WSC=y
+#endif // WSC_SUPPORT //
+
+CFLAGS		= -Wall -O2 -D__KERNEL__ -DMODULE -D__MIPSEB__ \
+			-DBIG_ENDIAN -DRTL865X_SOC -DRALINK_ATE\
+			-DMBSS_SUPPORT -DAGGREGATION_SUPPORT -DWDS_SUPPORT -DWMM_SUPPORT\
+			-fomit-frame-pointer -fno-common \
+			-mlong-calls -mno-abicalls -fno-pic -pipe \
+			-I$(KERNELDIR)/include -I$(KERNELDIR)/drivers/net 
+
+#-include $(KERNELDIR)/include/linux/modversions.h
+
+CFLAGS += -DRTL865X_FAST_PATH
+
+ifeq ($(HAS_APCLIENT),y)
+CFLAGS += -DAPCLI_SUPPORT
+endif
+
+ifeq ($(HAS_IGMPSNOOPING),y)
+CFLAGS += -DIGMP_SNOOP_SUPPORT
+endif
+
+ifeq ($(HAS_BLOCK_NET_IF),y)
+CFLAGS += -DBLOCK_NET_IF
+endif
+
+ifeq ($(HAS_CARRIER_DETECTION),y)
+CFLAGS += -DCARRIER_DETECTION_SUPPORT
+endif
+
+#ifdef WSC_SUPPORT
+ifeq ($(HAS_WSC),y)
+CFLAGS += -DWSC_SUPPORT
+endif
+#endif // WSC_SUPPORT //
+
+MOD_TARGET = rt61ap.o
+CONF_FILE  = RT61AP.dat
+
+OBJ = rt61ap.o
+
+RT61_OBJ =	rtmp_data.o	\
+          	rtmp_main.o	\
+		  	rtmp_task.o   \
+		  	rtmp_init.o	\
+          	mlme.o	\
+          	soft_ap.o \
+          	connect.o	\
+          	sync.o	\
+          	assoc.o	\
+          	auth.o	\
+          	auth_rsp.o	\
+          	sanity.o	\
+          	rtmp_wep.o	\
+          	rtmp_info.o	\
+          	eeprom.o	\
+          	rtmp_tkip.o	\
+          	wpa.o		\
+		  	rtl865x_fast.o\
+          	md5.o		\
+          	dls.o
+
+ifeq ($(HAS_APCLIENT),y)
+RT61_OBJ += sta_auth.o	\
+			sta_assoc.o	\
+			sta_sync.o	\
+			sta_ctrl.o	\
+			rtmp_apcli.o	\
+			rtmp_apcli_iparp.o	\
+			rtmp_apcli_pppoe.o	\
+			sta_mlme.o
+endif
+
+ifeq ($(HAS_IGMPSNOOPING),y)
+RT61_OBJ += rtmp_igmpSnoop.o
+endif
+
+ifeq ($(HAS_BLOCK_NET_IF),y)
+RT61_OBJ += netif_block.o
+endif
+
+#ifdef WSC_SUPPORT
+ifeq ($(HAS_WSC),y)
+RT61_OBJ += wsc.o	\
+			wsc_tlv.o	\
+			sha2.o	\
+			hmac.o	\
+			evp_enc.o	\
+			dh_key.o
+endif
+#endif // WSC_SUPPORT //
+
+#all: $(MOD_TARGET)
+all: $(OBJ)
+
+rt61ap.o: $(RT61_OBJ)
+
+	$(LD) -r $^ -o $@          
+          
+#$(MOD_TARGET): $(OBJS)
+#	$(LD) -r -o  $@ $(OBJS)
+	
+clean:
+	rm -f *.o *.bak
+
+romfs:
+	cp -f $(MOD_TARGET) $(ROMFSDIR)/lib/modules/$(MOD_TARGET)
+	cp -f $(CONF_FILE)  $(ROMFSDIR)/etc/$(CONF_FILE)

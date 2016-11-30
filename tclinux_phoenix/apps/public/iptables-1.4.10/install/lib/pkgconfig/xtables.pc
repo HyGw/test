@@ -1,0 +1,13 @@
+
+prefix=/opt/tclinux_phoenix/apps/public/iptables-1.4.10/install
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+xtlibdir=${exec_prefix}/libexec/xtables
+includedir=${prefix}/include
+
+Name:		xtables
+Description:	Shared Xtables code for extensions and iproute2
+Version:	1.4.10
+Cflags:		-I${includedir}
+Libs:		-L${libdir} -lxtables
+Libs.private:	-ldl

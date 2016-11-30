@@ -1,0 +1,60 @@
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote,
+pre, a, abbr, acronym, address, code,
+del, dfn, em, img, q, dl, dt, dd, ol, 
+ul, li, fieldset, form, label, legend, table,
+tr, td, caption 
+{
+	margin: 0px auto;
+	padding: 0px;
+	border: 0;
+	border-collapse: separate; 
+	border-spacing: 0;
+	list-style: none;
+	text-decoration: none;
+	font-style: normal;
+	font-weight: normal;
+}
+
+html{
+	height: 100%;
+}
+
+body{
+	font-family: 'TradeGothicRegular', Arial, Helvetica, sans-serif;
+	background-color: #009ba8;
+	color: #FFF;
+	height: 100%;
+}
+
+input{
+	font-family: 'TradeGothicRegular';
+	border: 0;
+	color: #009ba8;
+}
+
+a{
+	color: #009ba8;
+}
+
+@font-face {
+    font-family: 'TradeGothicRegular';
+    src: url('../../include/fonts/tradg___-webfont.eot');
+    src: url('../../include/fonts/tradg___-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../../include/fonts/tradg___-webfont.woff') format('woff'),
+         url('../../include/fonts/tradg___-webfont.ttf') format('truetype'),
+         url('../../include/fonts/tradg___-webfont.svg#TradeGothicRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TradeGothicBoldTwo';
+    src: url('../../include/fonts/tradgbt_-webfont.eot');
+    src: url('../../include/fonts/tradgbt_-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../../include/fonts/tradgbt_-webfont.woff') format('woff'),
+         url('../../include/fonts/tradgbt_-webfont.ttf') format('truetype'),
+         url('../../include/fonts/tradgbt_-webfont.svg#TradeGothicBoldTwo') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}

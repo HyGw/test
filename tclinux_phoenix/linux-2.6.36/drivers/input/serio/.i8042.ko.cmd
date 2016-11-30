@@ -1,0 +1,1 @@
+cmd_drivers/input/serio/i8042.ko := mips-buildroot-linux-gnu-ld -r  -m elf32btsmip -T /opt/tclinux_phoenix/linux-2.6.36/scripts/module-common.lds --build-id  -o drivers/input/serio/i8042.ko drivers/input/serio/i8042.o drivers/input/serio/i8042.mod.o

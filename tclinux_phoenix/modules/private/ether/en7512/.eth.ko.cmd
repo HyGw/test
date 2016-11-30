@@ -1,0 +1,1 @@
+cmd_/opt/tclinux_phoenix/modules/private/ether/en7512/eth.ko := mips-buildroot-linux-gnu-ld -r  -m elf32btsmip -T /opt/tclinux_phoenix/linux-2.6.36/scripts/module-common.lds --build-id  -o /opt/tclinux_phoenix/modules/private/ether/en7512/eth.ko /opt/tclinux_phoenix/modules/private/ether/en7512/eth.o /opt/tclinux_phoenix/modules/private/ether/en7512/eth.mod.o

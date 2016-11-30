@@ -1,0 +1,71 @@
+Invoked as: ./configure --disable-lineedit "--with-out-jim-ext=stdlib posix load signal syslog" --prefix=/usr
+Failed: /opt/trendchip/mips-linux-uclibc/usr/bin/mips-linux-gcc -Os -c conftest__.c -o conftest__.o
+conftest__.c:1:25: error: crt_externs.h: No such file or directory
+============
+The failed code was:
+#include <crt_externs.h>
+int main(void) {
+
+return 0;
+}
+============
+Failed: /opt/trendchip/mips-linux-uclibc/usr/bin/mips-linux-gcc -Os conftest__.c -o conftest__
+/tmp/ccWXf1tn.o: In function `main':
+conftest__.c:(.text+0x14): undefined reference to `backtrace'
+collect2: ld returned 1 exit status
+============
+The failed code was:
+extern void backtrace(void);
+int main(void) {
+backtrace();
+return 0;
+}
+============
+Failed: /opt/trendchip/mips-linux-uclibc/usr/bin/mips-linux-gcc -Os conftest__.c -o conftest__
+/tmp/ccQ36aUp.o: In function `main':
+conftest__.c:(.text+0x14): undefined reference to `sys_signame'
+collect2: ld returned 1 exit status
+============
+The failed code was:
+extern void sys_signame(void);
+int main(void) {
+sys_signame();
+return 0;
+}
+============
+Failed: /opt/trendchip/mips-linux-uclibc/usr/bin/mips-linux-gcc -Os conftest__.c -o conftest__
+/tmp/ccYMHnvB.o: In function `main':
+conftest__.c:(.text+0x14): undefined reference to `sys_siglist'
+collect2: ld returned 1 exit status
+============
+The failed code was:
+extern void sys_siglist(void);
+int main(void) {
+sys_siglist();
+return 0;
+}
+============
+Failed: /opt/trendchip/mips-linux-uclibc/usr/bin/mips-linux-gcc -Os conftest__.c -o conftest__
+/tmp/ccmRs2qN.o: In function `main':
+conftest__.c:(.text+0x14): undefined reference to `_NSGetEnviron'
+collect2: ld returned 1 exit status
+============
+The failed code was:
+extern void _NSGetEnviron(void);
+int main(void) {
+_NSGetEnviron();
+return 0;
+}
+============
+Failed: /opt/trendchip/mips-linux-uclibc/usr/bin/mips-linux-gcc -Os -c conftest__.c -o conftest__.o
+conftest__.c: In function 'main':
+conftest__.c:4: error: too few arguments to function 'mkdir'
+============
+The failed code was:
+#include <sys/types.h>
+#include <sys/stat.h>
+int main(void) {
+mkdir("/dummy");
+return 0;
+}
+============

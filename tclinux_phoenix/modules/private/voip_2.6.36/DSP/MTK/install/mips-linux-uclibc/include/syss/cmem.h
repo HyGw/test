@@ -1,0 +1,98 @@
+/******************************************************************************
+ *	LEGAL DISCLAIMER
+ *
+ *	(HEADER OF MEDIATEK SOFTWARE/FIRMWARE RELEASE OR DOCUMENTATION)
+ *
+ *	(c) 2008 MediaTek Inc.  ALL RIGHTS RESERVED.
+ *
+ *	BY OPENING OR USING THIS FILE, BUYER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND 
+ *	AGREES THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS 
+ *	(MEDIATEK SOFTWARE) RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE 
+ *	PROVIDED TO BUYER ON AN AS IS BASIS ONLY.  MEDIATEK EXPRESSLY DISCLAIMS 
+ *	ANY AND ALL WARRANTIES, WHETHER EXPRESS OR IMPLIED, INCLUDING BUT NOT 
+ *	LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+ *	PARTICULAR PURPOSE, OR NON-INFRINGEMENT.  NOR DOES MEDIATEK PROVIDE ANY 
+ *	WARRANTY WHATSOEVER WITH RESPECT TO THE SOFTWARE OF ANY THIRD PART(IES) 
+ *	WHICH MAY BE USED BY, INCORPORATED IN, OR SUPPLIED WITH THE MEDIATEK 
+ *	SOFTWARE.  BUYER AGREES TO LOOK ONLY TO SUCH THIRD PART(IES) FOR ANY AND ALL 
+ *	WARRANTY CLAIMS RELATING THERETO.  NEITHER SHALL MEDIATEK BE RESPONSIBLE FOR 
+ *	ANY MEDIATEK SOFTWARE RELEASES MADE TO BUYER'S SPECIFICATION OR CONFORMING 
+ *	TO A PARTICULAR STANDARD OR OPEN FORUM.
+ *
+ *	BUYER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND CUMULATIVE 
+ *	LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER SHALL BE, 
+ *	AT MEDIATEK'S SOLE OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT 
+ *	ISSUE OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGES PAID BY BUYER 
+ *	TO MEDIATEK FOR SUCH MEDIATEK SOFTWARE. 
+ *
+ *	THE MEDIATEK SOFTWARE IS PROVIDED FOR AND ONLY FOR USE WITH MEDIATEK CHIPS 
+ *	OR PRODUCTS.  EXCEPT AS EXPRESSLY PROVIDED, NO LICENSE IS GRANTED BY 
+ *	IMPLICATION OR OTHERWISE UNDER ANY INTELLECTUAL PROPERTY RIGHTS, INCLUDING 
+ *	PATENT OR COPYRIGHTS, OF MEDIATEK.  UNAUTHORIZED USE, REPRODUCTION, OR 
+ *	DISCLOSURE OF THE MEDIATEK SOFTWARE IN WHOLE OR IN PART IS STRICTLY 
+ *	PROHIBITED.
+ *
+ *	THE TRANSACTION CONTEMPLATED HEREUNDER SHALL BE CONSTRUED IN ACCORDANCE WITH 
+ *	THE LAWS OF THE STATE OF CALIFORNIA, USA, EXCLUDING ITS CONFLICT OF 
+ *	LAWS PRINCIPLES.  
+ */
+/**
+ *  @file cmem.h
+ *	@author	Howard Chen, CCLee
+ *	
+ *	@brief  memory pool oect
+ *
+ */
+#ifndef CMEM_DEF
+#define CMEM_DEF
+
+#include <base/cerr.h>
+#include "cwait.h"
+#include "link_syss.h"
+
+#define CMEM_MAX_SIZE	90
+
+/**
+ *	@brief a fixe-sized memory pool
+ */
+typedef struct cmem cmem_t;
+
+LINK_SYSS unsigned CMEM_Size(void);
+
+/**
+ *	@param block_sz number of bytes in each memory block.
+ *	@param start the memory start address 
+ *	@param total_sz size of total memory which is pointed by <start>
+ */
+LINK_SYSS exc_t CMEM_Init(cmem_t* o, char *name, 
+		unsigned block_sz, void* start, unsigned total_sz);
+
+LINK_SYSS exc_t CMEM_Dest(cmem_t* o);
+
+LINK_SYSS void* CMEM_Malloc(cmem_t* o, cwait_t wait);
+
+LINK_SYSS exc_t CMEM_Free(void* mem);
+
+/**
+ *  @brief get the original memory pool object
+ *	@param memory_ptr
+ *	@return the memory pool object which the memory_ptr belongs to 
+ *			0 if can not find 
+ */
+LINK_SYSS cmem_t* CMEM_GetOwner(void* memory_ptr);
+
+
+typedef enum{
+	CMEM_GET_USAGE, 
+}cmem_ctrl_t;
+
+LINK_SYSS exc_t CMEM_Ctrl(cmem_t* o, cmem_ctrl_t req, ...);
+
+/**
+ *	@param req == CMEM_GET_USAGE
+ */
+exc_t cmem_ctrl_get_usage(cmem_t* o, cmem_ctrl_t req, 
+		unsigned* blk_sz, unsigned* total_blks, unsigned* free_blks);
+
+#endif
+

@@ -1,0 +1,338 @@
+
+./output/boot2.out：     文件格式 elf32-tradbigmips
+
+节：
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000004a0  9fa30800  9fa30800  00000800  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .reginfo      00000018  9fa30ca0  9fa30ca0  00000ca0  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA, LINK_ONCE_SAME_SIZE
+  2 .pdr          00000160  00000000  00000000  00000cb8  2**2
+                  CONTENTS, READONLY
+
+Disassembly of section .text:
+
+9fa30800 <_ftext>:
+9fa30800:	0fe8c2c1 	jal	9fa30b04 <sys_init_cache>
+9fa30804:	00000000 	nop
+9fa30808:	00000000 	nop
+9fa3080c:	3c02bfb0 	lui	v0,0xbfb0
+9fa30810:	34420958 	ori	v0,v0,0x958
+9fa30814:	8c4e0000 	lw	t6,0(v0)
+9fa30818:	00000000 	nop
+9fa3081c:	35ce0001 	ori	t6,t6,0x1
+9fa30820:	ac4e0000 	sw	t6,0(v0)
+9fa30824:	00000000 	nop
+9fa30828:	3c09bfa3 	lui	t1,0xbfa3
+9fa3082c:	8d310008 	lw	s1,8(t1)
+9fa30830:	00000000 	nop
+9fa30834:	8d32000c 	lw	s2,12(t1)
+9fa30838:	00000000 	nop
+9fa3083c:	3c13bfa3 	lui	s3,0xbfa3
+9fa30840:	36732800 	ori	s3,s3,0x2800
+9fa30844:	3c149fa3 	lui	s4,0x9fa3
+9fa30848:	26940864 	addiu	s4,s4,2148
+9fa3084c:	3c099fa3 	lui	t1,0x9fa3
+9fa30850:	35290040 	ori	t1,t1,0x40
+9fa30854:	00000000 	nop
+9fa30858:	01200008 	jr	t1
+9fa3085c:	00000000 	nop
+9fa30860:	00000000 	nop
+
+9fa30864 <move_ddr_calibration>:
+9fa30864:	00000000 	nop
+9fa30868:	3c1b9fa3 	lui	k1,0x9fa3
+9fa3086c:	277b088c 	addiu	k1,k1,2188
+9fa30870:	3c1abfb0 	lui	k0,0xbfb0
+9fa30874:	af5b0280 	sw	k1,640(k0)
+9fa30878:	3c1a9fa3 	lui	k0,0x9fa3
+9fa3087c:	375a2800 	ori	k0,k0,0x2800
+9fa30880:	03400008 	jr	k0
+9fa30884:	00000000 	nop
+9fa30888:	00000000 	nop
+
+9fa3088c <ddr_calibration_done>:
+9fa3088c:	241b0000 	li	k1,0
+9fa30890:	3c1abfb0 	lui	k0,0xbfb0
+9fa30894:	af5b0280 	sw	k1,640(k0)
+
+9fa30898 <ddr_calibration_exit>:
+	...
+9fa308a0:	3c03bfb0 	lui	v1,0xbfb0
+9fa308a4:	3c048007 	lui	a0,0x8007
+9fa308a8:	34841f1e 	ori	a0,a0,0x1f1e
+9fa308ac:	3c050007 	lui	a1,0x7
+9fa308b0:	34a51f1f 	ori	a1,a1,0x1f1f
+9fa308b4:	3c060004 	lui	a2,0x4
+9fa308b8:	ac640020 	sw	a0,32(v1)
+9fa308bc:	ac650024 	sw	a1,36(v1)
+9fa308c0:	00000000 	nop
+9fa308c4:	3c040004 	lui	a0,0x4
+9fa308c8:	34840808 	ori	a0,a0,0x808
+9fa308cc:	3c05c004 	lui	a1,0xc004
+9fa308d0:	34a51010 	ori	a1,a1,0x1010
+9fa308d4:	3c068005 	lui	a2,0x8005
+9fa308d8:	ac660034 	sw	a2,52(v1)
+9fa308dc:	00000000 	nop
+9fa308e0:	3c03bfb1 	lui	v1,0xbfb1
+9fa308e4:	3c04102d 	lui	a0,0x102d
+9fa308e8:	34841040 	ori	a0,a0,0x1040
+9fa308ec:	3c0610aa 	lui	a2,0x10aa
+9fa308f0:	34c68100 	ori	a2,a2,0x8100
+9fa308f4:	3c072000 	lui	a3,0x2000
+9fa308f8:	34e728d0 	ori	a3,a3,0x28d0
+9fa308fc:	ac640000 	sw	a0,0(v1)
+9fa30900:	ac670014 	sw	a3,20(v1)
+9fa30904:	00000000 	nop
+9fa30908:	3c08bfb4 	lui	t0,0xbfb4
+9fa3090c:	00000000 	nop
+9fa30910:	ad000000 	sw	zero,0(t0)
+9fa30914:	ad000004 	sw	zero,4(t0)
+9fa30918:	00000000 	nop
+9fa3091c:	3c09bfa3 	lui	t1,0xbfa3
+9fa30920:	8d3a0018 	lw	k0,24(t1)
+9fa30924:	8d3b001c 	lw	k1,28(t1)
+9fa30928:	3c098000 	lui	t1,0x8000
+9fa3092c:	3c09bfa3 	lui	t1,0xbfa3
+9fa30930:	8d2a0018 	lw	t2,24(t1)
+9fa30934:	00000000 	nop
+9fa30938:	3c0b8001 	lui	t3,0x8001
+9fa3093c:	ad6a0000 	sw	t2,0(t3)
+9fa30940:	00000000 	nop
+9fa30944:	8d2a001c 	lw	t2,28(t1)
+9fa30948:	00000000 	nop
+9fa3094c:	3c0b8001 	lui	t3,0x8001
+9fa30950:	356b0020 	ori	t3,t3,0x20
+9fa30954:	ad6a0000 	sw	t2,0(t3)
+9fa30958:	00000000 	nop
+9fa3095c:	8d310010 	lw	s1,16(t1)
+9fa30960:	00000000 	nop
+9fa30964:	8d320014 	lw	s2,20(t1)
+9fa30968:	00000000 	nop
+9fa3096c:	3c138000 	lui	s3,0x8000
+9fa30970:	3c149fa3 	lui	s4,0x9fa3
+9fa30974:	26940990 	addiu	s4,s4,2448
+9fa30978:	00000000 	nop
+9fa3097c:	3c1abfa3 	lui	k0,0xbfa3
+9fa30980:	375a0040 	ori	k0,k0,0x40
+9fa30984:	03400008 	jr	k0
+9fa30988:	00000000 	nop
+9fa3098c:	00000000 	nop
+
+9fa30990 <loading_bootcode_done>:
+9fa30990:	00000000 	nop
+
+9fa30994 <load_exit>:
+9fa30994:	3c098000 	lui	t1,0x8000
+9fa30998:	3c0a8020 	lui	t2,0x8020
+9fa3099c:	bd390000 	cache	0x19,0(t1)
+9fa309a0:	0000000f 	sync
+9fa309a4:	bd300000 	cache	0x10,0(t1)
+9fa309a8:	25290020 	addiu	t1,t1,32
+9fa309ac:	1549fffb 	bne	t2,t1,9fa3099c <load_exit+0x8>
+9fa309b0:	00000000 	nop
+9fa309b4:	00000000 	nop
+9fa309b8:	3c08f200 	lui	t0,0xf200
+9fa309bc:	3508ff15 	ori	t0,t0,0xff15
+9fa309c0:	40886000 	mtc0	t0,c0_status
+9fa309c4:	00000000 	nop
+9fa309c8:	3c0a8000 	lui	t2,0x8000
+9fa309cc:	01400008 	jr	t2
+9fa309d0:	00000000 	nop
+9fa309d4:	00000000 	nop
+9fa309d8:	8f480000 	lw	t0,0(k0)
+9fa309dc:	00000000 	nop
+9fa309e0:	ad280000 	sw	t0,0(t1)
+9fa309e4:	00000000 	nop
+9fa309e8:	8d2d0000 	lw	t5,0(t1)
+9fa309ec:	00000000 	nop
+9fa309f0:	150d000c 	bne	t0,t5,9fa30a24 <ram_error>
+9fa309f4:	00000000 	nop
+9fa309f8:	00000000 	nop
+9fa309fc:	275a0004 	addiu	k0,k0,4
+9fa30a00:	25290004 	addiu	t1,t1,4
+9fa30a04:	177afff4 	bne	k1,k0,9fa309d8 <load_exit+0x44>
+9fa30a08:	00000000 	nop
+	...
+9fa30a18:	10000005 	b	9fa30a30 <ram_pass>
+9fa30a1c:	00000000 	nop
+9fa30a20:	00000000 	nop
+
+9fa30a24 <ram_error>:
+9fa30a24:	1000ffff 	b	9fa30a24 <ram_error>
+9fa30a28:	00000000 	nop
+9fa30a2c:	00000000 	nop
+
+9fa30a30 <ram_pass>:
+9fa30a30:	3c098000 	lui	t1,0x8000
+9fa30a34:	3c0a8002 	lui	t2,0x8002
+9fa30a38:	bd390000 	cache	0x19,0(t1)
+9fa30a3c:	0000000f 	sync
+9fa30a40:	bd300000 	cache	0x10,0(t1)
+9fa30a44:	25290020 	addiu	t1,t1,32
+9fa30a48:	1549fffb 	bne	t2,t1,9fa30a38 <ram_pass+0x8>
+9fa30a4c:	00000000 	nop
+	...
+9fa30a58:	3c02bfb0 	lui	v0,0xbfb0
+9fa30a5c:	34420958 	ori	v0,v0,0x958
+9fa30a60:	8c4e0000 	lw	t6,0(v0)
+9fa30a64:	00000000 	nop
+9fa30a68:	240afffe 	li	t2,-2
+9fa30a6c:	01ca7024 	and	t6,t6,t2
+9fa30a70:	ac4e0000 	sw	t6,0(v0)
+9fa30a74:	00000000 	nop
+9fa30a78:	3c1a8000 	lui	k0,0x8000
+9fa30a7c:	03400008 	jr	k0
+9fa30a80:	00000000 	nop
+9fa30a84:	00000000 	nop
+
+9fa30a88 <error>:
+9fa30a88:	1000ffff 	b	9fa30a88 <error>
+9fa30a8c:	00000000 	nop
+9fa30a90:	00000000 	nop
+
+9fa30a94 <sys_init_processor>:
+9fa30a94:	40088000 	mfc0	t0,c0_config
+9fa30a98:	3c098000 	lui	t1,0x8000
+9fa30a9c:	3529ffff 	ori	t1,t1,0xffff
+9fa30aa0:	01094024 	and	t0,t0,t1
+9fa30aa4:	3c093604 	lui	t1,0x3604
+9fa30aa8:	01094025 	or	t0,t0,t1
+9fa30aac:	40888000 	mtc0	t0,c0_config
+9fa30ab0:	40086000 	mfc0	t0,c0_status
+9fa30ab4:	3c09fffc 	lui	t1,0xfffc
+9fa30ab8:	3529ffff 	ori	t1,t1,0xffff
+9fa30abc:	01094024 	and	t0,t0,t1
+9fa30ac0:	24090000 	li	t1,0
+9fa30ac4:	01094025 	or	t0,t0,t1
+9fa30ac8:	40886000 	mtc0	t0,c0_status
+9fa30acc:	40086000 	mfc0	t0,c0_status
+9fa30ad0:	3c090003 	lui	t1,0x3
+9fa30ad4:	01094024 	and	t0,t0,t1
+9fa30ad8:	3c090440 	lui	t1,0x440
+9fa30adc:	01094025 	or	t0,t0,t1
+9fa30ae0:	40886000 	mtc0	t0,c0_status
+9fa30ae4:	40088000 	mfc0	t0,c0_config
+9fa30ae8:	3c097fff 	lui	t1,0x7fff
+9fa30aec:	01094024 	and	t0,t0,t1
+9fa30af0:	24090003 	li	t1,3
+9fa30af4:	01094025 	or	t0,t0,t1
+9fa30af8:	40888000 	mtc0	t0,c0_config
+9fa30afc:	03e00008 	jr	ra
+9fa30b00:	00001021 	move	v0,zero
+
+9fa30b04 <sys_init_cache>:
+9fa30b04:	03e06021 	move	t4,ra
+9fa30b08:	04110031 	bal	9fa30bd0 <sys_determine_icache_linesize>
+9fa30b0c:	00000000 	nop
+9fa30b10:	00405021 	move	t2,v0
+9fa30b14:	04110037 	bal	9fa30bf4 <sys_determine_icache_lines>
+9fa30b18:	00000000 	nop
+9fa30b1c:	01420019 	multu	t2,v0
+9fa30b20:	00005812 	mflo	t3
+9fa30b24:	04110043 	bal	9fa30c34 <sys_determine_dcache_linesize>
+9fa30b28:	00000000 	nop
+9fa30b2c:	00404021 	move	t0,v0
+9fa30b30:	04110049 	bal	9fa30c58 <sys_determine_dcache_lines>
+9fa30b34:	00000000 	nop
+9fa30b38:	01020019 	multu	t0,v0
+9fa30b3c:	00004812 	mflo	t1
+9fa30b40:	01602021 	move	a0,t3
+9fa30b44:	01402821 	move	a1,t2
+9fa30b48:	04110007 	bal	9fa30b68 <sys_init_icache>
+9fa30b4c:	00000000 	nop
+9fa30b50:	01202021 	move	a0,t1
+9fa30b54:	01002821 	move	a1,t0
+9fa30b58:	04110010 	bal	9fa30b9c <sys_init_dcache>
+9fa30b5c:	00000000 	nop
+9fa30b60:	01800008 	jr	t4
+9fa30b64:	00001021 	move	v0,zero
+
+9fa30b68 <sys_init_icache>:
+9fa30b68:	4080e000 	mtc0	zero,c0_taglo
+9fa30b6c:	00000040 	ssnop
+9fa30b70:	00000040 	ssnop
+9fa30b74:	00000040 	ssnop
+9fa30b78:	000000c0 	ehb
+9fa30b7c:	3c068000 	lui	a2,0x8000
+9fa30b80:	00c43821 	addu	a3,a2,a0
+9fa30b84:	00e53823 	subu	a3,a3,a1
+9fa30b88:	bcc80000 	cache	0x8,0(a2)
+9fa30b8c:	14c7fffe 	bne	a2,a3,9fa30b88 <sys_init_icache+0x20>
+9fa30b90:	00c53021 	addu	a2,a2,a1
+9fa30b94:	03e00008 	jr	ra
+9fa30b98:	00000000 	nop
+
+9fa30b9c <sys_init_dcache>:
+9fa30b9c:	4080e002 	mtc0	zero,c0_taglo1
+9fa30ba0:	00000040 	ssnop
+9fa30ba4:	00000040 	ssnop
+9fa30ba8:	00000040 	ssnop
+9fa30bac:	000000c0 	ehb
+9fa30bb0:	3c068000 	lui	a2,0x8000
+9fa30bb4:	00c43821 	addu	a3,a2,a0
+9fa30bb8:	00e53823 	subu	a3,a3,a1
+9fa30bbc:	bcc90000 	cache	0x9,0(a2)
+9fa30bc0:	14c7fffe 	bne	a2,a3,9fa30bbc <sys_init_dcache+0x20>
+9fa30bc4:	00c53021 	addu	a2,a2,a1
+9fa30bc8:	03e00008 	jr	ra
+9fa30bcc:	00000000 	nop
+
+9fa30bd0 <sys_determine_icache_linesize>:
+9fa30bd0:	40198001 	mfc0	t9,c0_config1
+9fa30bd4:	3c180038 	lui	t8,0x38
+9fa30bd8:	0319c024 	and	t8,t8,t9
+9fa30bdc:	240f0013 	li	t7,19
+9fa30be0:	01f8c006 	srlv	t8,t8,t7
+9fa30be4:	240f0002 	li	t7,2
+9fa30be8:	030f1004 	sllv	v0,t7,t8
+9fa30bec:	03e00008 	jr	ra
+9fa30bf0:	00000000 	nop
+
+9fa30bf4 <sys_determine_icache_lines>:
+9fa30bf4:	40198001 	mfc0	t9,c0_config1
+9fa30bf8:	3c180007 	lui	t8,0x7
+9fa30bfc:	0319c024 	and	t8,t8,t9
+9fa30c00:	240f0010 	li	t7,16
+9fa30c04:	01f8c006 	srlv	t8,t8,t7
+9fa30c08:	27180001 	addiu	t8,t8,1
+9fa30c0c:	3c0f01c0 	lui	t7,0x1c0
+9fa30c10:	01f97824 	and	t7,t7,t9
+9fa30c14:	24190016 	li	t9,22
+9fa30c18:	032f7806 	srlv	t7,t7,t9
+9fa30c1c:	24190040 	li	t9,64
+9fa30c20:	01f97804 	sllv	t7,t9,t7
+9fa30c24:	030f0019 	multu	t8,t7
+9fa30c28:	00001012 	mflo	v0
+9fa30c2c:	03e00008 	jr	ra
+9fa30c30:	00000000 	nop
+
+9fa30c34 <sys_determine_dcache_linesize>:
+9fa30c34:	40198001 	mfc0	t9,c0_config1
+9fa30c38:	24181c00 	li	t8,7168
+9fa30c3c:	0319c024 	and	t8,t8,t9
+9fa30c40:	240f000a 	li	t7,10
+9fa30c44:	01f8c006 	srlv	t8,t8,t7
+9fa30c48:	240f0002 	li	t7,2
+9fa30c4c:	030f1004 	sllv	v0,t7,t8
+9fa30c50:	03e00008 	jr	ra
+9fa30c54:	00000000 	nop
+
+9fa30c58 <sys_determine_dcache_lines>:
+9fa30c58:	40198001 	mfc0	t9,c0_config1
+9fa30c5c:	24180380 	li	t8,896
+9fa30c60:	0319c024 	and	t8,t8,t9
+9fa30c64:	240f0007 	li	t7,7
+9fa30c68:	01f8c006 	srlv	t8,t8,t7
+9fa30c6c:	27180001 	addiu	t8,t8,1
+9fa30c70:	340fe000 	li	t7,0xe000
+9fa30c74:	01f97824 	and	t7,t7,t9
+9fa30c78:	2419000d 	li	t9,13
+9fa30c7c:	032f7806 	srlv	t7,t7,t9
+9fa30c80:	24190040 	li	t9,64
+9fa30c84:	01f97804 	sllv	t7,t9,t7
+9fa30c88:	030f0019 	multu	t8,t7
+9fa30c8c:	00001012 	mflo	v0
+9fa30c90:	03e00008 	jr	ra
+9fa30c94:	00000000 	nop
+	...

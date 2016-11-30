@@ -1,0 +1,12 @@
+prefix=/proj/mtk11340/Code1/newkernel_0420/BBN_Linux/DEV/main/tclinux_phoenix/apps/public/mtd-utils/install_e2fs
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: ss
+Description: Subsystem command parsing library
+Version: 1.42.13
+Requires.private: com_err
+Cflags: -I${includedir}/ss -I${includedir}
+Libs: -L${libdir} -lss
+Libs.private: -ldl

@@ -1,0 +1,27 @@
+***********************************************************
+2012.05.04
+revision note: 
+  1) /apps/private/voip
+  	This directory contains VoIP utility
+  2) /modules/private/voip
+  	This directory contains the VoIP modules implementation in object
+  3) G.711-A/U
+  4) G.711 VAD/CNG
+  5) G.711 PLC
+  6) G729 AnnexA/B
+  7) G722
+  8) G726
+  9) FAX: 711 pass through / T.38
+  10) Echo canceller ¡V up to 48ms
+  11) RTP/RTCP ¡V RFC 3350
+  12) Jitter buffer ¡V Dynamic/Static jitter buffer. Up to 500 ms
+  13) Caller ID ¡V Type1 / 2
+  14) Call forward/transfer/Return/DND/DOD
+  15) Anonymous calling / call blocking
+  16) 3 way conference
+  17) Digitmap
+  18) Country setting
+  19) DTMF generation ¡V RFC 2833 Relay  / In band generation
+  20) Analog gain - +/- 20 dbm
+  21) FxO ¡V loop current detection
+  22) FxO ¡V hook flash detection

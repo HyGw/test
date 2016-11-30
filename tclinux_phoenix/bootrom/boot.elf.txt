@@ -1,0 +1,208 @@
+
+boot.elf：     文件格式 elf32-tradbigmips
+
+节：
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000002f0  bfc00000  bfc00000  00010000  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .reginfo      00000018  bfc002f0  bfc002f0  000102f0  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA, LINK_ONCE_SAME_SIZE
+  2 .data         0001ac28  bfc00310  bfc00310  00010310  2**4
+                  CONTENTS, ALLOC, LOAD, DATA
+  3 .pdr          000000a0  00000000  00000000  0002af38  2**2
+                  CONTENTS, READONLY
+  4 .comment      00000021  00000000  00000000  0002afd8  2**0
+                  CONTENTS, READONLY
+  5 .gnu.attributes 00000010  00000000  00000000  0002aff9  2**0
+                  CONTENTS, READONLY
+
+Disassembly of section .text:
+
+bfc00000 <__start>:
+bfc00000:	0b f0 00 12 00 00 00 00                             ........
+
+bfc00008 <header_start>:
+	...
+
+bfc00048 <boot_start>:
+bfc00048:	40809000 	mtc0	zero,c0_watchlo
+bfc0004c:	40809800 	mtc0	zero,c0_watchhi
+bfc00050:	401a6000 	mfc0	k0,c0_status
+bfc00054:	001adcc2 	srl	k1,k0,0x13
+bfc00058:	337b0001 	andi	k1,k1,0x1
+bfc0005c:	13600007 	beqz	k1,bfc0007c <no_nmi>
+bfc00060:	00000000 	nop
+bfc00064:	3c1abfb0 	lui	k0,0xbfb0
+bfc00068:	375a0244 	ori	k0,k0,0x244
+bfc0006c:	8f5b0000 	lw	k1,0(k0)
+bfc00070:	00000000 	nop
+bfc00074:	03600008 	jr	k1
+bfc00078:	00000000 	nop
+
+bfc0007c <no_nmi>:
+bfc0007c:	401a6000 	mfc0	k0,c0_status
+bfc00080:	241bffe6 	li	k1,-26
+bfc00084:	035bd024 	and	k0,k0,k1
+bfc00088:	409a6000 	mtc0	k0,c0_status
+bfc0008c:	3c1a0080 	lui	k0,0x80
+bfc00090:	409a6800 	mtc0	k0,c0_cause
+bfc00094:	0ff0008d 	jal	bfc00234 <sys_init_processor>
+bfc00098:	00000000 	nop
+bfc0009c:	3c03bfb0 	lui	v1,0xbfb0
+bfc000a0:	3c048007 	lui	a0,0x8007
+bfc000a4:	34841f1e 	ori	a0,a0,0x1f1e
+bfc000a8:	3c050007 	lui	a1,0x7
+bfc000ac:	34a51f1f 	ori	a1,a1,0x1f1f
+bfc000b0:	3c060004 	lui	a2,0x4
+bfc000b4:	ac640020 	sw	a0,32(v1)
+bfc000b8:	ac650024 	sw	a1,36(v1)
+bfc000bc:	00000000 	nop
+bfc000c0:	3c040004 	lui	a0,0x4
+bfc000c4:	34840808 	ori	a0,a0,0x808
+bfc000c8:	3c05c004 	lui	a1,0xc004
+bfc000cc:	34a51010 	ori	a1,a1,0x1010
+bfc000d0:	3c068005 	lui	a2,0x8005
+bfc000d4:	ac660034 	sw	a2,52(v1)
+bfc000d8:	00000000 	nop
+bfc000dc:	3c03bfb1 	lui	v1,0xbfb1
+bfc000e0:	3c04102d 	lui	a0,0x102d
+bfc000e4:	34841040 	ori	a0,a0,0x1040
+bfc000e8:	3c0610aa 	lui	a2,0x10aa
+bfc000ec:	34c68100 	ori	a2,a2,0x8100
+bfc000f0:	3c072000 	lui	a3,0x2000
+bfc000f4:	34e728d0 	ori	a3,a3,0x28d0
+bfc000f8:	ac640000 	sw	a0,0(v1)
+bfc000fc:	ac670014 	sw	a3,20(v1)
+bfc00100:	00000000 	nop
+bfc00104:	3c08bfb4 	lui	t0,0xbfb4
+bfc00108:	00000000 	nop
+bfc0010c:	ad000000 	sw	zero,0(t0)
+bfc00110:	ad000004 	sw	zero,4(t0)
+bfc00114:	00000000 	nop
+bfc00118:	3c02bfb0 	lui	v0,0xbfb0
+bfc0011c:	34420958 	ori	v0,v0,0x958
+bfc00120:	8c4e0000 	lw	t6,0(v0)
+bfc00124:	00000000 	nop
+bfc00128:	35ce0001 	ori	t6,t6,0x1
+bfc0012c:	ac4e0000 	sw	t6,0(v0)
+bfc00130:	00000000 	nop
+bfc00134:	3c1abfc0 	lui	k0,0xbfc0
+bfc00138:	275a0310 	addiu	k0,k0,784
+bfc0013c:	3c1bbfc0 	lui	k1,0xbfc0
+bfc00140:	277b078c 	addiu	k1,k1,1932
+bfc00144:	3c09bfa3 	lui	t1,0xbfa3
+bfc00148:	35290040 	ori	t1,t1,0x40
+bfc0014c:	8f480000 	lw	t0,0(k0)
+bfc00150:	00000000 	nop
+bfc00154:	ad280000 	sw	t0,0(t1)
+bfc00158:	00000000 	nop
+bfc0015c:	8d2d0000 	lw	t5,0(t1)
+bfc00160:	00000000 	nop
+bfc00164:	150d0009 	bne	t0,t5,bfc0018c <ram_error>
+bfc00168:	00000000 	nop
+bfc0016c:	275a0004 	addiu	k0,k0,4
+bfc00170:	25290004 	addiu	t1,t1,4
+bfc00174:	177afff5 	bne	k1,k0,bfc0014c <no_nmi+0xd0>
+bfc00178:	00000000 	nop
+	...
+bfc00184:	10000003 	b	bfc00194 <ram_pass>
+bfc00188:	00000000 	nop
+
+bfc0018c <ram_error>:
+bfc0018c:	1000ffff 	b	bfc0018c <ram_error>
+bfc00190:	00000000 	nop
+
+bfc00194 <ram_pass>:
+bfc00194:	00000000 	nop
+bfc00198:	3c09bfa3 	lui	t1,0xbfa3
+bfc0019c:	3c0abfc0 	lui	t2,0xbfc0
+bfc001a0:	254a0788 	addiu	t2,t2,1928
+bfc001a4:	ad2a0000 	sw	t2,0(t1)
+bfc001a8:	3c0abfc0 	lui	t2,0xbfc0
+bfc001ac:	254a0c40 	addiu	t2,t2,3136
+bfc001b0:	ad2a0004 	sw	t2,4(t1)
+bfc001b4:	3c0abfc1 	lui	t2,0xbfc1
+bfc001b8:	254a9120 	addiu	t2,t2,-28384
+bfc001bc:	ad2a0008 	sw	t2,8(t1)
+bfc001c0:	3c0abfc1 	lui	t2,0xbfc1
+bfc001c4:	254ae090 	addiu	t2,t2,-8048
+bfc001c8:	ad2a000c 	sw	t2,12(t1)
+bfc001cc:	3c0abfc0 	lui	t2,0xbfc0
+bfc001d0:	254a0c40 	addiu	t2,t2,3136
+bfc001d4:	ad2a0010 	sw	t2,16(t1)
+bfc001d8:	3c0abfc1 	lui	t2,0xbfc1
+bfc001dc:	254a9120 	addiu	t2,t2,-28384
+bfc001e0:	ad2a0014 	sw	t2,20(t1)
+bfc001e4:	3c0abfc1 	lui	t2,0xbfc1
+bfc001e8:	254ae090 	addiu	t2,t2,-8048
+bfc001ec:	ad2a0018 	sw	t2,24(t1)
+bfc001f0:	3c0abfc2 	lui	t2,0xbfc2
+bfc001f4:	254aaf38 	addiu	t2,t2,-20680
+bfc001f8:	ad2a001c 	sw	t2,28(t1)
+bfc001fc:	3c11bfc0 	lui	s1,0xbfc0
+bfc00200:	26310788 	addiu	s1,s1,1928
+bfc00204:	3c12bfc0 	lui	s2,0xbfc0
+bfc00208:	26520c40 	addiu	s2,s2,3136
+bfc0020c:	3c13bfa3 	lui	s3,0xbfa3
+bfc00210:	36730800 	ori	s3,s3,0x800
+bfc00214:	3c14bfa3 	lui	s4,0xbfa3
+bfc00218:	36940800 	ori	s4,s4,0x800
+bfc0021c:	3c1abfa3 	lui	k0,0xbfa3
+bfc00220:	375a0040 	ori	k0,k0,0x40
+bfc00224:	03400008 	jr	k0
+bfc00228:	00000000 	nop
+
+bfc0022c <error>:
+bfc0022c:	1000ffff 	b	bfc0022c <error>
+bfc00230:	00000000 	nop
+
+bfc00234 <sys_init_processor>:
+bfc00234:	40088000 	mfc0	t0,c0_config
+bfc00238:	3c098000 	lui	t1,0x8000
+bfc0023c:	3529ffff 	ori	t1,t1,0xffff
+bfc00240:	01094024 	and	t0,t0,t1
+bfc00244:	3c093604 	lui	t1,0x3604
+bfc00248:	01094025 	or	t0,t0,t1
+bfc0024c:	40888000 	mtc0	t0,c0_config
+bfc00250:	40086000 	mfc0	t0,c0_status
+bfc00254:	3c09fffc 	lui	t1,0xfffc
+bfc00258:	3529ffff 	ori	t1,t1,0xffff
+bfc0025c:	01094024 	and	t0,t0,t1
+bfc00260:	24090000 	li	t1,0
+bfc00264:	01094025 	or	t0,t0,t1
+bfc00268:	40886000 	mtc0	t0,c0_status
+bfc0026c:	40086000 	mfc0	t0,c0_status
+bfc00270:	3c090003 	lui	t1,0x3
+bfc00274:	01094024 	and	t0,t0,t1
+bfc00278:	3c090440 	lui	t1,0x440
+bfc0027c:	01094025 	or	t0,t0,t1
+bfc00280:	40886000 	mtc0	t0,c0_status
+bfc00284:	40088000 	mfc0	t0,c0_config
+bfc00288:	3c097fff 	lui	t1,0x7fff
+bfc0028c:	01094024 	and	t0,t0,t1
+bfc00290:	24090003 	li	t1,3
+bfc00294:	01094025 	or	t0,t0,t1
+bfc00298:	40888000 	mtc0	t0,c0_config
+bfc0029c:	03e00008 	jr	ra
+bfc002a0:	00001021 	move	v0,zero
+	...
+
+bfc002b0 <move_data_entry>:
+bfc002b0:	03e00008 	jr	ra
+bfc002b4:	00000000 	nop
+	...
+
+bfc002c0 <boot2_entry>:
+bfc002c0:	03e00008 	jr	ra
+bfc002c4:	00000000 	nop
+	...
+
+bfc002d0 <boot_entry>:
+bfc002d0:	03e00008 	jr	ra
+bfc002d4:	00000000 	nop
+	...
+
+bfc002e0 <lzma_entry>:
+bfc002e0:	03e00008 	jr	ra
+bfc002e4:	00000000 	nop
+	...

@@ -1,0 +1,1 @@
+cmd_lib/zlib_deflate/zlib_deflate.o := mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o lib/zlib_deflate/zlib_deflate.o lib/zlib_deflate/deflate.o lib/zlib_deflate/deftree.o lib/zlib_deflate/deflate_syms.o 

@@ -1,0 +1,1 @@
+cmd_net/ipv4/netfilter/iptable_filter.ko := mips-buildroot-linux-gnu-ld -r  -m elf32btsmip -T /opt/tclinux_phoenix/linux-2.6.36/scripts/module-common.lds --build-id  -o net/ipv4/netfilter/iptable_filter.ko net/ipv4/netfilter/iptable_filter.o net/ipv4/netfilter/iptable_filter.mod.o

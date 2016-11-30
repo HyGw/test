@@ -1,0 +1,247 @@
+include Project/dir.mak
+include $(TRUNK_DIR)/.profile_summary
+
+#UNOPEN_FILE_DELETE means unopen files needed to be deleted
+UNOPEN_FILE_DELETE= $(APP_AUTOMOUNT_DIR)\
+$(APP_PRIVATE_DIR)/auto_mount_dongle \
+$(APP_EIP93_APPS) \
+$(APP_RESTORE_LINOS_INFO_DIR) \
+$(APP_SNMPD_DIR) \
+$(APP_ZEBRA_DIR) \
+$(APP_TCAPI_DIR) \
+$(APP_TCWDOG_DIR) \
+$(APP_MTK_UH_TEST_DIR) \
+$(APP_RA_HWNAT_DIR) \
+$(APP_SMUXCTL_DIR) \
+$(APP_CENTRAL_COORDINATOR_DIR) \
+$(APP_CFG_PARSER_DIR) \
+$(APP_CODE_REDUCE_PATCH_DIR) \
+$(APP_FWUPGRADE_DIR) \
+$(APP_HUAWEI_CI_DIR) \
+$(APP_PRIVATE_DIR)/igmpv3proxy \
+$(APP_SNMPD_DIR) \
+$(APP_PCM_TEST_DIR) \
+$(APP_QUAGGA_DIR) \
+$(APP_RCS_DIR) \
+$(APP_EPON_DUMMY_DETECT_DIR) \
+$(APP_SLIC_TEST_DIR) \
+$(APP_SKB_MANAGER_DIR) \
+$(APP_PWCTLCMD_DIR) \
+$(APP_DMS_DIR) \
+$(APP_RA_MENU_DIR) \
+$(APP_AUTOIP_DIR) \
+$(APP_PRIVATE_DIR)/osgi \
+$(OSGI_DIR)/antlr \
+$(OSGI_DIR)/src \
+$(OSGI_DIR)/java \
+$(OSGI_DIR)/classpath-new \
+$(OSGI_DIR)/jamvm-2.0.0 \
+$(OSGI_DIR)/zlib-1.2.8 \
+$(APP_JOYME_DIR)/example \
+$(APP_JOYME_DIR)/joyme.c \
+$(APP_CTSGWLIB_DIR)/ctsgw.c \
+$(APP_CTSGWLIB_DIR)/ctsgw_test \
+$(APP_BDSERVICE_DIR)/bdService.c \
+$(APP_BUNDLELIB_DIR)/bundle.c \
+$(APP_BANDWIDTH_DIR) \
+$(APP_PLUGIN_MONITOR_DIR) \
+$(APP_STORE_DIR) \
+$(APP_HTTPDETECT_DIR) \
+$(BUNDLE_MONITOR_DIR) \
+$(BUNDLE_CMD_DIR) \
+$(USB_MONITOR_DIR) \
+$(APP_PRIVATE_DIR)/flash \
+$(APP_PRIVATE_DIR)/tcapi_enhance_lib \
+$(APP_PRIVATE_DIR)/sendicmp \
+$(APP_TCAPILIB_DIR)/*.c \
+
+ifeq ($(strip $(TCSUPPORT_MUH_TEST)),)
+UNOPEN_FILE_DELETE += $(APP_PRIVATE_DIR)/mtk_xhci_test_cli
+endif
+ifeq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)$(TCSUPPORT_XPON_HAL_API)),)
+UNOPEN_FILE_DELETE += $(APP_PRIVATE_DIR)/mtk_itf
+endif
+ifeq ($(strip $(TCSUPPORT_CT_PHONEAPP)),)
+UNOPEN_FILE_DELETE += $(APP_PRIVATE_DIR)/mobile-manager \
+$(APP_PRIVATE_DIR)/TR69_64/midware-server 
+endif
+ifeq ($(strip $(TCSUPPORT_CT_PON_GD)),)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+UNOPEN_FILE_DELETE += $(APP_CWMP_DIR)/cwmp/Sources/cwmp.c
+else
+UNOPEN_FILE_DELETE += $(APP_CWMP_DIR)/cwmp/Sources/cwmp_ct.c
+endif
+UNOPEN_FILE_DELETE += $(APP_CWMP_DIR)/clmp \
+$(APP_CWMP_DIR)/cwmp/Sources/cwmpAttr.c \
+$(APP_CWMP_DIR)/cwmp/Sources/cwmpDocument.c \
+$(APP_CWMP_DIR)/cwmp/Sources/cwmpElement.c \
+$(APP_CWMP_DIR)/cwmp/Sources/cwmpNode.c \
+$(APP_CWMP_DIR)/cwmp/Sources/cwmpParamApi.c \
+$(APP_CWMP_DIR)/cwmp/Sources/cwmpParameter.c \
+$(APP_CWMP_DIR)/cwmp/Sources/cwmpSoap.c \
+$(APP_CWMP_DIR)/cwmp/Sources/cwmpXml.c \
+$(APP_CWMP_DIR)/cwmp/Sources/cwmpXmlmembuf.c \
+$(APP_CWMP_DIR)/cwmp/Sources/cwmpXmlparser.c \
+$(APP_CWMP_DIR)/cwmp/Sources/mbuf.c \
+$(APP_CWMP_DIR)/cwmp/Sources/messageHandle.c \
+$(APP_CWMP_DIR)/cwmp/Sources/namedNodeMap.c \
+$(APP_CWMP_DIR)/cwmp/Sources/node.c \
+$(APP_CWMP_DIR)/cwmp/Sources/nodeList.c \
+$(APP_CWMP_DIR)/cwmp/Sources/unopen.c \
+$(APP_CWMP_DIR)/cwmp/Sources/unopen_ct.c \
+$(APP_CWMP_DIR)/main/main.c \
+$(APP_CWMP_DIR)/linos/utily.c
+endif
+UNOPEN_FILE_DELETE += $(APP_CWMP_DIR)/rompager \
+$(APP_CMDCI_DIR)/algcmd.* \
+$(APP_CMDCI_DIR)/firewallcmd.* \
+$(APP_CMDCI_DIR)/portbindcmd.* \
+$(APP_CMDCI_DIR)/qoscmd.* \
+$(APP_CMDCI_DIR)/qoscmd_ct.* \
+$(APP_CMDCI_DIR)/accesslimitcmd \
+$(APP_CMDCI_DIR)/accesslimitcmd.* \
+$(APP_CMDCI_DIR)/atmcmdd \
+$(APP_CMDCI_DIR)/atmcmdc.* \
+$(APP_FONSMCD_DIR)/src/coova \
+$(APP_FONSMCD_DIR)/src/fonsmcd \
+$(APP_FONSMCD_DIR)/src/fon-api \
+$(APP_FONSMCD_DIR)/src/getrandom/getrandom.o \
+$(APP_FONSMCD_DIR)/src/getrandom/getrandom \
+$(APP_NEW_SHELL_DIR) \
+$(APP_FON_HOTSPOT_DIR) \
+$(APP_SIM_CARD_DIR) \
+$(APP_BLOCK_PROCESS_DIR) \
+$(APP_TCAPILIB_ENHANCE_DIR) \
+$(APP_TCAPI_CWMP_LIB_DIR) \
+$(APP_SENDICMP_DIR)
+
+ifeq ($(strip $(RELEASEHWNAT)),)
+UNOPEN_FILE_DELETE += $(APP_RA_HWNAT_7510_DIR) 
+endif
+
+#delete xpon_lib
+UNOPEN_FILE_DELETE += $(LIB_XPON_DIR)/epon/libepon.c \
+$(LIB_XPON_DIR)/eponmap/libeponmap.c \
+$(LIB_XPON_DIR)/gponmap/libgponmap.c \
+$(LIB_XPON_DIR)/pon_vlan/lib_pon_vlan.c \
+$(LIB_XPON_DIR)/pon_mac_filter/lib_pon_mac_filter.c \
+$(LIB_XPON_DIR)/xpon_igmp/lib_xpon_igmp.c \
+$(LIB_XPON_DIR)/xpon_igmp/xpon_igmp_omci.c
+
+#delete oam 
+UNOPEN_FILE_DELETE += $(APP_EPON_OAM_DIR)/epon_oam.c \
+$(APP_EPON_OAM_DIR)/epon_oam_ext.c \
+$(APP_EPON_OAM_DIR)/epon_oam_dbg_srv.c \
+$(APP_EPON_OAM_DIR)/epon_oam_timer.c \
+$(APP_EPON_OAM_DIR)/epon_oam_util.c
+
+#voip xpon for MT7505
+ifneq ($(strip $(TCSUPPORT_CPU_MT7505)),)
+UNOPEN_FILE_DELETE += $(APP_PRIVATE_DIR)/voip \
+$(APP_XPON_DIR) \
+$(APP_FLASH_DIR) \
+$(APP_ECB3LIB_DIR)
+endif
+
+#delete omci 
+UNOPEN_FILE_DELETE += $(APP_OMCI_DIR)/omci.c \
+$(APP_OMCI_DIR)/omci_dbg_srv.c \
+$(APP_OMCI_DIR)/omci_general_func.c \
+$(APP_OMCI_DIR)/omci_message_handle.c \
+$(APP_OMCI_DIR)/omci_timer.c \
+$(APP_OMCI_DIR)/omci_utily.c \
+
+#delete midware & upnp-dm
+UNOPEN_FILE_DELETE += $(APP_PRIVATE_DIR)/TR69_64/cwmp/midware \
+$(APP_UPNP_DM_DIR)
+
+#delete extra code of CT if customer is not CT and do the other when CT defined 
+ifeq ($(strip $(TCSUPPORT_CT)),)
+UNOPEN_FILE_DELETE += $(APP_PRIVATE_DIR)/cfg_manager_ct \
+$(APP_PRIVATE_DIR)/cfg_manager/cfg_manager.c \
+$(APP_PRIVATE_DIR)/cfg_manager/*.o \
+$(APP_PRIVATE_DIR)/ethcmd_ct \
+$(APP_PRIVATE_DIR)/TR69_64/cwmp/cwmpParameter_ct \
+$(APP_CMDCI_DIR)/atmcmdd.* \
+$(APP_PRIVATE_DIR)/backuprestore 
+else
+UNOPEN_FILE_DELETE += $(APP_PRIVATE_DIR)/cfg_manager \
+$(APP_PRIVATE_DIR)/cfg_manager_ct/cfg_manager.c \
+$(APP_PRIVATE_DIR)/cfg_manager_ct/*.o \
+$(APP_PRIVATE_DIR)/ethcmd_ct \
+$(APP_CMDCI_DIR)/atmcmdd.c \
+$(APP_PRIVATE_DIR)/TR69_64/cwmp/cwmpParameter \
+$(APP_PRIVATE_DIR)/backuprestore \
+$(APP_ETC_SCRIPT_DIR)/ct/CDTool \
+$(APP_ETC_SCRIPT_DIR)/ct/eHomeEIWrd_e8bc_20130609.zip
+endif
+
+UNOPEN_FILE_DELETE += $(MOBILE_MANAGEER_DIR)/app-client \
+$(MOBILE_MANAGEER_DIR)/app-server \
+$(MOBILE_MANAGEER_DIR)/common \
+$(MOBILE_MANAGEER_DIR)/exec-process \
+$(MOBILE_MANAGEER_DIR)/json-1.5 \
+$(MOBILE_MANAGEER_DIR)/plugin_server \
+$(MOBILE_MANAGEER_DIR)/src/* \
+$(TOOLS_DIR)/yaffs2-HEAD-583dbd9 \
+$(APP_STB_TEST_DIR)
+
+ifeq ($(strip $(TCSUPPORT_CT_JOYME)),)
+UNOPEN_FILE_DELETE += $(APP_JOYME_DIR) \
+$(APP_BUNDLELIB_DIR) \
+$(APP_CTSGWLIB_DIR) \
+$(OSGI_DIR)
+endif
+
+ifeq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)$(TCSUPPORT_XPON_HAL_API)),)
+UNOPEN_FILE_DELETE += $(APP_PRIVATE_DIR)/mtk_itf
+endif
+
+ifeq ($(strip $(TCSUPPORT_MUH_TEST)),)
+UNOPEN_FILE_DELETE += $(APP_MTK_UH_TEST_DIR)
+endif
+
+#FTTDP
+UNOPEN_FILE_DELETE += $(APP_TCAPI_INIC_DIR) \
+$(APP_TCAPILIB_INIC_DIR) \
+$(APP_INIC_CLIENT_HEARTBEAT_DIR)
+
+OTHER_FILE_DELETE= $(APP_BSP_EXCLUSIVE_DIR)/private \
+$(APP_BSP_EXCLUSIVE_DIR)/public \
+$(APP_BSP_EXCLUSIVE_DIR)/bsp_builder
+
+ALL:
+
+
+	for FILE in $(UNOPEN_FILE_DELETE) $(OTHER_FILE_DELETE); \
+	do\
+		echo "******rm -rf $$FILE***********************************";\
+		rm -rf $$FILE; \
+		echo "******************************************************";\
+	done \
+	
+	find $(APP_PRIVATE_DIR)/etc_script/* -type d  | xargs rm -rf
+	if [ $$(ls -A $(APP_PRIVATE_DIR)/etc_script.reserved|wc -w) -gt 0 ]; then\
+		cp -rf $(APP_PRIVATE_DIR)/etc_script.reserved/* $(APP_PRIVATE_DIR)/etc_script/ ;\
+	fi
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	rm -rf $(APP_PRIVATE_DIR)/etc_script/ct/CDTool
+	rm -rf $(APP_PRIVATE_DIR)/etc_script/ct/eHomeEIWrd_e8bc_20130609.zip
+endif
+	rm -rf $(APP_PRIVATE_DIR)/etc_script.reserved
+
+	find $(APP_WEBPAGE_DIR)/* -type d | xargs rm -rf
+	if [ $$(ls -A $(APP_WEBPAGE_DIR).reserved|wc -w) -gt 0 ]; then\
+		cp -rf $(APP_WEBPAGE_DIR).reserved/*  $(APP_WEBPAGE_DIR);\
+	fi
+	rm -rf $(APP_WEBPAGE_DIR).reserved
+	
+	find $(APP_PRIVATE_DIR)/led_conf/* -type d | xargs rm -rf
+	if [ $$(ls -A $(APP_PRIVATE_DIR)/led_conf.reserved|wc -w) -gt 0 ]; then\
+		cp -rf $(APP_PRIVATE_DIR)/led_conf.reserved/* $(APP_PRIVATE_DIR)/led_conf ;\
+	fi
+	rm -rf $(APP_PRIVATE_DIR)/led_conf.reserved
+	
+	find $(APP_IPTABLES_DIR) -name "*.d"  -not -name "." | xargs rm -rf
+
+	

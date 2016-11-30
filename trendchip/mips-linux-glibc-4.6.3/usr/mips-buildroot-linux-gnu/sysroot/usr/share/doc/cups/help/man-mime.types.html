@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<!-- SECTION: Man Pages -->
+<head>
+	<style type='text/css'><!--
+	h1, h2, h3, p { font-family: sans-serif; text-align: justify; }
+	tt, pre a:link, pre a:visited, tt a:link, tt a:visited { font-weight: bold; color: #7f0000; }
+	pre { font-weight: bold; color: #7f0000; margin-left: 2em; }
+	h1.title, h2.title, h3.title { border-bottom: solid 2px #000000; }
+	--></style>
+	<title>mime.types(5)</title>
+</head>
+<body>
+<h2><a name='NAME'>Name</a></h2>
+mime.types - mime type description file for cups
+<h2><a name='DESCRIPTION'>Description</a></h2>
+The <i>mime.types</i> file defines the recognized file types.
+<p>Additional file types can be added to <i>mime.types</i> or
+(preferably) in additional files in the CUPS configuration
+directory with the extension ".types".
+<p>Each line in the <i>mime.types</i> file is a comment, blank, or
+rule line. Comment lines start with the # character. Rule lines
+start with the MIME type name and are optionally followed by a
+series of file recognition rules that are used to automatically
+identify print and web files:
+<br>
+<pre>
+
+    super/type rule [ ... ruleN]
+</pre>
+The rules may be grouped using parenthesis, joined using "+" for a
+logical AND and "," or whitespace for a logical OR, and negated using
+"!".
+<h2><a name='RULES'>Rules</a></h2>
+Rules take two forms - a filename extension by itself and functions with test
+values inside parenthesis. The following functions are available:
+<dl>
+<dt>match("pattern")
+</dt>
+<dd>Pattern match on filename
+</dd>
+<dt>ascii(offset,length)
+</dt>
+<dd>True if bytes are valid printable ASCII (CR, NL, TAB, BS, 32-126)
+</dd>
+<dt>printable(offset,length)
+</dt>
+<dd>True if bytes are printable 8-bit chars (CR, NL, TAB, BS, 32-126, 128-254)
+</dd>
+<dt>string(offset,"string")
+</dt>
+<dd>True if bytes are identical to string
+</dd>
+<dt>istring(offset,"string")
+</dt>
+<dd>True if a case-insensitive comparison of the bytes is identical
+</dd>
+<dt>char(offset,value)
+</dt>
+<dd>True if byte is identical
+</dd>
+<dt>short(offset,value)
+</dt>
+<dd>True if 16-bit integer is identical
+</dd>
+<dt>int(offset,value)
+</dt>
+<dd>True if 32-bit integer is identical
+</dd>
+<dt>locale("string")
+</dt>
+<dd>True if current locale matches string
+</dd>
+<dt>contains(offset,range,"string")
+</dt>
+<dd>True if the range contains the string
+</dd>
+</dl>
+<h2><a name='STRING_CONSTANTS'>String Constants</a></h2>
+String constants can be specified inside quotes ("") for strings
+containing whitespace and angle brackets (&lt;>) for hexadecimal
+strings.
+<h2><a name='SEE_ALSO'>See Also</a></h2>
+<a href='man-classes.conf.html?TOPIC=Man+Pages'>classes.conf(5)</a>, <a href='man-cupsd.html?TOPIC=Man+Pages'>cupsd(8)</a>, <a href='man-cupsd.conf.html?TOPIC=Man+Pages'>cupsd.conf(5)</a>,
+<a href='man-mime.convs.html?TOPIC=Man+Pages'>mime.convs(5)</a>, <a href='man-printers.conf.html?TOPIC=Man+Pages'>printers.conf(5)</a>,
+<br>
+<a href='http://localhost:631/help'>http://localhost:631/help</a>
+<h2><a name='COPYRIGHT'>Copyright</a></h2>
+Copyright 2007 by Apple Inc.
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+bootbase:bootbase_clean mt7515_bootext_ram
+	echo "Build bootrom"
+ifneq ($(strip $(TCSUPPORT_BOSA_CARLIBRATION)),)
+ifeq ($(strip $(TCSUPPORT_RESERVEAREA_BLOCK)),)
+	echo "Compile TCSUPPORT_BOSA_CARLIBRATION error,TCSUPPORT_RESERVEAREA_BLOCK must be existed"
+	exit 1
+endif
+endif	
+
+	if test -e $(PROFILE_DIR)/mi.conf; \
+	then cp $(PROFILE_DIR)/mi.conf $(BOOTROM_DIR)/mi.conf; \
+	fi
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+
+ifneq ($(strip $(TCSUPPORT_SDRAM_16M)),)
+	cp $(BOOTROM_DIR)/$(TCPLATFORM)/boot_16M.bin $(BOOTROM_DIR)/boot.bin
+endif
+
+ifneq ($(strip $(TCSUPPORT_SDRAM_32M)),)
+	cp $(BOOTROM_DIR)/$(TCPLATFORM)/boot_32M.bin $(BOOTROM_DIR)/boot.bin
+endif
+
+ifneq ($(strip $(TCSUPPORT_SDRAM_64M)),)
+	cp $(BOOTROM_DIR)/$(TCPLATFORM)/boot_64M.bin $(BOOTROM_DIR)/boot.bin
+endif
+
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+	cp $(BOOTROM_DIR)/start.S_7510_final $(BOOTROM_DIR)/start.S
+else
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_WIND)
+ifneq ($(strip $(TCSUPPORT_CD_WIND)),)
+	cp $(BOOTROM_DIR)/start.S_wind $(BOOTROM_DIR)/start.S
+else
+#endif/*TCSUPPORT_COMPILE*/
+	cp $(BOOTROM_DIR)/start.S_def $(BOOTROM_DIR)/start.S
+endif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_WIND)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7505)),)
+	cp $(BOOTROM_DIR)/start.S_7505_final $(BOOTROM_DIR)/start.S
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7520)),)
+	cp $(BOOTROM_DIR)/start.S_7510_final $(BOOTROM_DIR)/start.S
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512)),)
+	cp $(BOOTROM_DIR)/en7512_boot/start.S_7512_final $(BOOTROM_DIR)/start.S
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_EN7521)),)
+	cp $(BOOTROM_DIR)/en7512_boot/start.S_7512_final $(BOOTROM_DIR)/start.S
+endif
+
+	dos2unix $(BOOTROM_DIR)/mi.conf
+
+# Support Bootloader Compression, frankliao added 20100803
+ifneq ($(strip $(TCSUPPORT_BOOT_LZMA)),)
+	$(MAKE) -C $(BOOTROM_DIR) bootlzma
+else
+	$(MAKE) -C $(BOOTROM_DIR) bootload
+endif
+
+	if test -e $(BOOTROM_DIR)/tcboot.bin; \
+	then echo "Compile bootbase success"; \
+	else echo "Compile bootbase error!"; exit 1; \
+	fi	
+ifeq ($(strip $(BSP)),)
+	cp $(BOOTROM_DIR)/tcboot.bin $(APP_TCLINUXBUILDER_DIR)
+	cp $(BOOTROM_DIR)/byteswap $(APP_TCLINUXBUILDER_DIR)
+endif
+	cp $(BOOTROM_DIR)/tcboot.bin $(PROJECT_DIR)/images
+	cp $(BOOTROM_DIR)/byteswap $(PROJECT_DIR)/images
+
+mt7515_bootext_ram: mt7515_bootext_ram_clean
+ifneq ($(strip $(TCSUPPORT_INIC_CLIENT)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(KERNEL_DIR)/include/linux/mtd/fttdp_inic.h $(TRUNK_DIR)/bootrom_int/bootram/include/linux/mtd/
+	$(MAKE) -C $(TRUNK_DIR)/bootrom_int TC3262=1 BOOTROM_INT=1 BOOTROM_EXT=1 MT7510=1 TCSUPPORT_INIC_CLIENT=1
+	mkdir -p $(INIC_CLIENT_FILE_BACKUP_DIR)
+	cp $(TRUNK_DIR)/bootrom_int/bootext.ram $(INIC_CLIENT_FILE_BACKUP_DIR)/
+endif
+endif
+
+mt7515_bootext_ram_clean:
+ifneq ($(strip $(TCSUPPORT_INIC_CLIENT)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	chmod -R 777 $(TRUNK_DIR)/bootrom_int
+	$(MAKE) -C $(TRUNK_DIR)/bootrom_int TC3262=1 BOOTROM_INT=1 BOOTROM_EXT=1 MT7510=1 TCSUPPORT_INIC_CLIENT=1 clean
+ifeq ($(strip $(RELEASEBSP)),)	
+	rm -rf $(INIC_CLIENT_FILE_BACKUP_DIR)
+endif	
+endif
+endif
+	
+bootbase_clean:mt7515_bootext_ram_clean
+	echo "Clean bootrom"
+	$(MAKE) -C $(BOOTROM_DIR) clean
+
+bbsram:bbsram_clean
+	echo "Build bbsram"
+
+	if test -e $(PROFILE_DIR)/mi.conf; \
+	then cp $(PROFILE_DIR)/mi.conf $(BOOTROM_DIR)/mi.conf; \
+	fi
+
+	cp $(BOOTROM_DIR)/start.S_7505_final $(BOOTROM_DIR)/start.S
+
+	dos2unix $(BOOTROM_DIR)/mi.conf
+
+	$(MAKE) -C $(BOOTROM_DIR) bootsram
+	
+	if test -e $(BOOTROM_DIR)/tcboot.bin; \
+	then echo "Compile bootbase success"; \
+	else echo "Compile bootbase error!"; exit 1; \
+	fi	
+
+	cp $(BOOTROM_DIR)/tcboot.bin $(PROJECT_DIR)/images
+	cp $(BOOTROM_DIR)/byteswap $(PROJECT_DIR)/images
+			
+bbsram_clean:
+	echo "Clean bootrom"
+	$(MAKE) -C $(BOOTROM_DIR) clean

@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<!-- SECTION: Man Pages -->
+<head>
+	<style type='text/css'><!--
+	h1, h2, h3, p { font-family: sans-serif; text-align: justify; }
+	tt, pre a:link, pre a:visited, tt a:link, tt a:visited { font-weight: bold; color: #7f0000; }
+	pre { font-weight: bold; color: #7f0000; margin-left: 2em; }
+	h1.title, h2.title, h3.title { border-bottom: solid 2px #000000; }
+	--></style>
+	<title>lpr(1)</title>
+</head>
+<body>
+<h2><a name='NAME'>Name</a></h2>
+lpr - print files
+<h2><a name='SYNOPSIS'>Synopsis</a></h2>
+<b>lpr
+</b>[ -E ] [ -H
+<i>server[:port]
+</i>] [ -U
+<i>username
+</i>] [ -P
+<i>destination[/instance]
+</i>] [ -#
+<i>num-copies
+</i>[ -h ] [ -l ] [ -m ] [ -o
+<i>option[=value]
+</i>] [ -p] [ -q ] [ -r ] [ -C/J/T
+<i>title
+</i>] [
+<i>file(s)
+</i>]
+<h2><a name='DESCRIPTION'>Description</a></h2>
+<i>lpr</i> submits files for printing. Files named on the command
+line are sent to the named printer (or the system default
+destination if no destination is specified). If no files are
+listed on the command-line, <i>lpr</i> reads the print file from
+the standard input.
+<h2><a name='OPTIONS'>Options</a></h2>
+The following options are recognized by <i>lpr</i>:
+<dl>
+<dt>-E
+</dt>
+<dd>Forces encryption when connecting to the server.
+</dd>
+<dt>-H server[:port]
+</dt>
+<dd>Specifies an alternate server.
+</dd>
+<dt>-C "name"
+</dt>
+<dt>-J "name"
+</dt>
+<dt>-T "name"
+</dt>
+<dd>Sets the job name.
+</dd>
+<dt>-P destination[/instance]
+</dt>
+<dd>Prints files to the named printer.
+</dd>
+<dt>-U username
+</dt>
+<dd>Specifies an alternate username.
+</dd>
+<dt>-# <i>copies</i>
+</dt>
+<dd>Sets the number of copies to print from 1 to 100.
+</dd>
+<dt>-h
+</dt>
+<dd>Disables banner printing. This option is equivalent to "-o
+job-sheets=none".
+</dd>
+<dt>-l
+</dt>
+<dd>Specifies that the print file is already formatted for the
+destination and should be sent without filtering. This option is
+equivalent to "-o raw".
+</dd>
+<dt>-m
+</dt>
+<dd>Send an email on job completion.
+</dd>
+<dt>-o option[=value]
+</dt>
+<dd>Sets a job option.
+</dd>
+<dt>-p
+</dt>
+<dd>Specifies that the print file should be formatted with a shaded
+header with the date, time, job name, and page number. This
+option is equivalent to "-o prettyprint" and is only useful when
+printing text files.
+</dd>
+<dt>-q
+</dt>
+<dd>Hold job for printing.
+</dd>
+<dt>-r
+</dt>
+<dd>Specifies that the named print files should be deleted after
+printing them.
+</dd>
+</dl>
+<h2><a name='COMPATIBILITY'>Compatibility</a></h2>
+The "c", "d", "f", "g", "i", "n", "t", "v", and "w" options
+are not supported by CUPS and produce a warning message if used.
+<h2><a name='SEE_ALSO'>See Also</a></h2>
+<a href='man-cancel.html?TOPIC=Man+Pages'>cancel(1)</a>, <a href='man-lp.html?TOPIC=Man+Pages'>lp(1)</a>, <a href='man-lpq.html?TOPIC=Man+Pages'>lpq(1)</a>, <a href='man-lprm.html?TOPIC=Man+Pages'>lprm(1)</a>,
+<a href='man-lpstat.html?TOPIC=Man+Pages'>lpstat(1)</a>,
+<br>
+<a href='http://localhost:631/help'>http://localhost:631/help</a>
+<h2><a name='COPYRIGHT'>Copyright</a></h2>
+Copyright 2007 by Apple Inc.
+
+</body>
+</html>

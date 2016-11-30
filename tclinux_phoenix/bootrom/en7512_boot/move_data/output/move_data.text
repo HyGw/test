@@ -1,0 +1,336 @@
+
+./output/move_data.out：     文件格式 elf32-tradbigmips
+
+节：
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000460  9fa30040  9fa30040  00010040  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .reginfo      00000018  9fa304a0  9fa304a0  000104a0  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA, LINK_ONCE_SAME_SIZE
+  2 .pdr          00000060  00000000  00000000  000104b8  2**2
+                  CONTENTS, READONLY
+
+Disassembly of section .text:
+
+9fa30040 <_ftext>:
+9fa30040:	3c09bfa1 	lui	t1,0xbfa1
+9fa30044:	3529009c 	ori	t1,t1,0x9c
+9fa30048:	240a0009 	li	t2,9
+9fa3004c:	ad2a0000 	sw	t2,0(t1)
+9fa30050:	00000000 	nop
+9fa30054:	3c09bfa1 	lui	t1,0xbfa1
+9fa30058:	35290004 	ori	t1,t1,0x4
+9fa3005c:	240a0000 	li	t2,0
+9fa30060:	ad2a0000 	sw	t2,0(t1)
+
+9fa30064 <fsm_idle>:
+9fa30064:	3c09bfa1 	lui	t1,0xbfa1
+9fa30068:	35290018 	ori	t1,t1,0x18
+9fa3006c:	8d2f0000 	lw	t7,0(t1)
+9fa30070:	240a0000 	li	t2,0
+9fa30074:	15eafffb 	bne	t7,t2,9fa30064 <fsm_idle>
+9fa30078:	00000000 	nop
+
+9fa3007c <sf_mtx>:
+9fa3007c:	3c09bfa1 	lui	t1,0xbfa1
+9fa30080:	35290014 	ori	t1,t1,0x14
+9fa30084:	240a0009 	li	t2,9
+9fa30088:	ad2a0000 	sw	t2,0(t1)
+9fa3008c:	00000000 	nop
+
+9fa30090 <macmux_sel>:
+9fa30090:	3c09bfa1 	lui	t1,0xbfa1
+9fa30094:	3529001c 	ori	t1,t1,0x1c
+9fa30098:	240a0001 	li	t2,1
+9fa3009c:	ad2a0000 	sw	t2,0(t1)
+9fa300a0:	00000000 	nop
+9fa300a4:	3c09bfa1 	lui	t1,0xbfa1
+9fa300a8:	35290020 	ori	t1,t1,0x20
+9fa300ac:	240a0001 	li	t2,1
+9fa300b0:	ad2a0000 	sw	t2,0(t1)
+
+9fa300b4 <GET_INFO>:
+9fa300b4:	3c09bfa1 	lui	t1,0xbfa1
+9fa300b8:	35290114 	ori	t1,t1,0x114
+9fa300bc:	8d2c0000 	lw	t4,0(t1)
+9fa300c0:	318c0002 	andi	t4,t4,0x2
+9fa300c4:	8d380000 	lw	t8,0(t1)
+9fa300c8:	33180001 	andi	t8,t8,0x1
+9fa300cc:	8d280000 	lw	t0,0(t1)
+9fa300d0:	31080004 	andi	t0,t0,0x4
+
+9fa300d4 <START_LOAD>:
+9fa300d4:	1180004d 	beqz	t4,9fa3020c <READ_DATA>
+9fa300d8:	00000000 	nop
+9fa300dc:	00000000 	nop
+
+9fa300e0 <LOAD_PAGE>:
+9fa300e0:	0251082a 	slt	at,s2,s1
+9fa300e4:	1420009f 	bnez	at,9fa30364 <LOAD_DONE>
+9fa300e8:	00000000 	nop
+9fa300ec:	00000000 	nop
+9fa300f0:	240d0001 	li	t5,1
+9fa300f4:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa300f8:	240f0001 	li	t7,1
+9fa300fc:	00000000 	nop
+9fa30100:	240d0008 	li	t5,8
+9fa30104:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa30108:	240f0001 	li	t7,1
+9fa3010c:	00000000 	nop
+9fa30110:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa30114:	240d0013 	li	t5,19
+9fa30118:	00000000 	nop
+
+9fa3011c <PAGE_NUMBER>:
+9fa3011c:	3c0dbfc0 	lui	t5,0xbfc0
+9fa30120:	022d7023 	subu	t6,s1,t5
+9fa30124:	000e72c2 	srl	t6,t6,0xb
+9fa30128:	240d0008 	li	t5,8
+9fa3012c:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa30130:	240f0003 	li	t7,3
+9fa30134:	00000000 	nop
+9fa30138:	000e6c02 	srl	t5,t6,0x10
+9fa3013c:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa30140:	31ad00ff 	andi	t5,t5,0xff
+9fa30144:	00000000 	nop
+9fa30148:	000e6a02 	srl	t5,t6,0x8
+9fa3014c:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa30150:	31ad00ff 	andi	t5,t5,0xff
+9fa30154:	00000000 	nop
+9fa30158:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa3015c:	31cd00ff 	andi	t5,t6,0xff
+9fa30160:	00000000 	nop
+9fa30164:	240d0000 	li	t5,0
+9fa30168:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa3016c:	240f0001 	li	t7,1
+9fa30170:	00000000 	nop
+9fa30174:	240d0002 	li	t5,2
+9fa30178:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa3017c:	240f0005 	li	t7,5
+9fa30180:	00000000 	nop
+
+9fa30184 <GET_FEATURE>:
+9fa30184:	240d0001 	li	t5,1
+9fa30188:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa3018c:	240f0001 	li	t7,1
+9fa30190:	00000000 	nop
+9fa30194:	240d0008 	li	t5,8
+9fa30198:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa3019c:	240f0001 	li	t7,1
+9fa301a0:	00000000 	nop
+9fa301a4:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa301a8:	240d000f 	li	t5,15
+9fa301ac:	00000000 	nop
+9fa301b0:	240d0008 	li	t5,8
+9fa301b4:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa301b8:	240f0001 	li	t7,1
+9fa301bc:	00000000 	nop
+9fa301c0:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa301c4:	240d00c0 	li	t5,192
+9fa301c8:	00000000 	nop
+9fa301cc:	240d000c 	li	t5,12
+9fa301d0:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa301d4:	240f0001 	li	t7,1
+9fa301d8:	0fe8c0e3 	jal	9fa3038c <send_datafifo_read_cmd>
+9fa301dc:	00000000 	nop
+9fa301e0:	00000000 	nop
+9fa301e4:	31b90001 	andi	t9,t5,0x1
+9fa301e8:	240d0000 	li	t5,0
+9fa301ec:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa301f0:	240f0001 	li	t7,1
+9fa301f4:	00000000 	nop
+9fa301f8:	240d0002 	li	t5,2
+9fa301fc:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa30200:	240f0005 	li	t7,5
+9fa30204:	1720ffdf 	bnez	t9,9fa30184 <GET_FEATURE>
+9fa30208:	00000000 	nop
+
+9fa3020c <READ_DATA>:
+9fa3020c:	0251082a 	slt	at,s2,s1
+9fa30210:	14200054 	bnez	at,9fa30364 <LOAD_DONE>
+9fa30214:	00000000 	nop
+	...
+9fa30220:	240d0001 	li	t5,1
+9fa30224:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa30228:	240f0001 	li	t7,1
+9fa3022c:	00000000 	nop
+9fa30230:	3c0dbfc0 	lui	t5,0xbfc0
+9fa30234:	11800003 	beqz	t4,9fa30244 <ADDR_OPCODE>
+9fa30238:	022dc823 	subu	t9,s1,t5
+9fa3023c:	00000000 	nop
+9fa30240:	333907ff 	andi	t9,t9,0x7ff
+
+9fa30244 <ADDR_OPCODE>:
+9fa30244:	240d0008 	li	t5,8
+9fa30248:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa3024c:	240f0001 	li	t7,1
+9fa30250:	17000006 	bnez	t8,9fa3026c <FOUR_BYTE_OP>
+9fa30254:	00000000 	nop
+9fa30258:	00000000 	nop
+9fa3025c:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa30260:	240d0003 	li	t5,3
+9fa30264:	0be8c09e 	j	9fa30278 <SEND_ADDR>
+9fa30268:	00000000 	nop
+
+9fa3026c <FOUR_BYTE_OP>:
+9fa3026c:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa30270:	240d0003 	li	t5,3
+9fa30274:	00000000 	nop
+
+9fa30278 <SEND_ADDR>:
+9fa30278:	13000009 	beqz	t8,9fa302a0 <THREE_BYTE_ADDR>
+9fa3027c:	00000000 	nop
+9fa30280:	240d0008 	li	t5,8
+9fa30284:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa30288:	240f0001 	li	t7,1
+9fa3028c:	00000000 	nop
+9fa30290:	00196e02 	srl	t5,t9,0x18
+9fa30294:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa30298:	31ad00ff 	andi	t5,t5,0xff
+9fa3029c:	00000000 	nop
+
+9fa302a0 <THREE_BYTE_ADDR>:
+9fa302a0:	240d0008 	li	t5,8
+9fa302a4:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa302a8:	240f0003 	li	t7,3
+9fa302ac:	15000004 	bnez	t0,9fa302c0 <DUMMY_APPEND>
+9fa302b0:	00000000 	nop
+9fa302b4:	00196c02 	srl	t5,t9,0x10
+9fa302b8:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa302bc:	31ad00ff 	andi	t5,t5,0xff
+
+9fa302c0 <DUMMY_APPEND>:
+9fa302c0:	00196a02 	srl	t5,t9,0x8
+9fa302c4:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa302c8:	31ad00ff 	andi	t5,t5,0xff
+9fa302cc:	00000000 	nop
+9fa302d0:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa302d4:	332d00ff 	andi	t5,t9,0xff
+9fa302d8:	11000004 	beqz	t0,9fa302ec <read_one_byte>
+9fa302dc:	00000000 	nop
+9fa302e0:	0fe8c118 	jal	9fa30460 <send_datafifo_write_cmd>
+9fa302e4:	240d0000 	li	t5,0
+9fa302e8:	00000000 	nop
+
+9fa302ec <read_one_byte>:
+9fa302ec:	0251082a 	slt	at,s2,s1
+9fa302f0:	1420001c 	bnez	at,9fa30364 <LOAD_DONE>
+9fa302f4:	00000000 	nop
+9fa302f8:	240d000c 	li	t5,12
+9fa302fc:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa30300:	240f0001 	li	t7,1
+9fa30304:	0fe8c0e3 	jal	9fa3038c <send_datafifo_read_cmd>
+9fa30308:	00000000 	nop
+9fa3030c:	00000000 	nop
+9fa30310:	a26d0000 	sb	t5,0(s3)
+9fa30314:	00000000 	nop
+9fa30318:	26310001 	addiu	s1,s1,1
+9fa3031c:	26730001 	addiu	s3,s3,1
+9fa30320:	27390001 	addiu	t9,t9,1
+9fa30324:	332d03ff 	andi	t5,t9,0x3ff
+9fa30328:	240a0000 	li	t2,0
+9fa3032c:	15aaffef 	bne	t5,t2,9fa302ec <read_one_byte>
+9fa30330:	00000000 	nop
+9fa30334:	11aa0002 	beq	t5,t2,9fa30340 <READ_PAGE_DONE>
+9fa30338:	00000000 	nop
+9fa3033c:	00000000 	nop
+
+9fa30340 <READ_PAGE_DONE>:
+9fa30340:	240d0000 	li	t5,0
+9fa30344:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa30348:	240f0001 	li	t7,1
+9fa3034c:	00000000 	nop
+9fa30350:	240d0002 	li	t5,2
+9fa30354:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa30358:	240f0005 	li	t7,5
+9fa3035c:	0be8c035 	j	9fa300d4 <START_LOAD>
+9fa30360:	00000000 	nop
+
+9fa30364 <LOAD_DONE>:
+9fa30364:	240d0000 	li	t5,0
+9fa30368:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa3036c:	240f0001 	li	t7,1
+9fa30370:	00000000 	nop
+9fa30374:	240d0002 	li	t5,2
+9fa30378:	0fe8c0f6 	jal	9fa303d8 <send_opfifo_write_cmd>
+9fa3037c:	240f0005 	li	t7,5
+9fa30380:	02800008 	jr	s4
+9fa30384:	00000000 	nop
+9fa30388:	00000000 	nop
+
+9fa3038c <send_datafifo_read_cmd>:
+9fa3038c:	3c09bfa1 	lui	t1,0xbfa1
+9fa30390:	3529003c 	ori	t1,t1,0x3c
+9fa30394:	8d2a0000 	lw	t2,0(t1)
+9fa30398:	240b0001 	li	t3,1
+9fa3039c:	114bfffb 	beq	t2,t3,9fa3038c <send_datafifo_read_cmd>
+9fa303a0:	00000000 	nop
+9fa303a4:	00000000 	nop
+9fa303a8:	3c09bfa1 	lui	t1,0xbfa1
+9fa303ac:	35290044 	ori	t1,t1,0x44
+9fa303b0:	8d2d0000 	lw	t5,0(t1)
+9fa303b4:	31ad00ff 	andi	t5,t5,0xff
+9fa303b8:	00000000 	nop
+9fa303bc:	3c09bfa1 	lui	t1,0xbfa1
+9fa303c0:	35290040 	ori	t1,t1,0x40
+9fa303c4:	240a0001 	li	t2,1
+9fa303c8:	ad2a0000 	sw	t2,0(t1)
+9fa303cc:	03e00008 	jr	ra
+9fa303d0:	00000000 	nop
+9fa303d4:	00000000 	nop
+
+9fa303d8 <send_opfifo_write_cmd>:
+9fa303d8:	3c09bfa1 	lui	t1,0xbfa1
+9fa303dc:	35290028 	ori	t1,t1,0x28
+9fa303e0:	31aa001f 	andi	t2,t5,0x1f
+9fa303e4:	00000000 	nop
+9fa303e8:	000a5240 	sll	t2,t2,0x9
+9fa303ec:	00000000 	nop
+9fa303f0:	31eb01ff 	andi	t3,t7,0x1ff
+9fa303f4:	014b5025 	or	t2,t2,t3
+9fa303f8:	00000000 	nop
+9fa303fc:	ad2a0000 	sw	t2,0(t1)
+9fa30400:	00000000 	nop
+
+9fa30404 <opfifo_full_check>:
+9fa30404:	3c09bfa1 	lui	t1,0xbfa1
+9fa30408:	3529002c 	ori	t1,t1,0x2c
+9fa3040c:	8d2a0000 	lw	t2,0(t1)
+9fa30410:	00000000 	nop
+9fa30414:	240b0000 	li	t3,0
+9fa30418:	154bfffa 	bne	t2,t3,9fa30404 <opfifo_full_check>
+9fa3041c:	00000000 	nop
+9fa30420:	00000000 	nop
+9fa30424:	3c09bfa1 	lui	t1,0xbfa1
+9fa30428:	35290030 	ori	t1,t1,0x30
+9fa3042c:	240a0001 	li	t2,1
+9fa30430:	ad2a0000 	sw	t2,0(t1)
+9fa30434:	00000000 	nop
+
+9fa30438 <opfifo_empty_check>:
+9fa30438:	3c09bfa1 	lui	t1,0xbfa1
+9fa3043c:	35290024 	ori	t1,t1,0x24
+9fa30440:	8d2a0000 	lw	t2,0(t1)
+9fa30444:	00000000 	nop
+9fa30448:	240b0000 	li	t3,0
+9fa3044c:	114bfffa 	beq	t2,t3,9fa30438 <opfifo_empty_check>
+9fa30450:	00000000 	nop
+9fa30454:	03e00008 	jr	ra
+9fa30458:	00000000 	nop
+9fa3045c:	00000000 	nop
+
+9fa30460 <send_datafifo_write_cmd>:
+9fa30460:	3c09bfa1 	lui	t1,0xbfa1
+9fa30464:	35290034 	ori	t1,t1,0x34
+9fa30468:	8d2a0000 	lw	t2,0(t1)
+9fa3046c:	240b0001 	li	t3,1
+9fa30470:	114bfffb 	beq	t2,t3,9fa30460 <send_datafifo_write_cmd>
+9fa30474:	00000000 	nop
+9fa30478:	00000000 	nop
+9fa3047c:	3c09bfa1 	lui	t1,0xbfa1
+9fa30480:	35290038 	ori	t1,t1,0x38
+9fa30484:	31aa00ff 	andi	t2,t5,0xff
+9fa30488:	ad2a0000 	sw	t2,0(t1)
+9fa3048c:	03e00008 	jr	ra
+9fa30490:	00000000 	nop
+	...

@@ -1,0 +1,6 @@
+kernel/drivers/mtd/chips/chipreg.ko
+kernel/drivers/mtd/chips/cfi_probe.ko
+kernel/drivers/mtd/chips/cfi_util.ko
+kernel/drivers/mtd/chips/gen_probe.ko
+kernel/drivers/mtd/chips/jedec_probe.ko
+kernel/drivers/mtd/chips/newspiflash.ko

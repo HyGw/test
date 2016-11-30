@@ -1,0 +1,117 @@
+#################################################################################
+ # Ralink Technology, Inc.	                                         	#
+ # 4F, No. 2 Technology 5th Rd.                                          	#
+ # Science-based Industrial Park                                         	#
+ # Hsin-chu, Taiwan, R.O.C.                                              	#
+ #                                                                       	#
+ # (c) Copyright 2005, Ralink Technology, Inc.                           	#
+ #                                                                       	#
+ # All rights reserved. Ralink's source code is an unpublished work and the	#
+ # use of a copyright notice does not imply otherwise. This source code		#
+ # contains confidential trade secret material of Ralink Tech. Any attempt	#
+ # or participation in deciphering, decoding, reverse engineering or in any	#
+ # way altering the source code is stricitly prohibited, unless the prior	#
+ # written consent of Ralink Technology, Inc. is obtained.			#
+#################################################################################
+
+export RALINK_CFLAGS
+
+# Support AP client function
+#HAS_APCLIENT=y
+
+# Support IGMP snooping function
+#HAS_IGMPSNOOPING=y
+
+# Support Block Net-If during TxSw queue full.
+#HAS_BLOCK_NET_IF=y
+
+# Support Carrier Detection
+#HAS_CARRIER_DETECTION=y
+
+#ifdef WSC_SUPPORT
+# Support WSC function
+HAS_WSC=y
+#endif // WSC_SUPPORT //
+
+RALINK_WFLAGS := -Wno-unused -O2 
+RALINK_CFLAGS := -fomit-frame-pointer -DRTMP_EMBEDDED -DMBSS_SUPPORT -DAGGREGATION_SUPPORT -DWDS -DEOU -DWMM_SUPPORT -DLinux
+RALINK_CFLAGS += -mstructure-size-boundary=8 
+
+ifeq ($(HAS_APCLIENT),y)
+RALINK_CFLAGS += -DAPCLI_SUPPORT
+endif
+
+ifeq ($(HAS_IGMPSNOOPING),y)
+RALINK_CFLAGS += -DIGMP_SNOOP_SUPPORT
+endif
+
+ifeq ($(HAS_BLOCK_NET_IF),y)
+RALINK_CFLAGS += -DBLOCK_NET_IF
+endif
+
+ifeq ($(HAS_CARRIER_DETECTION),y)
+RALINK_CFLAGS += -DCARRIER_DETECTION_SUPPORT
+endif
+
+#ifdef WSC_SUPPORT
+ifeq ($(HAS_WSC),y)
+RALINK_CFLAGS += -DWSC_SUPPORT
+endif
+#endif // WSC_SUPPORT //
+
+EXTRA_CFLAGS += $(RALINK_WFLAGS) $(RALINK_CFLAGS)
+
+O_TARGET := rt61ap.o
+
+obj-y +=  			\
+		rtmp_main.o	\
+		rtmp_task.o \		
+		mlme.o		\
+		connect.o	\
+		sync.o		\
+		assoc.o		\
+		auth.o		\
+		auth_rsp.o	\
+		rtmp_data.o	\
+		rtmp_init.o	\
+		sanity.o	\
+		rtmp_wep.o	\
+		rtmp_info.o	\
+		eeprom.o	\
+		rtmp_tkip.o	\
+		wpa.o		\
+		md5.o		\
+		soft_ap.o       \
+                dls.o
+          
+ifeq ($(HAS_APCLIENT),y)
+obj-y += 	sta_auth.o	\
+			sta_assoc.o	\
+			sta_sync.o	\
+			sta_ctrl.o	\
+			rtmp_apcli.o	\
+			rtmp_apcli_iparp.o	\
+			rtmp_apcli_pppoe.o	\
+			sta_mlme.o
+endif
+          
+ifeq ($(HAS_IGMPSNOOPING),y)
+obj-y += 	rtmp_igmpSnoop.o
+endif
+
+ifeq ($(HAS_BLOCK_NET_IF),y)
+obj-y += 	netif_block.o
+endif
+          
+#ifdef WSC_SUPPORT
+ifeq ($(HAS_WSC),y)
+obj-y += 	wsc.o	\
+			wsc_tlv.o	\
+			sha2.o	\
+			hmac.o	\
+			evp_enc.o	\
+			dh_key.o
+endif
+#endif // WSC_SUPPORT //
+          
+include $(TOPDIR)/Rules.make

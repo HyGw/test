@@ -1,0 +1,622 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<!-- SECTION: Man Pages -->
+<head>
+	<style type='text/css'><!--
+	h1, h2, h3, p { font-family: sans-serif; text-align: justify; }
+	tt, pre a:link, pre a:visited, tt a:link, tt a:visited { font-weight: bold; color: #7f0000; }
+	pre { font-weight: bold; color: #7f0000; margin-left: 2em; }
+	h1.title, h2.title, h3.title { border-bottom: solid 2px #000000; }
+	--></style>
+	<title>cupsd.conf(5)</title>
+</head>
+<body>
+<h2><a name='NAME'>Name</a></h2>
+cupsd.conf - server configuration file for cups
+<h2><a name='DESCRIPTION'>Description</a></h2>
+The <i>cupsd.conf</i> file configures the CUPS scheduler, <a href='man-cupsd.html?TOPIC=Man+Pages'>cupsd(8)</a>.  It
+is normally located in the <i>/etc/cups</i> directory.
+<p>Each line in the file can be a configuration directive, a blank line,
+or a comment. Comment lines start with the # character. The
+configuration directives are intentionally similar to those used by the
+popular Apache web server software and are described below.
+<h2><a name='DIRECTIVES'>Directives</a></h2>
+The following directives are understood by <a href='man-cupsd.html?TOPIC=Man+Pages'>cupsd(8)</a>. Consult the
+on-line help for detailed descriptions:
+<dl>
+<dt>AccessLog filename
+</dt>
+<dt>AccessLog syslog
+</dt>
+<dd>Defines the access log filename.
+</dd>
+<dt>Allow all
+</dt>
+<dt>Allow none
+</dt>
+<dt>Allow host.domain.com
+</dt>
+<dt>Allow *.domain.com
+</dt>
+<dt>Allow ip-address
+</dt>
+<dt>Allow ip-address/netmask
+</dt>
+<dt>Allow ip-address/mm
+</dt>
+<dt>Allow @IF(name)
+</dt>
+<dt>Allow @LOCAL
+</dt>
+<dd>Allows access from the named hosts or addresses.
+</dd>
+<dt>AuthClass User
+</dt>
+<dt>AuthClass Group
+</dt>
+<dt>AuthClass System
+</dt>
+<dd>Specifies the authentication class (User, Group, System) -
+<b>this directive is deprecated</b>.
+</dd>
+<dt>AuthGroupName group-name
+</dt>
+<dd>Specifies the authentication group - <b>this directive is
+deprecated</b>.
+</dd>
+<dt>AuthType None
+</dt>
+<dt>AuthType Basic
+</dt>
+<dt>AuthType BasicDigest
+</dt>
+<dt>AuthType Digest
+</dt>
+<dt>AuthType Negotiate
+</dt>
+<dd>Specifies the authentication type (None, Basic, BasicDigest, Digest, Negotiate)
+</dd>
+<dt>AutoPurgeJobs Yes
+</dt>
+<dt>AutoPurgeJobs No
+</dt>
+<dd>Specifies whether to purge job history data automatically when
+it is no longer required for quotas.
+</dd>
+<dt>BrowseAddress ip-address
+</dt>
+<dt>BrowseAddress @IF(name)
+</dt>
+<dt>BrowseAddress @LOCAL
+</dt>
+<dd>Specifies a broadcast address for outgoing printer information packets.
+</dd>
+<dt>BrowseAllow all
+</dt>
+<dt>BrowseAllow none
+</dt>
+<dt>BrowseAllow host.domain.com
+</dt>
+<dt>BrowseAllow *.domain.com
+</dt>
+<dt>BrowseAllow ip-address
+</dt>
+<dt>BrowseAllow ip-address/netmask
+</dt>
+<dt>BrowseAllow ip-address/mm
+</dt>
+<dt>BrowseAllow @IF(name)
+</dt>
+<dt>BrowseAllow @LOCAL
+</dt>
+<dd>Allows incoming printer information packets from the named host or address.
+</dd>
+<dt>BrowseDeny all
+</dt>
+<dt>BrowseDeny none
+</dt>
+<dt>BrowseDeny host.domain.com
+</dt>
+<dt>BrowseDeny *.domain.com
+</dt>
+<dt>BrowseDeny ip-address
+</dt>
+<dt>BrowseDeny ip-address/netmask
+</dt>
+<dt>BrowseDeny ip-address/mm
+</dt>
+<dt>BrowseDeny @IF(name)
+</dt>
+<dt>BrowseDeny @LOCAL
+</dt>
+<dd>Denies incoming printer information packets from the named host or address.
+</dd>
+<dt>BrowseInterval seconds
+</dt>
+<dd>Specifies the maximum interval between printer information broadcasts.
+</dd>
+<dt>BrowseOrder allow,deny
+</dt>
+<dt>BrowseOrder deny,allow
+</dt>
+<dd>Specifies the order of printer information access control (allow,deny or deny,allow)
+</dd>
+<dt>BrowsePoll host-or-ip-address
+</dt>
+<dd>Specifies a server to poll for printer information.
+</dd>
+<dt>BrowsePort port
+</dt>
+<dd>Specifies the port to listen to for printer information packets.
+</dd>
+<dt>BrowseProtocols [All] [CUPS] [DNSSD] [LDAP] [SLP]
+</dt>
+<dd>Specifies the protocols to use for printer browsing.
+</dd>
+<dt>BrowseLocalProtocols [All] [CUPS] [DNSSD] [LDAP] [SLP]
+</dt>
+<dd>Specifies the protocols to use for local printer browsing.
+</dd>
+<dt>BrowseRemoteProtocols [All] [CUPS] [DNSSD] [LDAP] [SLP]
+</dt>
+<dd>Specifies the protocols to use for remote printer browsing.
+</dd>
+<dt>BrowseRelay from-address to-address
+</dt>
+<dd>Specifies that printer information packets should be relayed from one host or
+network to another.
+</dd>
+<dt>BrowseShortNames Yes
+</dt>
+<dt>BrowseShortNames No
+</dt>
+<dd>Specifies whether remote printers will use short names ("printer") or not
+("printer@server"). This option is ignored if more than one remote printer
+exists with the same name.
+</dd>
+<dt>BrowseTimeout seconds
+</dt>
+<dd>Specifies the maximum interval between printer information updates before
+remote printers will be removed from the list of available printers.
+</dd>
+<dt>Browsing Yes
+</dt>
+<dt>Browsing No
+</dt>
+<dd>Specifies whether or not remote printer browsing should be enabled.
+</dd>
+<dt>Classification banner
+</dt>
+<dd>Specifies the security classification of the server.
+</dd>
+<dt>ClassifyOverride Yes
+</dt>
+<dt>ClassifyOverride No
+</dt>
+<dd>Specifies whether to allow users to override the classification
+of individual print jobs.
+</dd>
+<dt>ConfigFilePerm mode
+</dt>
+<dd>Specifies the permissions for all configuration files that the scheduler
+writes.
+</dd>
+<dt>DataDir path
+</dt>
+<dd>Specified the directory where data files can be found.
+</dd>
+<dt>DefaultAuthType Basic
+</dt>
+<dt>DefaultAuthType BasicDigest
+</dt>
+<dt>DefaultAuthType Digest
+</dt>
+<dt>DefaultAuthType Negotiate
+</dt>
+<dd>Specifies the default type of authentication to use.
+</dd>
+<dt>DefaultCharset charset
+</dt>
+<dd>Specifies the default character set to use for text.
+</dd>
+<dt>DefaultLanguage locale
+</dt>
+<dd>Specifies the default language to use for text and web content.
+</dd>
+<dt>DefaultPolicy policy-name
+</dt>
+<dd>Specifies the default access policy to use.
+</dd>
+<dt>DefaultShared Yes
+</dt>
+<dt>DefaultShared No
+</dt>
+<dd>Specifies whether local printers are shared by default.
+</dd>
+<dt>Deny all
+</dt>
+<dt>Deny none
+</dt>
+<dt>Deny host.domain.com
+</dt>
+<dt>Deny *.domain.com
+</dt>
+<dt>Deny ip-address
+</dt>
+<dt>Deny ip-address/netmask
+</dt>
+<dt>Deny ip-address/mm
+</dt>
+<dt>Deny @IF(name)
+</dt>
+<dt>Deny @LOCAL
+</dt>
+<dd>Denies access to the named host or address.
+</dd>
+<dt>DocumentRoot directory
+</dt>
+<dd>Specifies the root directory for the internal web server documents.
+</dd>
+<dt>Encryption IfRequested
+</dt>
+<dt>Encryption Never
+</dt>
+<dt>Encryption Required
+</dt>
+<dd>Specifies the level of encryption that is required for a particular
+location.
+</dd>
+<dt>ErrorLog filename
+</dt>
+<dt>ErrorLog syslog
+</dt>
+<dd>Specifies the error log filename.
+</dd>
+<dt>FileDevice Yes
+</dt>
+<dt>FileDevice No
+</dt>
+<dd>Specifies whether the file pseudo-device can be used for new
+printer queues.
+</dd>
+<dt>FilterLimit limit
+</dt>
+<dd>Specifies the maximum cost of filters that are run concurrently.
+</dd>
+<dt>FilterNice nice-value
+</dt>
+<dd>Specifies the scheduling priority ("nice" value) of filters that
+are run to print a job.
+</dd>
+<dt>FontPath directory[:directory:...]
+</dt>
+<dd>Specifies the search path for fonts.
+</dd>
+<dt>Group group-name-or-number
+</dt>
+<dd>Specifies the group name or ID that will be used when executing
+external programs.
+</dd>
+<dt>HideImplicitMembers Yes
+</dt>
+<dt>HideImplicitMembers No
+</dt>
+<dd>Specifies whether to hide members of implicit classes.
+</dd>
+<dt>HostNameLookups On
+</dt>
+<dt>HostNameLookups Off
+</dt>
+<dt>HostNameLookups Double
+</dt>
+<dd>Specifies whether or not to do reverse lookups on client addresses.
+</dd>
+<dt>ImplicitAnyClasses Yes
+</dt>
+<dt>ImplicitAnyClasses No
+</dt>
+<dd>Specifies whether or not to create implicit classes for local and
+remote printers, e.g. "AnyPrinter" from "Printer", "Printer@server1",
+and "Printer@server2".
+</dd>
+<dt>ImplicitClasses Yes
+</dt>
+<dt>ImplicitClasses No
+</dt>
+<dd>Specifies whether or not to create implicit classes from identical
+remote printers.
+</dd>
+<dt>Include filename
+</dt>
+<dd>Includes the named file.
+</dd>
+<dt>JobRetryInterval seconds
+</dt>
+<dd>Specifies the interval between retries of jobs in seconds.
+</dd>
+<dt>JobRetryLimit count
+</dt>
+<dd>Specifies the number of retries that are done for jobs.
+</dd>
+<dt>KeepAlive Yes
+</dt>
+<dt>KeepAlive No
+</dt>
+<dd>Specifies whether to support HTTP keep-alive connections.
+</dd>
+<dt>KeepAliveTimeout seconds
+</dt>
+<dd>Specifies the amount of time that connections are kept alive.
+</dd>
+<dt>Krb5Keytab filename
+</dt>
+<dd>Overrides the Kerberos key tab location.
+</dd>
+<dt>&lt;Limit operations> ... &lt;/Limit>
+</dt>
+<dd>Specifies the IPP operations that are being limited inside a policy.
+</dd>
+<dt>&lt;Limit methods> ... &lt;/Limit>
+</dt>
+<dt>&lt;LimitExcept methods> ... &lt;/LimitExcept>
+</dt>
+<dd>Specifies the HTTP methods that are being limited inside a location.
+</dd>
+<dt>LimitRequestBody
+</dt>
+<dd>Specifies the maximum size of any print job request.
+</dd>
+<dt>Listen ip-address:port
+</dt>
+<dt>Listen *:port
+</dt>
+<dt>Listen /path/to/domain/socket
+</dt>
+<dd>Listens to the specified address and port or domain socket path.
+</dd>
+<dt>&lt;Location /path> ... &lt;/Location>
+</dt>
+<dd>Specifies access control for the named location.
+</dd>
+<dt>LogFilePerm mode
+</dt>
+<dd>Specifies the permissions for all log files that the scheduler writes.
+</dd>
+<dt>LogLevel alert
+</dt>
+<dt>LogLevel crit
+</dt>
+<dt>LogLevel debug2
+</dt>
+<dt>LogLevel debug
+</dt>
+<dt>LogLevel emerg
+</dt>
+<dt>LogLevel error
+</dt>
+<dt>LogLevel info
+</dt>
+<dt>LogLevel none
+</dt>
+<dt>LogLevel notice
+</dt>
+<dt>LogLevel warn
+</dt>
+<dd>Specifies the logging level for the ErrorLog file.
+</dd>
+<dt>MaxClients number
+</dt>
+<dd>Specifies the maximum number of simultaneous clients to support.
+</dd>
+<dt>MaxClientsPerHost number
+</dt>
+<dd>Specifies the maximum number of simultaneous clients to support from a
+single address.
+</dd>
+<dt>MaxCopies number
+</dt>
+<dd>Specifies the maximum number of copies that a user can print of each job.
+</dd>
+<dt>MaxJobs number
+</dt>
+<dd>Specifies the maximum number of simultaneous jobs to support.
+</dd>
+<dt>MaxJobsPerPrinter number
+</dt>
+<dd>Specifies the maximum number of simultaneous jobs per printer to support.
+</dd>
+<dt>MaxJobsPerUser number
+</dt>
+<dd>Specifies the maximum number of simultaneous jobs per user to support.
+</dd>
+<dt>MaxLogSize number-bytes
+</dt>
+<dd>Specifies the maximum size of the log files before they are
+rotated (0 to disable rotation)
+</dd>
+<dt>MaxRequestSize number-bytes
+</dt>
+<dd>Specifies the maximum request/file size in bytes (0 for no limit)
+</dd>
+<dt>Order allow,deny
+</dt>
+<dt>Order deny,allow
+</dt>
+<dd>Specifies the order of HTTP access control (allow,deny or deny,allow)
+</dd>
+<dt>PageLog filename
+</dt>
+<dt>PageLog syslog
+</dt>
+<dd>Specifies the page log filename.
+</dd>
+<dt>PassEnv variable [... variable]
+</dt>
+<dd>Passes the specified environment variable(s) to child processes.
+</dd>
+<dt>&lt;Policy name> ... &lt;/Policy>
+</dt>
+<dd>Specifies access control for the named policy.
+</dd>
+<dt>Port number
+</dt>
+<dd>Specifies a port number to listen to for HTTP requests.
+</dd>
+<dt>PreserveJobFiles Yes
+</dt>
+<dt>PreserveJobFiles No
+</dt>
+<dd>Specifies whether or not to preserve job files after they are printed.
+</dd>
+<dt>PreserveJobHistory Yes
+</dt>
+<dt>PreserveJobHistory No
+</dt>
+<dd>Specifies whether or not to preserve the job history after they are
+printed.
+</dd>
+<dt>Printcap
+</dt>
+<dt>Printcap filename
+</dt>
+<dd>Specifies the filename for a printcap file that is updated
+automatically with a list of available printers (needed for
+legacy applications); specifying Printcap with no filename
+disables printcap generation.
+</dd>
+<dt>PrintcapFormat bsd
+</dt>
+<dt>PrintcapFormat solaris
+</dt>
+<dd>Specifies the format of the printcap file.
+</dd>
+<dt>PrintcapGUI
+</dt>
+<dt>PrintcapGUI gui-program-filename
+</dt>
+<dd>Specifies whether to generate option panel definition files on
+some operating systems. When provided with no program filename,
+disables option panel definition files.
+</dd>
+<dt>ReloadTimeout seconds
+</dt>
+<dd>Specifies the amount of time to wait for job completion before
+restarting the scheduler.
+</dd>
+<dt>RemoteRoot user-name
+</dt>
+<dd>Specifies the username that is associated with unauthenticated root
+accesses.
+</dd>
+<dt>RequestRoot directory
+</dt>
+<dd>Specifies the directory to store print jobs and other HTTP request
+data.
+</dd>
+<dt>Require group group-name-list
+</dt>
+<dt>Require user user-name-list
+</dt>
+<dt>Require valid-user
+</dt>
+<dd>Specifies that user or group authentication is required.
+</dd>
+<dt>RIPCache bytes
+</dt>
+<dd>Specifies the maximum amount of memory to use when converting images
+and PostScript files to bitmaps for a printer.
+</dd>
+<dt>Satisfy all
+</dt>
+<dt>Satisfy any
+</dt>
+<dd>Specifies whether all or any limits set for a Location must be
+satisfied to allow access.
+</dd>
+<dt>ServerAdmin user@domain.com
+</dt>
+<dd>Specifies the email address of the server administrator.
+</dd>
+<dt>ServerAlias hostname
+</dt>
+<dd>Specifies an alternate name that the server is known by. The special name "*"
+allows any name to be used.
+</dd>
+<dt>ServerBin directory
+</dt>
+<dd>Specifies the directory where backends, CGIs, daemons, and filters may
+be found.
+</dd>
+<dt>ServerCertificate filename
+</dt>
+<dd>Specifies the encryption certificate to use.
+</dd>
+<dt>ServerKey filename
+</dt>
+<dd>Specifies the encryption key to use.
+</dd>
+<dt>ServerName hostname-or-ip-address
+</dt>
+<dd>Specifies the fully-qualified hostname of the server.
+</dd>
+<dt>ServerRoot directory
+</dt>
+<dd>Specifies the directory where the server configuration files can be found.
+</dd>
+<dt>ServerTokens Full
+</dt>
+<dt>ServerTokens Major
+</dt>
+<dt>ServerTokens Minimal
+</dt>
+<dt>ServerTokens Minor
+</dt>
+<dt>ServerTokens None
+</dt>
+<dt>ServerTokens OS
+</dt>
+<dt>ServerTokens ProductOnly
+</dt>
+<dd>Specifies what information is included in the Server header of HTTP
+responses.
+</dd>
+<dt>SetEnv variable value
+</dt>
+<dd>Set the specified environment variable to be passed to child processes.
+</dd>
+<dt>SSLListen
+</dt>
+<dd>Listens on the specified address and port for encrypted connections.
+</dd>
+<dt>SSLPort
+</dt>
+<dd>Listens on the specified port for encrypted connections.
+</dd>
+<dt>SystemGroup group-name [group-name ...]
+</dt>
+<dd>Specifies the group(s) to use for System class authentication.
+</dd>
+<dt>TempDir directory
+</dt>
+<dd>Specifies the directory where temporary files are stored.
+</dd>
+<dt>Timeout seconds
+</dt>
+<dd>Specifies the HTTP request timeout in seconds.
+</dd>
+<dt>User user-name
+</dt>
+<dd>Specifies the user name or ID that is used when running external programs.
+</dd>
+</dl>
+<h2><a name='SEE_ALSO'>See Also</a></h2>
+<a href='man-classes.conf.html?TOPIC=Man+Pages'>classes.conf(5)</a>, <a href='man-cupsd.html?TOPIC=Man+Pages'>cupsd(8)</a>, <a href='man-mime.convs.html?TOPIC=Man+Pages'>mime.convs(5)</a>,
+<a href='man-mime.types.html?TOPIC=Man+Pages'>mime.types(5)</a>, <a href='man-printers.conf.html?TOPIC=Man+Pages'>printers.conf(5)</a>,
+<a href='man-subscriptions.conf.html?TOPIC=Man+Pages'>subscriptions.conf(5)</a>,
+<br>
+<a href='http://localhost:631/help'>http://localhost:631/help</a>
+<h2><a name='COPYRIGHT'>Copyright</a></h2>
+Copyright 2007-2009 by Apple Inc.
+
+</body>
+</html>

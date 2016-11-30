@@ -1,0 +1,1 @@
+cmd_drivers/input/built-in.o :=  mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o drivers/input/built-in.o drivers/input/input-core.o drivers/input/evdev.o drivers/input/keyboard/built-in.o drivers/input/mouse/built-in.o 

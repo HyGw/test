@@ -1,0 +1,15 @@
+<node>
+  <interface name="com.ctc.igd1.Properties">
+    <method name="Test">
+      <arg name="input" direction="in" type="u"/>
+      <arg name="output" direction="out" type="s"/>
+    </method>
+    <property name="Result" type="s" access="readwrite"/>
+  </interface>
+  <interface name="com.ctc.igd1.ObjectManager">
+    <method name="Add">
+      <arg name="inst" direction="out" type="u"/>
+    </method>
+    <property name="instnum" type="u" access="readwrite"/>
+  </interface>
+</node>

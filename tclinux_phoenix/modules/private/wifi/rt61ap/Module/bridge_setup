@@ -1,0 +1,8 @@
+/usr/sbin/brctl addbr br0
+/usr/sbin/brctl addif br0 eth0
+/usr/sbin/brctl addif br0 ra0
+/sbin/ifconfig eth0 0.0.0.0
+/sbin/ifconfig ra0 0.0.0.0
+/sbin/ip link set br0 up
+/sbin/ip addr add 192.168.5.234/24 brd + dev br0
+/sbin/ip route add default via 192.168.5.254

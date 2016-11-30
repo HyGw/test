@@ -1,0 +1,12 @@
+# D-Link DWM-157 A1
+
+DefaultVendor= 0x2001
+DefaultProduct=0xa809
+
+TargetVendor=  0x2001
+TargetProduct= 0x7901
+
+MessageContent="5553424312345678000000008000061b010000020000000000000000000000"
+
+CheckSuccess=5
+

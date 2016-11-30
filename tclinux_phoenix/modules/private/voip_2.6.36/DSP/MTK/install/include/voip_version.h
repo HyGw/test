@@ -1,0 +1,1 @@
+#define RELEASE_VOIP_VERSION "Ver:TVB1.0.4.545.1-1"

@@ -1,0 +1,254 @@
+include Project/release.chk
+include Project/customer_release/c_release.chk
+ifneq ($(strip $(CUSTOM)),)
+ifneq ($(strip $(KERNEL_2_6_36)),)
+include Project/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE)_2_6_36.profile
+else
+include Project/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE).profile
+endif
+else
+CUSTOM=RT
+ifneq ($(strip $(KERNEL_2_6_36)),)
+include Project/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE)_2_6_36.profile
+else
+include Project/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE).profile
+endif
+endif
+include Project/dir.mak
+include Project/rule.mak
+
+export CFG_CFLAGS = -msoft-float -fomit-frame-pointer
+
+
+#Cross Compile Setup
+nullstring :=
+space :=$(nullstring) #end of line
+
+ifeq ($(strip $(TCSUPPORT_TOOLCHAIN_VER)),493)
+#export PATH :=/proj/mtk69527/econet-toolchain/buildroot-2015.08.1/output/host/usr/bin:$(PATH)
+export PATH :=/opt/trendchip/mips-linux-uclibc-4.9.3/usr/bin:$(PATH)
+export HOST=mips-linux
+export CROSS=mips-buildroot-linux-uclibc-
+export CROSS_COMPILE=$(CROSS)
+export LD=$(CROSS)ld
+export AR=$(CROSS)ar
+export STRIP=$(CROSS)strip
+export RANLIB = $(CROSS)ranlib
+CFG_CFLAGS += -mips32r2 -muclibc
+#export SYSROOT=/proj/mtk69527/econet-toolchain/buildroot-2015.08.1/output/host/usr/mips-buildroot-linux-uclibc/sysroot
+export SYSROOT=/opt/trendchip/mips-linux-uclibc-4.9.3/usr/mips-buildroot-linux-uclibc/sysroot
+export CC=$(CROSS)gcc -mips32r2 -msoft-float
+export CCC=$(CROSS)g++ -mips32r2 -msoft-float
+endif
+
+ifeq ($(strip $(TCSUPPORT_TOOLCHAIN_VER)),436)
+#ifeq ($(strip $(COMPILE_TOOLCHAIN)),mips-unknown-linux-uclibc)
+export PATH := /opt/trendchip/mips-linux-uclibc-4.3.6-v2/usr/bin:$(PATH)
+export HOST=mips-linux
+export CROSS=mips-unknown-linux-uclibc-
+export CROSS_COMPILE=$(CROSS)
+export CC=$(CROSS)gcc -mips32r2 -msoft-float
+export CCC=$(CROSS)g++ -mips32r2 -msoft-float
+export LD=$(CROSS)ld
+export AR=$(CROSS)ar
+export STRIP=$(CROSS)strip
+export SYSROOT=/opt/trendchip/mips-linux-uclibc-4.3.6-v2/usr/mips-unknown-linux-uclibc/sysroot
+export LD_LIBRARY_PATH:=/opt/trendchip/mips-linux-uclibc-4.3.6-v2/usr/lib:$(LD_LIBRARY_PATH)
+CFG_CFLAGS += -mips32r2 -muclibc
+endif
+
+ifeq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux)
+export PATH :=/opt/trendchip/mips-linux-3.4.6/bin:$(PATH)
+export HOST=mips-linux-
+#export CROSS=/opt/trendchip/mips-linux-3.4.6/bin/mips-linux-
+export CROSS=mips-linux-
+export CROSS_COMPILE=$(CROSS)
+export CC=$(CROSS)gcc
+export LD=$(CROSS)ld
+export AR=$(CROSS)ar
+export STRIP=$(CROSS)strip
+TC3162_CFLAG=$(space)-mips1 -msoft-float
+CFG_CFLAGS += -mips1
+endif
+
+ifneq ($(strip $(TCSUPPORT_GCC4_9_GLIBC2_20)),)
+export PATH:=/opt/trendchip/mips-linux-glibc-4.9.3/usr/bin:$(PATH)
+export HOST=mips-linux
+export CROSS=mips-buildroot-linux-gnu-
+export CROSS_COMPILE=$(CROSS)
+export CC=$(CROSS)gcc -mips32r2 -msoft-float
+export CCC=$(CROSS)g++ -mips32r2 -msoft-float
+export LD=$(CROSS)ld
+export AR=$(CROSS)ar
+export STRIP=$(CROSS)strip
+export SYSROOT=/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot
+endif
+
+ifeq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux-uclibc)
+export PATH :=/opt/trendchip/mips-linux-uclibc/usr/bin:$(PATH)
+export HOST=mips-linux
+export CROSS=mips-linux-uclibc-
+export CROSS_COMPILE=$(CROSS)
+export CC=mips-linux-uclibc-gcc -mips32r2 -msoft-float
+export STRIP=mips-linux-uclibc-strip
+export SYSROOT=/opt/trendchip/mips-linux-uclibc
+CFG_CFLAGS += -mips32r2 -muclibc
+endif
+
+ifneq ($(strip $(TCSUPPORT_CODE_SHRINK)),)
+CFG_CFLAGS += -Os
+else
+CFG_CFLAGS += -O2
+endif
+
+ifneq ($(strip $(VP_MEGACO)),)
+TCSUPPORT_VOIP_IMSSIP=
+CFG_CFLAGS += -DVP_MEGACO
+endif
+
+
+ifneq ($(strip $(TCSUPPORT_ZEBRA_WORKAROUND)),)
+CFG_CFLAGS += -DTCSUPPORT_ZEBRA_WORKAROUND
+endif
+
+ifneq ($(strip $(TCSUPPORT_FON)),)
+#if defined(TCSUPPORT_FON_MODEL_B)
+ifneq ($(strip $(TCSUPPORT_FON_MODEL_B)),)
+FON_CFLAGS += -DTCSUPPORT_FON_MODEL_B
+endif
+FON_CFLAGS += -Os
+FON_CFLAGS += -Wall
+FON_CFLAGS += -mips1
+#endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT)),)
+DMS_CFLAGS += -g -O2 -DTCSUPPORT_CT
+ifneq ($(strip $(TCSUPPORT_DMS_FULL_FORMAT)),)
+DMS_CFLAGS += -DDMS_FULL_FORMAT
+endif
+ifneq ($(strip $(TCSUPPORT_CT_PON)),)
+ifneq ($(strip $(SLAVEBIN)),)
+MAINIMG_PROFILE_DIR=$(PROJECT_DIR)/profile/$(CUSTOM)/$(MAINIMAGE)
+endif
+endif
+else
+ifneq ($(strip $(TCSUPPORT_DMS_FULL_FORMAT)),)
+DMS_CFLAGS += -g -O2 -DDMS_FULL_FORMAT
+endif
+endif
+
+TC3262_DRIVERS := $(TCSUPPORT_CPU_TC3262) $(TCSUPPORT_CPU_TC3182) $(TCSUPPORT_CPU_RT63165) $(TCSUPPORT_CPU_RT65168)
+
+#Detect Release Code
+ifneq ($(strip $(RELEASEBSP)),)
+#unexport Compile Env of SDRAM Size
+unexport 8M
+unexport 16M
+unexport 32M
+unexport 64M
+unexport TCSUPPORT_SDRAM_8M
+unexport TCSUPPORT_SDRAM_16M
+unexport TCSUPPORT_SDRAM_32M
+unexport TCSUPPORT_SDRAM_64M
+include Project/release_bsp.mak
+ifeq ($(strip $(BSP)),)
+include $(APP_DIR)/release_app.mak
+endif
+endif
+
+#for customer release
+ifneq ($(strip $(CUSTOMERRELEASE)),)
+include Project/customer_release/customer_release
+endif
+
+#begin for parallel build
+ifeq ($(strip $(TCSUPPORT_PARALLEL_BUILD_CUSTOM_JOB_NUM_ENABLE)),) #no custom job number
+TCSUPPORT_PARALLEL_BUILD_JOB_NUM = 16
+endif
+
+TC_PARALLEL_BUILD_PARAM = -j $(TCSUPPORT_PARALLEL_BUILD_JOB_NUM)
+
+ifneq ($(strip $(TCSUPPORT_PARALLEL_BUILD_KERNEL_OFF)),)
+TC_PARALLEL_BUILD_PARAM_KERNEL =
+else
+TC_PARALLEL_BUILD_PARAM_KERNEL = $(TC_PARALLEL_BUILD_PARAM)
+endif
+#end for parallel build
+
+All: clean_fs bootbase kernel modules app_bsp apps buildimage
+
+clean: clean_fs bootbase_clean kernel_clean modules_clean app_bsp_clean apps_clean 
+	rm -rf $(PROJECT_DIR)/images/*
+
+
+menuconfig:
+	echo "Project menuconfig"
+	chmod -R 777 $(PROJECT_DIR)
+ifneq ($(strip $(KERNEL_2_6_36)),)
+	cp $(PROFILE_DIR)/$(PROFILE)_2_6_36.profile  $(PROJECT_MENUCONFIG_DIR)/.config		
+else
+	cp $(PROFILE_DIR)/$(PROFILE).profile  $(PROJECT_MENUCONFIG_DIR)/.config		
+endif
+ifneq ($(strip $(CUSTOM)),)
+	echo "#Custom menuconfig" > $(PROJECT_MENUCONFIG_DIR)/CustomConfig;
+	if test -e $(PROJECT_MENUCONFIG_DIR)/$(CUSTOM).config; \
+	then cat $(PROJECT_MENUCONFIG_DIR)/$(CUSTOM).config > $(PROJECT_MENUCONFIG_DIR)/CustomConfig; \
+	fi
+endif		
+	$(MAKE) -C $(PROJECT_MENUCONFIG_DIR) menuconfig
+ifneq ($(strip $(KERNEL_2_6_36)),)
+	cp $(PROJECT_MENUCONFIG_DIR)/.config $(PROFILE_DIR)/$(PROFILE)_2_6_36.profile	
+else
+	cp $(PROJECT_MENUCONFIG_DIR)/.config $(PROFILE_DIR)/$(PROFILE).profile	
+endif
+
+clean_fs: apps_cp_before_cleanfs
+	chmod -R 777 $(PROJECT_DIR)
+	chmod -R 777 $(KERNEL_DIR)
+	chmod -R 777 $(APP_BSP_DIR)
+	chmod -R 777 $(FILESYSTEM_DIR)
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+	chmod -R 777 $(MODULE_DIR)
+else
+	chmod -R 777 $(MODULES_PRIV_SRC_DIR)
+	chmod -R 777 $(MODULES_PUBLIC_SRC_DIR)
+endif
+
+	chmod -R 777 $(TOOLS_DIR)
+	chmod -R 777 $(BOOTROM_DIR)
+	rm -rf $(FILESYSTEM_DIR)/lib/*
+	rm -rf $(FILESYSTEM_DIR)/bin/*
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/*
+	rm -rf $(FILESYSTEM_DIR)/userfs/dlna
+	rm -rf $(FILESYSTEM_DIR)/usr/bin/*
+	rm -rf $(FILESYSTEM_DIR)/sbin/*
+	mkdir $(FILESYSTEM_DIR)/lib/modules
+	find $(FILESYSTEM_DIR) -name "dummpy.file" | xargs rm -f
+
+buildimage: kocopy devgen build_fw 
+
+include $(TOOLS_DIR)/make_tools
+include $(BOOTROM_DIR)/make_bootbase
+include $(PROJECT_DIR)/make_kernel
+include $(MODULE_DIR)/make_modules
+include $(APP_BSP_DIR)/make_app_bsp
+include $(PROJECT_DIR)/make_devgen
+
+ifneq ($(strip $(BSP)),)
+apps_cp_before_cleanfs:
+	echo "apps_cp_before_cleanfs do nothing in BSP version"
+apps:
+	echo "not build apps in BSP"	
+apps_clean:
+	echo "not do apps_clean in BSP"
+else
+include $(APP_DIR)/make_apps
+endif
+
+ifneq ($(strip $(BSP)),)
+include $(APP_BSP_EXCLUSIVE_DIR)/make_build_bsp_fw
+else
+include $(APP_DIR)/make_build_sdk_fw
+endif
+

@@ -1,0 +1,26 @@
+#
+# Voodoo3 3500 TV Video For Linux
+#
+
+config VIDEO_V3TV
+	tristate "Voodoo3 3500 TV Video For Linux"
+	depends on VIDEO_DEV && PCI && I2C_ALGOBIT && SOUND
+	--- help ---
+	  Support for Voodoo3 3500 TV cards.  Please visit v3tv.sourceforge.net 
+	  for details.
+
+	  This option also builds msp3400.o, tuner.o, and vpx3224.o.
+
+          If you say Y or M here, you need to say Y or M to: 
+
+            "Voodoo 3" in the I2C Hardware Bus support section
+            "Video 4 Linux TV-Mixer" in the sound device section
+
+          To compile this driver as a module, choose M here: the
+          module will be called v3tv.
+
+config V3TV_VERBOSEDEBUG
+	bool '    Excessive V3TV debugging output'
+	depends on VIDEO_V3TV
+
+endmenu

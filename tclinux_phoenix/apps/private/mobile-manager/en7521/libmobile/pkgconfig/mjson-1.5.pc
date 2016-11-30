@@ -1,0 +1,12 @@
+prefix=/home/test/workdir/phone-app/tclinux_phoenix/apps/private/mobile-manager
+exec_prefix=${prefix}
+libdir=/home/test/workdir/phone-app/tclinux_phoenix/apps/private/mobile-manager/libmobile
+includedir=/home/test/workdir/phone-app/tclinux_phoenix/apps/private/mobile-manager/libmobile
+
+Name: mjson-1.5
+Description: M's JSON Parser
+Requires:
+Version: 1.5
+Libs: -L${libdir} -lmjson-1.5
+Cflags: -I${includedir}/mjson-1.5
+

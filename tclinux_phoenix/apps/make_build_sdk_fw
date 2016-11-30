@@ -1,0 +1,2455 @@
+build_fw: othercopy fwbuild devkitgen
+fwgen: devgen fwbuild
+
+othercopy:
+#Copy profile to filesystem
+	rm -f $(FILESYSTEM_DIR)/userfs/profile.cfg
+ifneq ($(strip $(KERNEL_2_6_36)),)
+	cp $(PROFILE_DIR)/$(PROFILE)_2_6_36.profile $(FILESYSTEM_DIR)/userfs/profile.cfg
+else
+	cp $(PROFILE_DIR)/$(PROFILE).profile $(FILESYSTEM_DIR)/userfs/profile.cfg
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+ifneq ($(strip $(TCSUPPORT_INIC_CLIENT)),)
+	cp $(FILESYSTEM_DIR)/usr/etc/init.d/rcS $(APP_PRIVATE_DIR)/etc_script/dmt_co/rcS_bak
+	cp $(APP_PRIVATE_DIR)/etc_script/dmt_co/rcS $(FILESYSTEM_DIR)/usr/etc/init.d/rcS
+endif
+endif
+
+#generate RcS and copy RcS(No needed), rcS file will modify in filesystem
+#	rm -f $(FILESYSTEM_DIR)/usr/etc/init.d/rcS
+#	cp $(PROJECT_AUTOCONFIG_DIR)/rcStemplate $(FILESYSTEM_DIR)/usr/etc/init.d/rcS
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+ifeq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+#ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	rm -f $(FILESYSTEM_DIR)/usr/etc/init.d/rcS
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/rcS $(FILESYSTEM_DIR)/usr/etc/init.d/rcS
+	rm -f $(FILESYSTEM_DIR)/usr/etc/userttyconsole
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/userttyconsole $(FILESYSTEM_DIR)/usr/etc/userttyconsole
+#endif
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+
+#copy certificates
+ifneq ($(strip $(TCSUPPORT_WPA_SUPPLICANT)),)
+	if test -d  $(FILESYSTEM_DIR)/usr/etc/802_1X; \
+	then rm -rf $(FILESYSTEM_DIR)/usr/etc/802_1X; \
+	fi
+	mkdir  $(FILESYSTEM_DIR)/usr/etc/802_1X
+	mkdir  $(FILESYSTEM_DIR)/usr/etc/802_1X/Certificates
+	mkdir  $(FILESYSTEM_DIR)/usr/etc/802_1X/CA
+	mkdir  $(FILESYSTEM_DIR)/usr/etc/802_1X/PKEY
+	mkdir  $(FILESYSTEM_DIR)/usr/etc/802_1X/PKEYPASSWD	
+	cp -rf $(APP_8021X_PARA_DIR)/Certificates/* $(FILESYSTEM_DIR)/usr/etc/802_1X/Certificates/
+	cp -rf $(APP_8021X_PARA_DIR)/CA/* $(FILESYSTEM_DIR)/usr/etc/802_1X/CA/
+	cp -rf $(APP_8021X_PARA_DIR)/PKEY/* $(FILESYSTEM_DIR)/usr/etc/802_1X/PKEY/
+	cp -rf $(APP_8021X_PARA_DIR)/PKEYPASSWD/* $(FILESYSTEM_DIR)/usr/etc/802_1X/PKEYPASSWD/
+	chmod 777 -R $(FILESYSTEM_DIR)/usr/etc/802_1X/
+endif
+
+#copy led conf file
+#ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	echo "copy led conf file"
+ifneq ($(strip $(TCSUPPORT_CPU_TC3162)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_3162 $(FILESYSTEM_DIR)/userfs/led.conf
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_TC3162U)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+ifneq ($(strip $(TCSUPPORT_WLAN_WPS)),)	
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)	
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_3162u_autobench $(FILESYSTEM_DIR)/userfs/led.conf
+else
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_3162u_wps $(FILESYSTEM_DIR)/userfs/led.conf
+endif
+else
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)	
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_3162u_autobench $(FILESYSTEM_DIR)/userfs/led.conf
+else
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_3162u $(FILESYSTEM_DIR)/userfs/led.conf
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_RT63260)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_rt63260_autobench $(FILESYSTEM_DIR)/userfs/led.conf
+else
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_rt63260 $(FILESYSTEM_DIR)/userfs/led.conf
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_TC3262)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_3262 $(FILESYSTEM_DIR)/userfs/led.conf
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_TC3182)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_3182_autobench $(FILESYSTEM_DIR)/userfs/led.conf
+else
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_3182 $(FILESYSTEM_DIR)/userfs/led.conf
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_RT63165)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_rt63165_autobench $(FILESYSTEM_DIR)/userfs/led.conf
+else
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_rt63165 $(FILESYSTEM_DIR)/userfs/led.conf
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_RT63365)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/led.conf_rt63365 $(FILESYSTEM_DIR)/userfs/led.conf
+else
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_WIND)	
+ifneq ($(strip $(TCSUPPORT_CD_WIND)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/led.conf_rt63365_wind $(FILESYSTEM_DIR)/userfs/led.conf
+else
+#endif/*TCSUPPORT_COMPILE*/
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_rt63365_autobench $(FILESYSTEM_DIR)/userfs/led.conf
+else
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_rt63365 $(FILESYSTEM_DIR)/userfs/led.conf
+endif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_WIND)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_RT63368)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_rt63368_autobench $(FILESYSTEM_DIR)/userfs/led.conf
+else
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_rt63368 $(FILESYSTEM_DIR)/userfs/led.conf
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_RT65168)),)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/led.conf_rt65168 $(FILESYSTEM_DIR)/userfs/led.conf
+else
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_rt65168_autobench $(FILESYSTEM_DIR)/userfs/led.conf
+else
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_rt65168 $(FILESYSTEM_DIR)/userfs/led.conf
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+ifeq ($(strip $(TCSUPPORT_CPU_MT7512)),)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/led.conf_mt7510 $(FILESYSTEM_DIR)/userfs/led.conf
+else
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_mt7510_autobench $(FILESYSTEM_DIR)/userfs/led.conf
+else
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_mt7510 $(FILESYSTEM_DIR)/userfs/led.conf
+endif
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7505)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_mt7505_autobench $(FILESYSTEM_DIR)/userfs/led.conf
+else
+ifneq ($(strip $(TCSUPPORT_WLAN_MT7601E)),)
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_mt7505_mt7601 $(FILESYSTEM_DIR)/userfs/led.conf
+else
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_mt7505 $(FILESYSTEM_DIR)/userfs/led.conf
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7520)),)
+ifeq ($(strip $(TCSUPPORT_CPU_MT7521)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/led.conf
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_C5_XPON_AUTH_LED)	
+ifneq ($(strip $(TCSUPPORT_C5_XPON_AUTH_LED)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/dare/led.conf_mt7520 $(FILESYSTEM_DIR)/userfs/led.conf
+else
+#endif/*TCSUPPORT_COMPILE*/
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_mt7520_autobench $(FILESYSTEM_DIR)/userfs/led.conf
+else
+ifneq ($(strip $(TCSUPPORT_TW_BOARD_CDS)),)
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_mt7520_dasan $(FILESYSTEM_DIR)/userfs/led.conf
+else
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_SFU_SK)
+ifneq ($(strip $(TCSUPPORT_CT_SFU_SK)),)
+	cp $(PROFILE_DIR)/led.conf $(FILESYSTEM_DIR)/userfs/led.conf
+else
+#endif/*TCSUPPORT_COMPILE*/
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_mt7520 $(FILESYSTEM_DIR)/userfs/led.conf
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_SFU_SK)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+endif
+endif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_C5_XPON_AUTH_LED)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+endif
+endif
+#endif
+
+#copy if user modify led.conf for ssw test
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512)),)
+	#delete original led.conf before copy led.conf
+	rm -f $(FILESYSTEM_DIR)/userfs/*led.conf;
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_en7512 $(FILESYSTEM_DIR)/userfs/led.conf
+	if test -e $(PROFILE_DIR)/7512led.conf; \
+	then cp $(PROFILE_DIR)/7512led.conf $(FILESYSTEM_DIR)/userfs/7512led.conf; \
+	fi
+	if test -e $(PROFILE_DIR)/7513led.conf; \
+	then cp $(PROFILE_DIR)/7513led.conf $(FILESYSTEM_DIR)/userfs/7513led.conf; \
+	fi
+	if test -e $(PROFILE_DIR)/7513gled.conf; \
+	then cp $(PROFILE_DIR)/7513gled.conf $(FILESYSTEM_DIR)/userfs/7513gled.conf; \
+	fi
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_EN7521)),)
+	#delete original led.conf before copy led.conf
+	rm -f $(FILESYSTEM_DIR)/userfs/*led.conf;
+	cp $(APP_PRIVATE_DIR)/led_conf/led.conf_en7521 $(FILESYSTEM_DIR)/userfs/led.conf
+	if test -e $(PROFILE_DIR)/7526fled.conf; \
+	then cp $(PROFILE_DIR)/7526fled.conf $(FILESYSTEM_DIR)/userfs/7526fled.conf; \
+	fi
+	if test -e $(PROFILE_DIR)/7521fled.conf; \
+	then cp $(PROFILE_DIR)/7521fled.conf $(FILESYSTEM_DIR)/userfs/7521fled.conf; \
+	fi
+	if test -e $(PROFILE_DIR)/7521sled.conf; \
+	then cp $(PROFILE_DIR)/7521sled.conf $(FILESYSTEM_DIR)/userfs/7521sled.conf; \
+	fi
+	if test -e $(PROFILE_DIR)/7526dled.conf; \
+	then cp $(PROFILE_DIR)/7526dled.conf $(FILESYSTEM_DIR)/userfs/7526dled.conf; \
+	fi
+	if test -e $(PROFILE_DIR)/7526gled.conf; \
+	then cp $(PROFILE_DIR)/7526gled.conf $(FILESYSTEM_DIR)/userfs/7526gled.conf; \
+	fi
+	if test -e $(PROFILE_DIR)/7521gled.conf; \
+	then cp $(PROFILE_DIR)/7521gled.conf $(FILESYSTEM_DIR)/userfs/7521gled.conf; \
+	fi
+	if test -e $(PROFILE_DIR)/7586led.conf; \
+	then cp $(PROFILE_DIR)/7586led.conf $(FILESYSTEM_DIR)/userfs/7586led.conf; \
+	fi
+endif
+	if test -e $(PROFILE_DIR)/led.conf; \
+	then cp $(PROFILE_DIR)/led.conf $(FILESYSTEM_DIR)/userfs/led.conf; \
+	fi
+	dos2unix $(FILESYSTEM_DIR)/userfs/led.conf
+
+#copy fwver.conf	
+	if test -e $(PROFILE_DIR)/fwver.conf; \
+	then cp $(PROFILE_DIR)/fwver.conf $(FILESYSTEM_DIR)/usr/etc/fwver.conf; \
+	fi
+
+#copy romfile.cfg
+#ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+#Copy profile to filesystem, no needed, /userfs/romfile.cfg will contain all cfg node
+#	cp $(APP_PRIVATE_DIR)/etc_script/romfile.cfg $(FILESYSTEM_DIR)/userfs/
+ifneq ($(strip $(TCSUPPORT_INIC_CLIENT)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/dmt_co/romfile.cfg $(FILESYSTEM_DIR)/userfs/
+else
+	cp $(APP_PRIVATE_DIR)/etc_script/romfile.cfg $(FILESYSTEM_DIR)/userfs/
+endif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_C1_NEW_GUI)
+ifneq ($(strip $(TCSUPPORT_C1_NEW_GUI)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/ZYXEL/romfile.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+ifneq ($(strip $(TCSUPPORT_WAN_PTM)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/romfile_vdsl.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+	if test -e $(PROFILE_DIR)/romfile_vdsl.cfg; \
+	then cp $(PROFILE_DIR)/romfile_vdsl.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg; \
+	fi; \
+	if test -e $(PROFILE_DIR)/romfile_vdsl_f.cfg; \
+	then cp $(PROFILE_DIR)/romfile_vdsl_f.cfg $(FILESYSTEM_DIR)/userfs/romfile_f.cfg; \
+	fi
+else
+ifneq ($(strip $(TCSUPPORT_CT_E8B_ADSL)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/romfile_adsl.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+else
+ifneq ($(strip $(TCSUPPORT_CT_PON)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/romfile_pon.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+else
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/romfile.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+endif
+endif
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_OMCI)
+ifneq ($(strip $(TCSUPPORT_WAN_GPON) $(TCSUPPORT_WAN_EPON)),)
+ifeq ($(strip $(TCSUPPORT_CT)),)
+ifneq ($(strip $(TCSUPPORT_OMCI_ALCATEL)),)
+	cp $(PROFILE_DIR)/romfile.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+else
+	cp $(APP_PRIVATE_DIR)/etc_script/pon/romfile.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+endif
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_NEW_GUI)
+ifneq ($(strip $(TCSUPPORT_CD_NEW_GUI)),)
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_WEBPAGE_STYLE2)
+ifneq ($(strip $(TCSUPPORT_CD_WEBPAGE_STYLE2)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/romfile_cd_style2.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/string1-style2.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/string2-style2.conf $(FILESYSTEM_DIR)/userfs/string2.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/string3-style2.conf $(FILESYSTEM_DIR)/userfs/string3.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/string4-style2.conf $(FILESYSTEM_DIR)/userfs/string4.conf
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_CD_WEBPAGE_STYLE2)
+ifeq ($(strip $(TCSUPPORT_CD_WEBPAGE_STYLE2)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/romfile_cd.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/string1.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/string2.conf $(FILESYSTEM_DIR)/userfs/string2.conf
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/vserver_cd.sh $(FILESYSTEM_DIR)/usr/script/vserver.sh
+endif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_WIND)
+ifneq ($(strip $(TCSUPPORT_CD_WIND)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/romfile_wind.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+	rm -f $(FILESYSTEM_DIR)/usr/etc/init.d/rcS
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/rcS_wind $(FILESYSTEM_DIR)/usr/etc/init.d/rcS
+	rm -f $(FILESYSTEM_DIR)/userfs/string*.conf	
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/string1-wind.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/string2-wind.conf $(FILESYSTEM_DIR)/userfs/string2.conf
+endif
+#endif/*TCSUPPORT_COMPILE*/
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	sed -i "/MldSnoop/d" $(FILESYSTEM_DIR)/userfs/romfile.cfg
+	sed -i "/IgmpSnoop/d" $(FILESYSTEM_DIR)/userfs/romfile.cfg
+endif
+else
+	sed -i "/<Snoop/d" $(FILESYSTEM_DIR)/userfs/romfile.cfg	
+endif	
+#endif/*TCSUPPORT_COMPILE*/	
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_TTNET)
+ifneq ($(strip $(TCSUPPORT_TTNET)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/ttnet/string1.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/ttnet/string2.conf $(FILESYSTEM_DIR)/userfs/string2.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/ttnet/vserver_ttnet.sh $(FILESYSTEM_DIR)/usr/script/vserver.sh
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_TURKISH)
+ifneq ($(strip $(TCSUPPORT_TURKISH)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/ttnet/string1.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/ttnet/string2.conf $(FILESYSTEM_DIR)/userfs/string2.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/ttnet/vserver_ttnet.sh $(FILESYSTEM_DIR)/usr/script/vserver.sh
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+
+#endif
+
+#	$(TOOLS_DIR)/romfile_merge/romfile_merge $(APP_PRIVATE_DIR)/etc_script/romfile.cfg $(APP_PRIVATE_DIR)/etc_script/$(CUSTOM)/romfile.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg $(APP_CFG_MANAGER_DIR)/cfg_mgr.cfg Project/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE).profile
+
+ifneq ($(strip $(TCSUPPORT_C1_MS)),)
+	if test -e $(PROFILE_DIR)/romfile.cfg;\
+	then cp -f $(PROFILE_DIR)/romfile.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg; \
+	fi
+	if test -e $(PROFILE_DIR)/fwver_c1.conf;\
+	then cp -f $(PROFILE_DIR)/fwver_c1.conf $(FILESYSTEM_DIR)/usr/etc/fwver_c1.conf; \
+	fi
+endif
+
+ifneq ($(strip $(TCSUPPORT_C1_ZY)),)
+	if test -e $(PROFILE_DIR)/romfile.cfg;\
+	then cp -f $(PROFILE_DIR)/romfile.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg; \
+	fi
+	if test -e $(PROFILE_DIR)/fwver_c1.conf;\
+	then cp -f $(PROFILE_DIR)/fwver_c1.conf $(FILESYSTEM_DIR)/usr/etc/fwver_c1.conf; \
+	fi
+	if test -e $(PROFILE_DIR)/led.conf;\
+	then rm -f $(FILESYSTEM_DIR)/userfs/led.conf;cp $(PROFILE_DIR)/led.conf $(FILESYSTEM_DIR)/userfs/led.conf;\
+	fi
+endif
+
+ifeq ($(strip $(CUSTOM)),RT)
+	if test -e $(PROFILE_DIR)/romfile.cfg;\
+	then  cp -f $(PROFILE_DIR)/romfile.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg; \
+	fi
+endif
+
+#copy script
+#ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+
+	echo "copy script"
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_AUTO_DMZ)
+ifneq ($(strip $(TCSUPPORT_AUTO_DMZ)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/ZYXEL/nat_stop.sh $(FILESYSTEM_DIR)/usr/script/nat_stop.sh
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	cp $(APP_PRIVATE_DIR)/etc_script/wan_start.sh $(FILESYSTEM_DIR)/usr/script/wan_start_ipv4.sh
+	cp $(APP_PRIVATE_DIR)/etc_script/wan_stop.sh $(FILESYSTEM_DIR)/usr/script/
+	cp $(APP_PRIVATE_DIR)/etc_script/ppp_start.sh $(FILESYSTEM_DIR)/usr/script/	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_C1_NEW_GUI)
+ifneq ($(strip $(TCSUPPORT_C1_NEW_GUI)),)
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ZYXEL/wan_start.sh $(FILESYSTEM_DIR)/usr/script/wan_start_ipv4.sh
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ZYXEL/ppp_start.sh $(FILESYSTEM_DIR)/usr/script/ppp_start.sh
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ZYXEL/vserver.sh $(FILESYSTEM_DIR)/usr/script/vserver.sh
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_NEW_GUI)
+ifneq ($(strip $(TCSUPPORT_CD_NEW_GUI)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/before_firmware_update.sh $(FILESYSTEM_DIR)/usr/script/before_firmware_update.sh
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/before_firmware_update_remove_wifi.sh $(FILESYSTEM_DIR)/usr/script/before_firmware_update_remove_wifi.sh
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_ETH4_WAN_PORT) 
+ifneq ($(strip $(TCSUPPORT_ETH4_WAN_PORT)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/port4_start.sh $(FILESYSTEM_DIR)/usr/script/port4_start.sh
+	cp $(APP_PRIVATE_DIR)/etc_script/port4_stop.sh $(FILESYSTEM_DIR)/usr/script/port4_stop.sh
+endif
+#endif/*TCSUPPORT_COMPILE*/
+ifneq ($(strip $(TCSUPPORT_DSLITE)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/dslite_start.sh $(FILESYSTEM_DIR)/usr/script/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_DSLITE)
+ifneq ($(strip $(TCSUPPORT_CT_DSLITE)),)
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/dslite_start.sh $(FILESYSTEM_DIR)/usr/script/dslite_start.sh
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/dslite_stop.sh $(FILESYSTEM_DIR)/usr/script/dslite_stop.sh
+endif
+#endif/*TCSUPPORT_COMPILE*/
+endif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_JOYME)
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/osgi_upg.sh $(FILESYSTEM_DIR)/usr/script/osgi_upg.sh
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	# modify in filesystem
+	#cp $(APP_PRIVATE_DIR)/etc_script/udhcpc_nodef.sh $(FILESYSTEM_DIR)/usr/script/
+	#cp $(APP_PRIVATE_DIR)/etc_script/udhcpc.sh $(FILESYSTEM_DIR)/usr/script/
+ifneq ($(strip $(TCSUPPORT_ALIASIP)),)	
+	cp $(APP_PRIVATE_DIR)/etc_script/lanAlias_start.sh $(FILESYSTEM_DIR)/usr/script/
+	cp $(APP_PRIVATE_DIR)/etc_script/lanAlias_stop.sh $(FILESYSTEM_DIR)/usr/script/
+endif
+ifneq ($(strip $(TCSUPPORT_CWMP)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/devInf.conf $(FILESYSTEM_DIR)/usr/etc/
+endif
+ifneq ($(strip $(TCSUPPORT_WPA_SUPPLICANT)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/8021xaction.sh $(FILESYSTEM_DIR)/usr/etc/
+endif
+	rm -f $(FILESYSTEM_DIR)/usr/script/wan_start_ipv6.sh
+ifneq ($(strip $(TCSUPPORT_IPV6)),)
+#	rm -f $(FILESYSTEM_DIR)/usr/script/wan_start.sh
+	cp $(APP_PRIVATE_DIR)/etc_script/wan_start_ipv6.sh $(FILESYSTEM_DIR)/usr/script/wan_start_ipv6.sh
+ifneq ($(strip $(TCSUPPORT_IPV6_PRIVACYADDRS)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/ipv6-up-privacyaddrs $(FILESYSTEM_DIR)/usr/etc/ppp/ipv6-up
+else
+	cp $(APP_PRIVATE_DIR)/etc_script/ipv6-up $(FILESYSTEM_DIR)/usr/etc/ppp/
+endif
+	chmod 777 $(FILESYSTEM_DIR)/usr/etc/ppp/ipv6-up
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_C1_NEW_GUI)
+ifneq ($(strip $(TCSUPPORT_C1_NEW_GUI)),)
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ZYXEL/wan_start_ipv6.sh $(FILESYSTEM_DIR)/usr/script/wan_start_ipv6.sh
+endif
+#endif/*TCSUPPORT_COMPILE*/
+endif
+#ifneq ($(strip $(TCSUPPORT_DNSEACHPVC)),)
+	rm -f $(FILESYSTEM_DIR)/usr/etc/resolv.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/resolv_ipv6.conf $(FILESYSTEM_DIR)/usr/etc/resolv_ipv6.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/resolv_ipv4.conf $(FILESYSTEM_DIR)/usr/etc/resolv_ipv4.conf
+#else
+#	rm -f $(FILESYSTEM_DIR)/usr/etc/resolv.conf
+#	rm -f $(FILESYSTEM_DIR)/usr/etc/dnsmasq.conf
+#	cp $(APP_PRIVATE_DIR)/etc_script/resolv_noeach.conf $(FILESYSTEM_DIR)/usr/etc/resolv.conf
+#	cp $(APP_PRIVATE_DIR)/etc_script/dnsmasq.conf $(FILESYSTEM_DIR)/usr/etc/dnsmasq.conf
+#endif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_TIME_OF_DAY)
+ifneq ($(strip $(TCSUPPORT_TIME_OF_DAY)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/parent_control_start.sh $(FILESYSTEM_DIR)/usr/script/
+	cp $(APP_PRIVATE_DIR)/etc_script/parent_control_stop.sh $(FILESYSTEM_DIR)/usr/script/
+endif
+#endif/*TCSUPPORT_COMPILE*/
+ifneq ($(strip $(TCSUPPORT_FW_UPGRADE_16M)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/before_web_download.sh $(FILESYSTEM_DIR)/usr/script/before_web_download.sh
+	cp $(APP_PRIVATE_DIR)/etc_script/before_web_download_remove_wifi.sh $(FILESYSTEM_DIR)/usr/script/before_web_download_remove_wifi.sh
+
+ifneq ($(strip $(TCSUPPORT_TR069_UPGRADE_CUSTOM)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/before_tr069_download_custom.sh $(FILESYSTEM_DIR)/usr/script/before_tr069_download.sh
+	cp $(APP_PRIVATE_DIR)/etc_script/before_reboot_custom.sh $(FILESYSTEM_DIR)/usr/script/before_reboot_custom.sh	
+else
+	cp $(APP_PRIVATE_DIR)/etc_script/before_tr069_download.sh $(FILESYSTEM_DIR)/usr/script/before_tr069_download.sh
+endif
+endif
+	rm -f $(FILESYSTEM_DIR)/usr/script/usb_insmod.sh
+ifneq ($(strip $(TCSUPPORT_USBHOST)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/usb_insmod.sh $(FILESYSTEM_DIR)/usr/script/usb_insmod.sh
+endif
+#copy inittab shell script
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/inittab_ra_menu $(FILESYSTEM_DIR)/usr/etc/inittab_ra_menu
+	cp $(APP_PRIVATE_DIR)/etc_script/inittab $(FILESYSTEM_DIR)/usr/etc/inittab_no_ra_menu
+endif
+
+	chmod 755 $(FILESYSTEM_DIR)/usr/script/*
+#endif
+
+ifeq ($(strip $(TCSUPPORT_CT)),)
+ifneq ($(strip $(TCSUPPORT_IPV6)),)
+	rm -f $(FILESYSTEM_DIR)/usr/script/wan_start.sh
+	cp $(FILESYSTEM_DIR)/usr/script/wan_start_ipv6.sh $(FILESYSTEM_DIR)/usr/script/wan_start.sh
+else
+	rm -f $(FILESYSTEM_DIR)/usr/script/wan_start.sh
+	cp $(FILESYSTEM_DIR)/usr/script/wan_start_ipv4.sh $(FILESYSTEM_DIR)/usr/script/wan_start.sh
+endif
+
+ifneq ($(strip $(TCSUPPORT_IPV6)),)
+	cp $(FILESYSTEM_DIR)/usr/etc/resolv_ipv6.conf $(FILESYSTEM_DIR)/usr/etc/resolv.conf
+else
+	cp $(FILESYSTEM_DIR)/usr/etc/resolv_ipv4.conf $(FILESYSTEM_DIR)/usr/etc/resolv.conf
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_IPV6_INETD)),)
+	cp $(APP_DIR)/private/etc_script/inetd6.conf $(FILESYSTEM_DIR)/usr/etc/inetd.conf
+else
+	cp $(APP_DIR)/private/etc_script/inetd.conf $(FILESYSTEM_DIR)/usr/etc/inetd.conf
+endif
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+#ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	# update script, remove old script first, then copy new ones from its own folder
+	rm -f $(FILESYSTEM_DIR)/usr/script/wan_start.sh
+	rm -f $(FILESYSTEM_DIR)/usr/script/wan_stop.sh
+	rm -f $(FILESYSTEM_DIR)/usr/script/ppp_start.sh
+	rm -f $(FILESYSTEM_DIR)/usr/script/before_tr069_download.sh
+	rm -f $(FILESYSTEM_DIR)/usr/script/wan_start_ipv4.sh
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/wan_start.sh $(FILESYSTEM_DIR)/usr/script/wan_start.sh
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/wan_stop.sh $(FILESYSTEM_DIR)/usr/script/wan_stop.sh
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/ppp_start.sh $(FILESYSTEM_DIR)/usr/script/ppp_start.sh
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/filter_forward_start.sh $(FILESYSTEM_DIR)/usr/script/filter_forward_start.sh
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/filter_forward_stop.sh $(FILESYSTEM_DIR)/usr/script/filter_forward_stop.sh
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/before_tr069_download.sh $(FILESYSTEM_DIR)/usr/script/before_tr069_download.sh
+ifneq ($(strip $(TCSUPPORT_CPU_MT7505)),)
+ifneq ($(strip $(TCSUPPORT_CT_E8B_ADSL)),)
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/7505_before_tr069_download.sh $(FILESYSTEM_DIR)/usr/script/before_tr069_download.sh
+endif
+endif
+	# modify in filesystem
+	rm -f $(FILESYSTEM_DIR)/usr/script/udhcpc_nodef.sh 
+	rm -f $(FILESYSTEM_DIR)/usr/script/udhcpc.sh
+	rm -f $(FILESYSTEM_DIR)/usr/script/dmz.sh 
+	rm -f $(FILESYSTEM_DIR)/usr/script/nat_start.sh
+	rm -f $(FILESYSTEM_DIR)/usr/script/nat_stop.sh
+	rm -f $(FILESYSTEM_DIR)/usr/script/vserver.sh 
+	rm -f $(FILESYSTEM_DIR)/usr/etc/ppp/ip-up
+	rm -f $(FILESYSTEM_DIR)/usr/etc/ppp/ip-down
+	rm -f $(FILESYSTEM_DIR)/usr/etc/ppp/pppoe-server-options
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/udhcpc_nodef.sh $(FILESYSTEM_DIR)/usr/script/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/udhcpc.sh $(FILESYSTEM_DIR)/usr/script/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/dmz.sh $(FILESYSTEM_DIR)/usr/script/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/nat_start.sh $(FILESYSTEM_DIR)/usr/script/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/nat_stop.sh $(FILESYSTEM_DIR)/usr/script/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/vserver.sh $(FILESYSTEM_DIR)/usr/script/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/ip-up $(FILESYSTEM_DIR)/usr/etc/ppp/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/ip-down $(FILESYSTEM_DIR)/usr/etc/ppp/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_MONITORCOLLECTOR)
+ifneq ($(strip $(TCSUPPORT_CT_MONITORCOLLECTOR)),)
+	rm -f $(FILESYSTEM_DIR)/usr/script/tftp.sh	
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/tftp.sh $(FILESYSTEM_DIR)/usr/script/
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	rm -f $(FILESYSTEM_DIR)/usr/script/ftpdown.sh	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_FTP_DOWNLOADCLIENT)
+ifneq ($(strip $(TCSUPPORT_CT_FTP_DOWNLOADCLIENT)),)
+	rm -f $(FILESYSTEM_DIR)/usr/script/ftpdown.sh	
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/ftpdown.sh $(FILESYSTEM_DIR)/usr/script/
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	rm -f $(FILESYSTEM_DIR)/usr/script/restore.sh	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_USB_BACKUPRESTORE)	
+ifneq ($(strip $(TCSUPPORT_CT_USB_BACKUPRESTORE)),)
+	rm -f $(FILESYSTEM_DIR)/usr/script/restore.sh	
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/restore.sh $(FILESYSTEM_DIR)/usr/script/
+endif
+#endif/*TCSUPPORT_COMPILE*/	
+ifneq ($(strip $(TCSUPPORT_CT_PPPOEPROXY)),)
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/pppoe-server-options $(FILESYSTEM_DIR)/usr/etc/ppp/
+endif
+ifneq ($(strip $(TCSUPPORT_ALIASIP)),)	
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/lanAlias_start.sh $(FILESYSTEM_DIR)/usr/script/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/lanAlias_stop.sh $(FILESYSTEM_DIR)/usr/script/
+endif
+ifneq ($(strip $(TCSUPPORT_CWMP)),)
+	rm -f $(FILESYSTEM_DIR)/usr/etc/devInf.conf
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/devInf.conf $(FILESYSTEM_DIR)/usr/etc/
+endif
+ifneq ($(strip $(TCSUPPORT_JFFS2_BLOCK)),)
+	rm -rf $(FILESYSTEM_DIR)/usr/local/ct/
+	mkdir -p $(FILESYSTEM_DIR)/usr/local/ct/
+	rm -f $(FILESYSTEM_DIR)/usr/script/mount_jffs2.sh
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/mount_jffs2.sh $(FILESYSTEM_DIR)/usr/script/mount_jffs2.sh
+endif
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+	rm -rf $(FILESYSTEM_DIR)/usr/osgi/
+	mkdir -p $(FILESYSTEM_DIR)/usr/osgi/
+endif
+ifneq ($(strip $(TCSUPPORT_CT_JOYME2)),)
+	rm -rf $(FILESYSTEM_DIR)/opt/upt/framework1
+	mkdir -p $(FILESYSTEM_DIR)/opt/upt/framework1
+	rm -rf $(FILESYSTEM_DIR)/opt/upt/framework2
+	mkdir -p $(FILESYSTEM_DIR)/opt/upt/framework2
+	rm -rf $(FILESYSTEM_DIR)/opt/upt/apps
+	mkdir -p $(FILESYSTEM_DIR)/opt/upt/apps
+endif
+	rm -f $(FILESYSTEM_DIR)/usr/script/dhcp6c_script
+	rm -f $(FILESYSTEM_DIR)/usr/etc/ppp/ipv6-up
+	rm -f $(FILESYSTEM_DIR)/usr/etc/ppp/ipv6-down
+	rm -f $(FILESYSTEM_DIR)/usr/etc/ppp/ipv6-up_pre
+ifneq ($(strip $(TCSUPPORT_IPV6)),)
+	rm -f $(FILESYSTEM_DIR)/usr/script/dhcp6c_script
+	rm -f $(FILESYSTEM_DIR)/usr/etc/ppp/ipv6-up
+	rm -f $(FILESYSTEM_DIR)/usr/etc/ppp/ipv6-down
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/dhcp6c_script $(FILESYSTEM_DIR)/usr/script/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/ipv6-up $(FILESYSTEM_DIR)/usr/etc/ppp/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/ipv6-down $(FILESYSTEM_DIR)/usr/etc/ppp/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/ipv6-up_pre $(FILESYSTEM_DIR)/usr/etc/ppp/
+endif
+ifneq ($(strip $(TCSUPPORT_DNSEACHPVC)),)
+	rm -f $(FILESYSTEM_DIR)/usr/etc/resolv.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/resolv.conf $(FILESYSTEM_DIR)/usr/etc/resolv.conf
+else
+	rm -f $(FILESYSTEM_DIR)/usr/etc/resolv.conf
+	rm -f $(FILESYSTEM_DIR)/usr/etc/dnsmasq.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/resolv_noeach.conf $(FILESYSTEM_DIR)/usr/etc/resolv.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/dnsmasq.conf $(FILESYSTEM_DIR)/usr/etc/dnsmasq.conf
+endif
+ifeq ($(strip $(TCSUPPORT_VOIP)),)
+	rm -rf $(FILESYSTEM_DIR)/userfs/CountrySetting
+endif
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/igd
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/nat_pvc8
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/nat_pvc9
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/nat_pvc10
+	rm -f $(FILESYSTEM_DIR)/usr/etc/defaultWan.conf
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/batcode.conf $(FILESYSTEM_DIR)/usr/etc/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/dvid.conf $(FILESYSTEM_DIR)/usr/etc/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/gateway.conf $(FILESYSTEM_DIR)/usr/etc/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/hdver.conf $(FILESYSTEM_DIR)/usr/etc/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/model.conf $(FILESYSTEM_DIR)/usr/etc/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/sdver.conf $(FILESYSTEM_DIR)/usr/etc/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/deviceParaStatic.conf $(FILESYSTEM_DIR)/usr/etc
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_PON)
+ifneq ($(strip $(TCSUPPORT_CT_PON)),)
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/deviceParaStatic_pon.conf $(FILESYSTEM_DIR)/usr/etc/deviceParaStatic.conf
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CY)
+ifneq ($(strip $(TCSUPPORT_CY)),)
+	cp -f $(PROFILE_DIR)/deviceParaStatic.conf $(FILESYSTEM_DIR)/usr/etc
+endif
+#endif/*TCSUPPORT_COMPILE*/
+else
+	cp -f $(APP_PRIVATE_DIR)/etc_script/udhcpc.sh $(FILESYSTEM_DIR)/usr/script/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/udhcpc_nodef.sh $(FILESYSTEM_DIR)/usr/script/
+endif
+#endif
+ifneq ($(strip $(TCSUPPORT_MNT_CONF)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/mnt.conf $(FILESYSTEM_DIR)/usr/etc/mnt.conf
+endif
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	if test -e $(PROFILE_DIR)/romfile.cfg; \
+	then cp $(PROFILE_DIR)/romfile*.cfg $(FILESYSTEM_DIR)/userfs/; \
+	fi
+	if test -e $(PROFILE_DIR)/romfile_epon.cfg; \
+	then cp $(PROFILE_DIR)/romfile_epon.cfg $(FILESYSTEM_DIR)/userfs/romfile_epon.cfg; \
+	fi
+
+	if test -e $(PROFILE_DIR)/deviceParaStatic.conf; \
+	then cp $(PROFILE_DIR)/deviceParaStatic.conf $(FILESYSTEM_DIR)/usr/etc/deviceParaStatic.conf; \
+	fi	
+	if test -e $(PROFILE_DIR)/devInf.conf; \
+	then cp $(PROFILE_DIR)/devInf.conf $(FILESYSTEM_DIR)/usr/etc/devInf.conf; \
+	fi
+endif
+ifneq ($(strip $(TCSUPPORT_CT)),)
+ifneq ($(strip $(TCSUPPORT_ECN_SIP)),)
+	cp $(PROFILE_DIR)/romfile.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CT_PON) $(TCSUPPORT_CT_E8B_ADSL)),)
+ifneq ($(strip $(TCSUPPORT_CT_PON_CY) $(TCSUPPORT_CT_PROLINE_SUPPORT)),)
+	cp $(PROFILE_DIR)/romfile.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+	cp $(PROFILE_DIR)/romfile_f.cfg $(FILESYSTEM_DIR)/userfs/romfile_f.cfg 
+	cp $(PROFILE_DIR)/deviceParaStatic.conf $(FILESYSTEM_DIR)/usr/etc/deviceParaStatic.conf
+endif
+endif
+	rm -f $(FILESYSTEM_DIR)/usr/script/ipoe_simulate.sh
+	rm -f $(FILESYSTEM_DIR)/usr/script/udhcpc_ipoe_sim.sh
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_IPOE_EMULATOR)
+ifneq ($(strip $(TCSUPPORT_CT_IPOE_EMULATOR)),)
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/ipoe_simulate.sh $(FILESYSTEM_DIR)/usr/script/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/udhcpc_ipoe_sim.sh $(FILESYSTEM_DIR)/usr/script/
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	rm -f $(FILESYSTEM_DIR)/usr/script/pppoe_simulate.sh
+	rm -f $(FILESYSTEM_DIR)/usr/script/emu_dhcp6c_script
+	rm -f $(FILESYSTEM_DIR)/usr/etc/ppp/emu_ipv6-up_pre
+	rm -f $(FILESYSTEM_DIR)/usr/etc/ppp/emu_ipv6-up
+ifneq ($(strip $(TCSUPPORT_PPPOE_SIMULATE)),)
+	if test -e $(APP_PRIVATE_DIR)/etc_script/ct/pppoe_simulate.sh; \
+		then cp -f $(APP_PRIVATE_DIR)/etc_script/ct/pppoe_simulate.sh $(FILESYSTEM_DIR)/usr/script/; \
+	fi
+endif	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_PPPOE_IPV6_EMULATOR)
+ifneq ($(strip $(TCSUPPORT_CT_PPPOE_IPV6_EMULATOR)),)
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/pppoe_simulate.sh $(FILESYSTEM_DIR)/usr/script/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/emu_dhcp6c_script $(FILESYSTEM_DIR)/usr/script/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/emu_ipv6-up_pre $(FILESYSTEM_DIR)/usr/etc/ppp/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/emu_ipv6-up $(FILESYSTEM_DIR)/usr/etc/ppp/
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_L2TP_VPN)
+ifneq ($(strip $(TCSUPPORT_CT_L2TP_VPN)),)
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/vpn_ip-up $(FILESYSTEM_DIR)/usr/etc/ppp/
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ct/vpn_ip-down $(FILESYSTEM_DIR)/usr/etc/ppp/
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#endif/*TCSUPPORT_COMPILE*/
+
+#copy inittab shell script
+#ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+ifneq ($(strip $(TCSUPPORT_RA_MENU)),)
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	rm -f $(FILESYSTEM_DIR)/usr/etc/inittab
+	cp $(FILESYSTEM_DIR)/usr/etc/inittab_ra_menu $(FILESYSTEM_DIR)/usr/etc/inittab
+endif
+else
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	rm -f $(FILESYSTEM_DIR)/usr/etc/inittab
+	cp $(FILESYSTEM_DIR)/usr/etc/inittab_no_ra_menu $(FILESYSTEM_DIR)/usr/etc/inittab
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	rm -f $(FILESYSTEM_DIR)/usr/etc/inittab_ra_menu
+	rm -f $(FILESYSTEM_DIR)/usr/etc/inittab_no_ra_menu
+endif
+#endif
+
+
+#copy string
+#ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+ifneq ($(strip $(GUI_STRING_CONFIG_SUPPORT)),)
+	cp $(APP_DIR)/private/etc_script/string1.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+	cp $(APP_DIR)/private/etc_script/string2.conf $(FILESYSTEM_DIR)/userfs/string2.conf
+endif
+#endif
+
+ifneq ($(strip $(TCSUPPORT_MODEL_CHECK)),)
+	cp $(TOOLS_DIR)/trx/trx_config $(FILESYSTEM_DIR)/usr/etc/trx_config
+endif
+
+	chmod 777 $(FILESYSTEM_DIR)/usr/etc/inittab
+
+	chmod 777 -R $(FILESYSTEM_DIR)/usr/etc/init.d
+
+#copy webpages
+ifneq ($(strip $(TCSUPPORT_C7_CU)),)
+	rm -rf $(APP_WEBPAGE_DIR)/Router/e8b_vd/boaroot/html/img/framelogo.jpg
+	rm -rf $(APP_WEBPAGE_DIR)/Router/e8b_vd/boaroot/html/img/logo.jpg
+	cp -rf $(PROFILE_DIR)/framelogo.jpg $(APP_WEBPAGE_DIR)/Router/e8b_vd/boaroot/html/img/
+	cp -rf $(PROFILE_DIR)/logo.jpg $(APP_WEBPAGE_DIR)/Router/e8b_vd/boaroot/html/img/
+endif
+#ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot
+	cp -a $(APP_ROUTE_WEBPAGE_DIR) $(FILESYSTEM_DIR)
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_TTNET))
+ifneq ($(strip $(TCSUPPORT_TTNET)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/
+	cp -a $(APP_WEBPAGE_DIR)/Router/ttnet/boaroot $(FILESYSTEM_DIR)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_TURKISH))
+ifneq ($(strip $(TCSUPPORT_TURKISH)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/
+	cp -a $(APP_WEBPAGE_DIR)/Router/ttnet/boaroot $(FILESYSTEM_DIR)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_WIND))
+ifneq ($(strip $(TCSUPPORT_CD_WIND)),)
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_FTP_USB))
+ifeq ($(strip $(TCSUPPORT_FTP_USB)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_usb.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/USBDevMag.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/showusb.cgi
+endif
+#endif/*TCSUPPORT_COMPILE*/	
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+ifneq ($(strip $(TCSUPPORT_GENERAL_MULTILANGUAGE)),)
+	#rm then copy string file
+	rm -rf $(FILESYSTEM_DIR)/userfs/string1.conf
+	rm -rf $(FILESYSTEM_DIR)/userfs/string2.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/string1.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/string2.conf $(FILESYSTEM_DIR)/userfs/string2.conf
+ifneq ($(strip $(TCSUPPORT_CHINESE_ONLY)),)	
+	cp $(APP_PRIVATE_DIR)/etc_script/string_chinese.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+endif		
+ifneq ($(strip $(TCSUPPORT_ENGLISH_ONLY)),)
+	cp $(PROFILE_DIR)/string1.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+endif	
+ifneq ($(strip $(TCSUPPORT_WAN_GPON) $(TCSUPPORT_WAN_EPON)),)
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	#rm then copy string file
+	rm -rf $(FILESYSTEM_DIR)/userfs/string1.conf
+	rm -rf $(FILESYSTEM_DIR)/userfs/string2.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/pon/string1.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/pon/string2.conf $(FILESYSTEM_DIR)/userfs/string2.conf
+ifneq ($(strip $(TCSUPPORT_CHINESE_ONLY)),)
+ifneq ($(strip $(TCSUPPORT_PON_FH)),)
+	cp $(PROFILE_DIR)/string_chinese.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+else 
+	cp $(APP_PRIVATE_DIR)/etc_script/pon/string_chinese.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CT_C5_HEN_SFU)),)
+	cp $(PROFILE_DIR)/string_chinese.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+endif 
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_SFU_SK)
+ifneq ($(strip $(TCSUPPORT_CT_SFU_SK)),)
+	if test -e $(PROFILE_DIR)/string_chinese.conf; \
+	then cp $(PROFILE_DIR)/string_chinese.conf $(FILESYSTEM_DIR)/userfs/string1.conf; \
+	fi
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+ifneq ($(strip $(TCSUPPORT_ENGLISH_ONLY)),)
+	cp $(PROFILE_DIR)/string1.conf $(FILESYSTEM_DIR)/userfs/string1.conf
+endif
+endif
+endif	
+	rm -rf $(FILESYSTEM_DIR)/boaroot/
+	cp -a $(APP_WEBPAGE_DIR)/Router/ml/boaroot $(FILESYSTEM_DIR)
+ifeq ($(strip $(TCSUPPORT_CY_PON)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/telnet.asp
+endif
+	cd $(TOOLS_DIR)/mlCheckHash/ && chmod 777 mlCheckHash && ./mlCheckHash $(FILESYSTEM_DIR)/userfs/string1.conf
+	if test -e $(TOOLS_DIR)/mlCheckHash/error; \
+	then echo "string1.conf duplicate, please check!"; exit 1; \
+	else echo "string1.conf is right!"; \
+	fi
+endif
+ifneq ($(strip $(TCSUPPORT_C1_ZY)),)
+	if test -e $(PROFILE_DIR)/logo.gif;\
+	then cp -f $(PROFILE_DIR)/logo.gif $(FILESYSTEM_DIR)/boaroot/html/logo.gif; \
+	fi
+	
+	if test -e $(PROFILE_DIR)/style.css;\
+	then cp -f $(PROFILE_DIR)/style.css $(FILESYSTEM_DIR)/boaroot/html/style.css; \
+	fi
+	
+	if test -e $(PROFILE_DIR)/menu.js;\
+	then cp -f $(PROFILE_DIR)/menu.js $(FILESYSTEM_DIR)/boaroot/html/menu.js; \
+	fi
+endif
+
+ifneq ($(strip $(TCSUPPORT_PON_FH)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/logo.gif
+	cp -f $(PROFILE_DIR)/logo.gif $(FILESYSTEM_DIR)/boaroot/html/logo.gif
+endif
+
+ifneq ($(strip $(TCSUPPORT_VIRSVR_LOCAL_PORT)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/virsvr_table.cgi
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/virsvr_table_local_port.cgi $(FILESYSTEM_DIR)/boaroot/cgi-bin/virsvr_table.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/virsvr_table_local_port.cgi
+else
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/virsvr_table_local_port.cgi; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/virsvr_table_local_port.cgi; \
+	fi
+endif
+
+ifneq ($(strip $(TCSUPPORT_VIRSVR_APPL_AND_PROT)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/virsvr_table.cgi
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/virsvr_table_appl_and_prot.cgi $(FILESYSTEM_DIR)/boaroot/cgi-bin/virsvr_table.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/virsvr_table_appl_and_prot.cgi
+else
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/virsvr_table_appl_and_port.cgi; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/virsvr_table_appl_and_port.cgi; \
+	fi
+endif
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_GUI_ALG_CONTROL))
+ifeq ($(strip $(TCSUPPORT_GUI_ALG_CONTROL)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_nat_alg_switch.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+	#remove the garbage WLAN webpage left in the filesystem
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+ifneq ($(strip $(TCSUPPORT_WLAN_RT3390)),)
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_MT7601E)),)
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_MT7592)),)
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5392)),)
+	
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5390)),)
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5390HL)),)
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT3090)),)
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3090.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_MULTIDRIVER)),)
+	
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	
+endif
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_MT7615E)),)
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_mt7615.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_5g.asp
+endif
+	#remove the raw webpage code 
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3090.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_mt7615.asp
+	
+ifneq ($(strip $(TCSUPPORT_TC2031)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_portbinding.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_portbinding_signal_port.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_portbinding.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_portbinding_signal_port.asp
+
+else
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_portbinding_signal_port.asp
+endif
+
+ifneq ($(strip $(TCSUPPORT_QOS)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_old_four_ports.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_old.asp
+ifneq ($(strip $(TCSUPPORT_TC2031)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_signal_port.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_signal_port.asp
+
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist.cgi; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist.cgi; \
+	fi
+ifneq ($(strip $(TCSUPPORT_GENERAL_MULTILANGUAGE)),)
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.asp
+else
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.cgi $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.cgi
+endif
+else
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_signal_port.asp
+ifneq ($(strip $(TCSUPPORT_GENERAL_MULTILANGUAGE)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.asp
+else
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.cgi
+endif
+endif
+else
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_signal_port.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_old_four_ports.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_old_four_ports.asp
+ifneq ($(strip $(TCSUPPORT_TC2031)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_old.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_old.asp
+
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist.cgi; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist.cgi; \
+	fi
+ifneq ($(strip $(TCSUPPORT_GENERAL_MULTILANGUAGE)),)
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.asp
+else
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.cgi $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.cgi
+endif
+else
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_old.asp
+ifneq ($(strip $(TCSUPPORT_GENERAL_MULTILANGUAGE)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.asp
+else
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.cgi
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_SYSLOG_ENHANCE)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_log.cgi
+else
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_log2.cgi; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_log2.cgi; \
+	fi
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_log2.asp; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_log2.asp; \
+	fi
+endif
+
+ifneq ($(strip $(TCSUPPORT_ACCOUNT_ACL)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/access_acl.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/access_acl_asb.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/access_acl.asp
+else
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/access_acl_asb.asp; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/access_acl_asb.asp; \
+	fi
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/acl_table.asp; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/acl_table.asp; \
+	fi
+endif
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_C2_TRUE))
+ifneq ($(strip $(TCSUPPORT_C2_TRUE)),)
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/tools_admin_c2.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/tools_admin.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/tools_admin_c2.asp
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_TRUE_LANDING_PAGE)) || !defined(TCSUPPORT_C2_TRUE))
+ifeq ($(strip $(TCSUPPORT_TRUE_LANDING_PAGE)),)
+ifeq ($(strip $(TCSUPPORT_C2_TRUE)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wzConnectClose_true.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wzExistAccount_true.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wzIspUserPwd_true.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wzManualConnect_true.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wzWait2_true.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wzWait3_true.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wzWelcome_true.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wzWiFi_true.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/tools_landingPage.asp
+endif
+endif	
+#endif/*TCSUPPORT_COMPILE*/
+	
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_TIME_OF_DAY))
+ifeq ($(strip $(TCSUPPORT_TIME_OF_DAY)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/access_timeofday.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/keyword.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/keywordTimeOfDay.cgi
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_PORT_TRIGGER))
+ifeq ($(strip $(TCSUPPORT_PORT_TRIGGER)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_nat_porttriggering.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_nat_porttriggering_list.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/porttriggering_list.cgi
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_CZ_OTE)
+ifeq ($(strip $(TCSUPPORT_CZ_OTE)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/OutVar.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wizardPPP_OTE.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wizStatusInfo_OTE.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/red.jpg
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/green.jpg
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_ISP_WIZARD)
+ifeq ($(strip $(TCSUPPORT_ISP_WIZARD)),)
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/wizardISP.asp; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wizardISP.asp; \
+	fi
+	if test -e $(FILESYSTEM_DIR)/boaroot/html/Isplist.js; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/html/Isplist.js; \
+	fi
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_CZ_OTE_TOOL)
+ifeq ($(strip $(TCSUPPORT_CZ_OTE_TOOL)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/OTE_index.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/OTE_home_wan.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/OTE_status_deviceinfo.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_SUPPORT_FLASH)
+ifeq ($(strip $(TCSUPPORT_SUPPORT_FLASH)),)
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/test_version.cgi; \
+	then rm $(FILESYSTEM_DIR)/boaroot/cgi-bin/test_version.cgi; \
+	fi
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+ifeq ($(strip $(TCSUPPORT_USB_3G_DONGLE)),)
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_3g.asp; \
+	then rm $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_3g.asp; \
+	fi
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/3G.asp; \
+	then rm $(FILESYSTEM_DIR)/boaroot/cgi-bin/3G.asp; \
+	fi
+	if test -e $(FILESYSTEM_DIR)/usr/etc/usb_modeswitch.d; \
+	then rm -rf $(FILESYSTEM_DIR)/usr/etc/usb_modeswitch.d; \
+	fi
+else
+	#cp -rf $(APP_PUBLIC_DIR)/usb-modeswitch-data-20120120/usb_modeswitch.d/ $(FILESYSTEM_DIR)/usr/etc/
+	if test -e $(FILESYSTEM_DIR)/usr/etc/usb_modeswitch.d; \
+	then rm -rf $(FILESYSTEM_DIR)/usr/etc/usb_modeswitch.d; \
+	fi
+	cp -rf $(APP_PUBLIC_DIR)/usb-modeswitch-data-20120531/usb_modeswitch.d/ $(FILESYSTEM_DIR)/usr/etc/
+endif
+
+ifeq ($(strip $(TCSUPPORT_TRACEROUTE_GUI)),)
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/getTracentResult.cgi; \
+	then rm $(FILESYSTEM_DIR)/boaroot/cgi-bin/getTracentResult.cgi; \
+	fi
+endif
+
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_NATSESSIONS_PERUSER_PERIP))
+ifeq ($(strip $(TCSUPPORT_BHARTI)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_nat_addsession.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_nat_session.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_nat_session.cgi
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_NEW_CUSTOMER_VERSION))
+ifeq ($(strip $(TCSUPPORT_NEW_CUSTOMER_VERSION)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/sig.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/upload.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/version.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_BHARTI))
+ifneq ($(strip $(TCSUPPORT_BHARTI)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_deviceinfo.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_deviceinfo_bhati.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_deviceinfo.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_deviceinfo_bhati.asp
+
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_log.cgi
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_log_bhati.cgi $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_log.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_log_bhati.cgi
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_WEB_INTERCEPTION))
+ifeq ($(strip $(TCSUPPORT_WEB_INTERCEPTION)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/AdslDownInfo.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/FirmwareUpgradeInfo.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_REDIRECT_WLAN_WEB))
+ifeq ($(strip $(TCSUPPORT_REDIRECT_WLAN_WEB)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/direct_to_wlan.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/rpSys_Wlan.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+ifneq ($(strip $(TCSUPPORT_CHINESE_ONLY)),)	
+	rm -f $(FILESYSTEM_DIR)/boaroot/boa.conf
+	cp -a $(FILESYSTEM_DIR)/boaroot/boa_chinese.conf $(FILESYSTEM_DIR)/boaroot/boa.conf
+	rm -f $(FILESYSTEM_DIR)/boaroot/boa_chinese.conf
+endif	
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_WIZARD_FON_OI)
+ifneq ($(strip $(TCSUPPORT_WIZARD_FON_OI)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/boa.conf
+	cp -a $(FILESYSTEM_DIR)/boaroot/boa_OI.conf $(FILESYSTEM_DIR)/boaroot/boa.conf
+		
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_OI_C9)
+ifneq ($(strip $(TCSUPPORT_OI_C9)),)
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/FonPost_tp.cgi $(FILESYSTEM_DIR)/boaroot/cgi-bin/FonPost.cgi
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/bem_vindo_comer_tp.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/bem_vindo_comer.asp
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/bem_vindo_usr_tp.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/bem_vindo_usr.asp
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/configurando_tp.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/configurando.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/style.css
+	cp -a $(FILESYSTEM_DIR)/boaroot/html/style_OI.css $(FILESYSTEM_DIR)/boaroot/html/style.css
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_mod.png
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_over_mod.png
+	cp -a $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_mod_OI.png $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_mod.png
+	cp -a $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_over_mod_OI.png $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_over_mod.png
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_fonnet.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/rpFon.asp
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_fonnet_tp_tw.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_fonnet.asp
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/rpFon_tp_tw.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/rpFon.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_OI_C7)
+ifneq ($(strip $(TCSUPPORT_OI_C7)),)
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/FonPost_tw.cgi $(FILESYSTEM_DIR)/boaroot/cgi-bin/FonPost.cgi
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/bem_vindo_comer_tw.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/bem_vindo_comer.asp
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/bem_vindo_usr_tw.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/bem_vindo_usr.asp
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/configurando_tw.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/configurando.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/style.css
+	cp -a $(FILESYSTEM_DIR)/boaroot/html/style_OI.css $(FILESYSTEM_DIR)/boaroot/html/style.css
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_mod.png
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_over_mod.png
+	cp -a $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_mod_OI.png $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_mod.png
+	cp -a $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_over_mod_OI.png $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_over_mod.png
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_fonnet.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/rpFon.asp
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_fonnet_tp_tw.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_fonnet.asp
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/rpFon_tp_tw.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/rpFon.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/FonPost_tp.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/FonPost_tw.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/bem_vindo_comer_tp.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/bem_vindo_comer_tw.asp
+	rm -r $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/bem_vindo_usr_tp.asp
+	rm -r $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/bem_vindo_usr_tw.asp
+	rm -r $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/configurando_tp.asp
+	rm -r $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/configurando_tw.asp
+	
+else
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/include/
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/getOutString.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/FonPost.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wanDefAccount.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/rpFon.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	
+	rm -f $(FILESYSTEM_DIR)/boaroot/boa_OI.conf
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/style_OI.css
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_mod_OI.png
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/include/images/page_btn_install_over_mod_OI.png
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_OI_C9)
+ifeq ($(strip $(TCSUPPORT_OI_C9)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_fonnet_tp_tw.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/rpFon_tp_tw.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/ 	
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_OI_C7)
+ifeq ($(strip $(TCSUPPORT_OI_C7)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_fonnet_tp_tw.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/rpFon_tp_tw.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_C1_NEW_GUI)
+ifneq ($(strip $(TCSUPPORT_C1_NEW_GUI)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/
+	cp -a $(APP_WEBPAGE_DIR)/Router/ZYXEL/boaroot $(FILESYSTEM_DIR)
+#if !defined(WIZARD_OI_GUI))
+ifeq ($(strip $(WIZARD_OI_GUI)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/include/
+else
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wz*.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/boa.conf
+	cp -f $(APP_PRIVATE_DIR)/etc_script/ZYXEL/boa.conf $(FILESYSTEM_DIR)/boaroot/boa.conf
+endif
+#endif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_TRUE_LANDING_PAGE))
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin-c1-landingPage/*.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/
+	cp -a $(FILESYSTEM_DIR)/boaroot/html-c1-landingPage/*.htm $(FILESYSTEM_DIR)/boaroot/html/
+#endif/*TCSUPPORT_COMPILE*/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin-c1-landingPage/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html-c1-landingPage/
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_OBM_FW))
+ifeq ($(strip $(TCSUPPORT_OBM_FW)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/Firewall_DefPolicy.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/Firewall_RuleSum.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/Firewall_RuleList.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/Firewall_RuleEdit.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/Firewall_CustomPort.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/Firewall_CustomPortCfg.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_WEB_INTERCEPTION))
+ifeq ($(strip $TCSUPPORT_WEB_INTERCEPTION)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/rpDslDisconnetWarn.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/rpNoInternetWarn.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#endif
+
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_C5_HEN_SFU))
+ifneq ($(strip $(TCSUPPORT_CT_C5_HEN_SFU)),)
+	if test -e $(PROFILE_DIR)/devInf.conf; \
+	then cp $(PROFILE_DIR)/devInf.conf $(FILESYSTEM_DIR)/usr/etc/devInf.conf; \
+	fi
+	if test -e $(PROFILE_DIR)/logo.jpg; \
+	then cp $(PROFILE_DIR)/logo.jpg $(FILESYSTEM_DIR)/boaroot/html/logo.jpg; \
+	fi
+	if test -e $(PROFILE_DIR)/style.css; \
+	then cp $(PROFILE_DIR)/style.css $(FILESYSTEM_DIR)/boaroot/html/style.css; \
+	fi
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_NEW_GUI)
+ifneq ($(strip $(TCSUPPORT_CD_NEW_GUI)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/
+	cp -a $(APP_WEBPAGE_DIR)/Router/dlink/boaroot $(FILESYSTEM_DIR)
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_WEBPAGE_STYLE2))
+ifneq ($(strip $(TCSUPPORT_CD_WEBPAGE_STYLE2)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/*
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/*	
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin-cd-style2/* $(FILESYSTEM_DIR)/boaroot/cgi-bin/
+	cp -a $(FILESYSTEM_DIR)/boaroot/html-cd-style2/* $(FILESYSTEM_DIR)/boaroot/html/	
+	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_WIND))
+ifneq ($(strip $(TCSUPPORT_CD_WIND)),)
+	cp $(APP_WEBPAGE_DIR)/Router/dlink/boaroot/cgi-bin-cd-style2/wizard/lan.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/lan.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wizard/lan.asp
+	if test -e $(PROFILE_DIR)/devInf.conf; \
+	then cp $(PROFILE_DIR)/devInf.conf $(FILESYSTEM_DIR)/usr/etc/devInf.conf; \
+	fi	
+else
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/wizard
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_3g.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/	
+	
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_CD_WEBPAGE_CODE_SHRINK))
+ifeq ($(strip $(TCSUPPORT_CD_WEBPAGE_CODE_SHRINK)),)
+ifeq ($(strip $(TCSUPPORT_CD_WEBPAGE_STYLE2)),)
+	cp -a $(FILESYSTEM_DIR)/boaroot/cgi-bin/cd_shrink_webpage/* $(FILESYSTEM_DIR)/boaroot/cgi-bin
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_ETH4_WAN_PORT))
+ifneq ($(strip $(TCSUPPORT_ETH4_WAN_PORT)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adslwan.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_ETH4_WAN_PORT))
+ifeq ($(strip $(TCSUPPORT_ETH4_WAN_PORT)),)
+	mv $(FILESYSTEM_DIR)/boaroot/cgi-bin/adslwan.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/wan.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_MENU_SPEEDUP))
+ifneq ($(strip $(TCSUPPORT_CD_MENU_SPEEDUP)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/menu.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_CD_MENU_SPEEDUP))
+ifeq ($(strip $(TCSUPPORT_CD_MENU_SPEEDUP)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/menu1.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/menu2.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/menu3.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/menu4.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+ifneq ($(strip $(TCSUPPORT_SYSLOG_ENHANCE)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/viewLogs.cgi
+else
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/viewsyslog.cgi; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/viewsyslog.cgi; \
+	fi
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/syslog.asp; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/syslog.asp; \
+	fi
+endif
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/cd_shrink_webpage/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin-cd-style2/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html-cd-style2/
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#endif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot
+	cp -a $(APP_WEBPAGE_DIR)/Router/ct/boaroot $(FILESYSTEM_DIR)
+#	ln -s /tmp/var/romfile.cfg $(FILESYSTEM_DIR)/boaroot/html/romfile.cfg
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/.svn/
+
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/cgi-bin/*
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/html/img/*
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_C1_CUC)
+ifneq ($(strip $(TCSUPPORT_C1_CUC)),)
+	mv $(FILESYSTEM_DIR)/boaroot/html/img/c1_framelogo.jpg $(FILESYSTEM_DIR)/boaroot/html/img/framelogo.jpg
+	mv $(FILESYSTEM_DIR)/boaroot/html/img/c1_logo.jpg $(FILESYSTEM_DIR)/boaroot/html/img/logo.jpg
+	mv $(FILESYSTEM_DIR)/boaroot/cgi-bin/help_content_c1.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/help_content.asp
+	mv $(FILESYSTEM_DIR)/boaroot/cgi-bin/AdslDownInfo_c1.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/AdslDownInfo.asp
+else
+#endif/*TCSUPPORT_COMPILE*/
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/img/c1_*.jpg
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/help_content_c1.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/AdslDownInfo_c1.asp
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_C1_CUC)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ !defined(TCSUPPORT_TRUE_LANDING_PAGE)
+ifeq ($(strip $(TCSUPPORT_TRUE_LANDING_PAGE)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-landingpage.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+ifneq ($(strip $(TCSUPPORT_USBHOST)),)
+	chmod 777 $(FILESYSTEM_DIR)/usr/script/usb_insmod.sh
+endif
+ifneq ($(strip $(TCSUPPORT_CT_E8GUI)),)
+ifneq ($(strip $(TCSUPPORT_CT_FW_UPGRADE_16M)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/before_web_download.sh $(FILESYSTEM_DIR)/usr/script/before_web_download.sh
+	cp $(APP_PRIVATE_DIR)/etc_script/before_web_download_remove_wifi.sh $(FILESYSTEM_DIR)/usr/script/before_web_download_remove_wifi.sh
+	chmod 777 $(FILESYSTEM_DIR)/usr/script/before_web_download_remove_wifi.sh
+	chmod 777 $(FILESYSTEM_DIR)/usr/script/before_web_download.sh
+endif
+ifneq ($(strip $(TCSUPPORT_CT_E8GUI_ONLY)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-natset.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-natset_e8.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-natset.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-natset_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/mag-reset.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/mag-reset_e8.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/mag-reset.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/mag-reset_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-routeset.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-routeset_e8.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-routeset.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-routeset_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-tr069.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-tr069_e8.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-tr069.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-tr069_e8.asp	
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-wanset.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-wanset_e8.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-wanset.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-wanset_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-wlan.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-wlan_e8.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-wlan.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-wlan_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-user.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-user_e8.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-user.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-user_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/qos-clsedit.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/qos-clsedit_e8.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/qos-clsedit.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/qos-clsedit_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-ddns.asp
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_C1_CUC)
+ifneq ($(strip $(TCSUPPORT_C1_CUC)),)
+else
+#endif/*TCSUPPORT_COMPILE*/
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-upnp.asp
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_C1_CUC)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/JS/menu.js
+	cp $(FILESYSTEM_DIR)/boaroot/html/JS/menu_e8.js $(FILESYSTEM_DIR)/boaroot/html/JS/menu.js
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/JS/menu_e8.js
+else
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-natset_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/mag-reset_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-routeset_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-tr069_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-wanset_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-wlan_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-user_e8.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/JS/menu_e8.js
+endif
+ifeq ($(strip $(TCSUPPORT_CT_E8BGUI)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-daily.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/showhis.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/showusb.cgi
+endif
+else
+ifneq ($(strip $(TCSUPPORT_WLAN_RT3390)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT3090)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3090.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3090.asp
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5392)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5390)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_MT7601E)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_MT7592)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5390HL)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_MULTIDRIVER)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp
+endif
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_MT7615E)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_5g.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_mt7615.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_5g.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_mt7615.asp
+endif
+ifneq ($(strip $(TCSUPPORT_TC2031)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_portbinding.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_portbinding_signal_port.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_portbinding.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_portbinding_signal_port.asp
+
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos.asp
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_signal_port.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qos_signal_port.asp
+
+	if test -e $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist.cgi; \
+	then rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist.cgi; \
+	fi
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.cgi $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_qoslist_signal_port.cgi
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CT_PON)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot
+	cp -a $(APP_WEBPAGE_DIR)/Router/e8c/boaroot $(FILESYSTEM_DIR)
+	if test -e $(PROFILE_DIR)/boa.conf; \
+	then cp $(PROFILE_DIR)/boa.conf $(FILESYSTEM_DIR)/boaroot/; \
+	fi
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_PON_GD)
+ifneq ($(strip $(TCSUPPORT_CT_PON_GD)),)
+	cp -a $(APP_WEBPAGE_DIR)/Router/e8c_pon_gd/boaroot $(FILESYSTEM_DIR)
+ifeq ($(strip $(TCSUPPORT_NAND_FLASH)),)
+	cp $(APP_WEBPAGE_DIR)/Router/e8c/boaroot/cgi-bin/RemoteUPGMsg.cgi $(FILESYSTEM_DIR)/boaroot/cgi-bin/RemoteUPGMsg.cgi
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_PON_CY_JX)
+ifneq ($(strip $(TCSUPPORT_CT_PON_CY_JX)),)
+	cp -a $(APP_WEBPAGE_DIR)/Router/e8c/boaroot/html/JS/menu_jx.js $(FILESYSTEM_DIR)/boaroot/html/JS/menu.js
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_JOYME)
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+	cp -a $(APP_WEBPAGE_DIR)/Router/e8c/boaroot/html/JS/menu_joyme.js $(FILESYSTEM_DIR)/boaroot/html/JS/menu.js
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_PON_SK)
+ifeq ($(strip $(TCSUPPORT_CT_PON_SK)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/laserforce.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/lasernormal.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/restorepurefactory.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/test_factory.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/test_info.asp
+endif
+#endif/*TCSUPPORT_COMPILE*/
+ifeq ($(strip $(TCSUPPORT_CT_PON_JX)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/admin.html
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/index.html
+endif
+ifeq ($(strip $(TCSUPPORT_CT_PON_SC)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/reset.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/selfcheck.asp
+endif
+ifeq ($(strip $(TCSUPPORT_CT_PON_CY_JX)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/qos-dslimit.asp
+endif
+ifeq ($(strip $(TCSUPPORT_CT_PON_CQ)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/cqregister.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/cqreset.asp
+endif
+ifeq ($(strip $(TCSUPPORT_CT_FJ)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/resetscreen.asp
+endif
+ifeq ($(strip $(TCSUPPORT_CT_JOYME)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/pushviewupgrade.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/pushviewfinish.asp
+endif
+ifeq ($(strip $(TCSUPPORT_CT_PON_CZ_NX)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/routesetting.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/img/bgroutesetting.jpg
+endif
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/.svn/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CY_E8_SFU) || defined(TCSUPPORT_CT_TY_LOGO)
+ifneq ($(strip $(TCSUPPORT_CY_E8_SFU) $(TCSUPPORT_CT_TY_LOGO)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/img/framelogo.jpg
+	cp $(FILESYSTEM_DIR)/boaroot/html/img/framelogo_cy.jpg $(FILESYSTEM_DIR)/boaroot/html/img/framelogo.jpg
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/img/framelogo_cy.jpg
+
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/img/logo.jpg
+	cp $(FILESYSTEM_DIR)/boaroot/html/img/logo_cy.jpg $(FILESYSTEM_DIR)/boaroot/html/img/logo.jpg
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/img/logo_cy.jpg
+
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/JS/stylemain.css
+	cp $(FILESYSTEM_DIR)/boaroot/html/JS/stylemain_cy.css $(FILESYSTEM_DIR)/boaroot/html/JS/stylemain.css
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/JS/stylemain_cy.css
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_PON_C9)
+ifneq ($(strip $(TCSUPPORT_CT_PON_C9)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/img/framelogo.jpg
+	cp $(FILESYSTEM_DIR)/boaroot/html/img/framelogo_tp.jpg $(FILESYSTEM_DIR)/boaroot/html/img/framelogo.jpg
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/img/framelogo_tp.jpg
+
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/img/logo.jpg
+	cp $(FILESYSTEM_DIR)/boaroot/html/img/logo_tp.jpg $(FILESYSTEM_DIR)/boaroot/html/img/logo.jpg
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/img/logo_tp.jpg
+
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/img/bg.jpg
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/cgi-bin/*
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/html/img/*
+endif
+ifneq ($(strip $(TCSUPPORT_CUC_GUI)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot
+	cp -a $(APP_WEBPAGE_DIR)/Router/cuc/boaroot $(FILESYSTEM_DIR)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/.svn/
+
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/cgi-bin/*
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/html/img/*
+endif
+ifneq ($(strip $(TCSUPPORT_CUC_SFU)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot
+	cp -a $(APP_WEBPAGE_DIR)/Router/sfu/boaroot $(FILESYSTEM_DIR)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/.svn/
+ifeq ($(strip $(TCSUPPORT_VOIP)),)
+	cp $(APP_WEBPAGE_DIR)/Router/sfu/boaroot/cgi-bin/help_NoVoIP.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/help.asp
+	cp $(APP_WEBPAGE_DIR)/Router/sfu/boaroot/cgi-bin/help_content_NoVoIP.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/help_content.asp
+endif
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/cgi-bin/*
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/html/img/*
+endif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_NEWGUI)
+ifneq ($(strip $(TCSUPPORT_CT_NEWGUI)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot
+	cp -a $(APP_WEBPAGE_DIR)/Router/ct_newgui/boaroot $(FILESYSTEM_DIR)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/.svn/
+	
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/cgi-bin/*
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/html/images/*
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CMCC)
+ifneq ($(strip $(TCSUPPORT_CMCC)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot
+	cp -a $(APP_WEBPAGE_DIR)/Router/cmcc/boaroot $(FILESYSTEM_DIR)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/.svn/
+	
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/cgi-bin/*
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/html/img/*
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_PON_CAU)
+ifneq ($(strip $(TCSUPPORT_CT_PON_CAU)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIPSIP.asp
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIPMegaco.asp
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIP.asp
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPUser.asp
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPSIP_Bas.asp
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPSIP_Adv.asp
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPMegaco_Bas.asp
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPMegaco_Adv.asp  
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIP.asp
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-wlan.asp
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/img/framelogo_cy.jpg
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/img/logo_cy.jpg
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/img/framelogo_tp.jpg
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/img/logo_tp.jpg
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/igmpproxy
+endif
+#endif/*TCSUPPORT_COMPILE*/
+ifeq ($(strip $(TCSUPPORT_CT_CUSTOMMENU)),)
+
+
+ifneq ($(strip $(TCSUPPORT_CT_PON) $(TCSUPPORT_CUC_GUI) $(TCSUPPORT_CUC_SFU)),)												
+ifneq ($(strip $(TCSUPPORT_CT_VOIP_H248) $(TCSUPPORT_CT_VOIP_SIP)),)												
+ifneq ($(strip $(TCSUPPORT_CUC_GUI)),)																							
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPMegaco_Adv_ECN.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIP248_Adv.asp											
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPMegaco_Bas_ECN.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIP248.asp											
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIPMegaco_ECN.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIP248.asp											
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPSIP_Adv_ECN.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIP_Adv.asp											
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPSIP_Bas_ECN.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIP.asp											
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIPSIP_ECN.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIP.asp											
+												
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPSIP_Bas_ECN.asp											
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPSIP_Adv_ECN.asp											
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPMegaco_Bas_ECN.asp											
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPMegaco_Adv_ECN.asp											
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIPMegaco_ECN.asp											
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIPSIP_ECN.asp											
+else												
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPMegaco_Adv.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIP248_Adv.asp											
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPMegaco_Bas.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIP248.asp											
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIPMegaco.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIP248.asp											
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPSIP_Adv.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIP_Adv.asp											
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPSIP_Bas.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIP.asp											
+	cp $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIPSIP.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIP.asp											
+												
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPSIP_Bas.asp											
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPSIP_Adv.asp											
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPMegaco_Bas.asp											
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/app-VoIPMegaco_Adv.asp											
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIPMegaco.asp											
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-VoIPSIP.asp																							
+endif
+endif
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CT_WAN_PTM) $(TCSUPPORT_CT_E8B_ADSL)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot
+	cp -a $(APP_WEBPAGE_DIR)/Router/e8b_vd/boaroot $(FILESYSTEM_DIR)
+
+ifeq ($(strip $(TCSUPPORT_CPU_MT7505)),)
+ifneq ($(strip $(TCSUPPORT_CT_E8B_ADSL)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/JS/menu.js
+	cp $(FILESYSTEM_DIR)/boaroot/html/JS/menu_adsl.js $(FILESYSTEM_DIR)/boaroot/html/JS/menu.js
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-binding.asp
+endif
+else
+ifneq ($(strip $(TCSUPPORT_CT_E8B_ADSL)),)
+	if test -e $(PROFILE_DIR)/MT7592_EEPROM_layout_v15_20140806.bin; \
+	then cp -f $(PROFILE_DIR)/MT7592_EEPROM_layout_v15_20140806.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin; \
+	fi
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CT_WAN_PTM)),)
+ifneq ($(strip $(TCSUPPORT_C7_CUC)),)
+	cp -a $(PROFILE_DIR)/img $(FILESYSTEM_DIR)/boaroot/html
+endif
+endif
+	rm -f $(FILESYSTEM_DIR)/boaroot/html/JS/menu_adsl.js
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/.svn/
+
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/cgi-bin/*
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/html/img/*
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CY_PON)
+ifneq ($(strip $(TCSUPPORT_CY_PON)),)
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_SFU_SK)
+ifneq ($(strip $(TCSUPPORT_CT_SFU_SK)),)
+	cp $(PROFILE_DIR)/logo.gif $(FILESYSTEM_DIR)/boaroot/html/logo.gif
+else
+#endif/*TCSUPPORT_COMPILE*/
+	cp $(APP_PRIVATE_DIR)/etc_script/yh/logo.gif $(FILESYSTEM_DIR)/boaroot/html/logo.gif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_SFU_SK)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	if test -e $(PROFILE_DIR)/romfile_f.cfg; \
+	then cp $(PROFILE_DIR)/romfile_f.cfg $(FILESYSTEM_DIR)/userfs/romfile_f.cfg; \
+	fi
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+ifneq ($(strip $(TCSUPPORT_TR069_UPGRADE_CUSTOM)),)
+#rm webpage which not used
+ifeq ($(strip $(TCSUPPORT_SNMP)),) 
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/access_snmp.asp
+endif
+ifeq ($(strip $(TCSUPPORT_WPA_SUPPLICANT)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/getCANames.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/getCertNames.cgi
+endif
+ifeq ($(strip $(TCSUPPORT_TTNET)$(TCSUPPORT_TURKISH)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/more_client_list.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/more_client_list_2.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/more_client_list_3.asp
+endif	
+ifeq ($(strip $(TCSUPPORT_BHARTI)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_deviceinfo_bhati.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/status_log_bhati.cgi
+endif
+ifeq ($(strip $(TCSUPPORT_VOIP)),)
+	rm -rf $(FILESYSTEM_DIR)/userfs/CountrySetting
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/voip_advanced.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/voip_basic.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/voip_busy.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/voip_call_ctrl.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/voip_log.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/voip_media2.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/voip_media.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/voip_media.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/voip_speed_dial.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/voip_speed_dial.cgi
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/navigation-voip.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/help_voip.asp
+endif		
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wifiqa_apstatistics.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wifiqa_advanced.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wifiqa_basic.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/wifiqa_wmm.asp
+
+ifeq ($(strip $(TCSUPPORT_SAMBA)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/access_samba.asp
+endif
+ifeq ($(strip $(TCSUPPORT_FON)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_fonnet.asp
+endif
+ifeq ($(strip $(RA_PARENTALCONTROL)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/access_parental.asp
+endif
+ifeq ($(strip $(TCSUPPORT_6RD)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/adv_6rdtunnel.asp
+endif
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3390.asp
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/home_wireless_RT3090.asp
+
+#rm script which not used
+	rm -f $(FILESYSTEM_DIR)/usr/script/wan_start_ipv4.sh
+	rm -f $(FILESYSTEM_DIR)/usr/script/wan_start_ipv6.sh
+ifneq ($(strip $(TCSUPPORT_CWMP)),)	
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/igd
+endif
+#rm app which not used
+ifeq ($(strip(TCSUPPORT_TRACEROUTE)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/traceroute
+endif
+#until now, qos function of main trunk does not use tc tool,so just rm it 
+	rm -f $(FILESYSTEM_DIR)/usr/bin/tc
+ifeq ($(strip $(TC3262_DRIVERS)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/mpstat
+endif
+	rm -f $(FILESYSTEM_DIR)/usr/bin/atmcmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/atmphxcmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/adslcmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/adslphxcmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/wlancmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/wlanphxcmd	
+endif
+
+#remove extra webpages,fredli
+#remove voip webpages
+ifeq ($(strip $(TCSUPPORT_VOIP)),)
+	find $(FILESYSTEM_DIR)/boaroot/cgi-bin/ -name "*voip*"  | xargs rm -rf
+endif
+#remove cwmp webpages
+ifeq ($(strip $(TCSUPPORT_CWMP)),)
+	find $(FILESYSTEM_DIR)/boaroot/cgi-bin/ -name "*cwmp*" | xargs rm -rf
+endif
+#remove samba webpages
+ifeq ($(strip $(TCSUPPORT_SAMBA)),)
+	find $(FILESYSTEM_DIR)/boaroot/cgi-bin/ -name "*samba*" | xargs rm -rf
+endif
+
+ifneq ($(strip $(TCSUPPORT_CODE_SHRINK)),)
+	cd $(FILESYSTEM_DIR)/boaroot/cgi-bin/ && ls|grep -v "WizardOi" > ctrl.txt
+	cd $(TOOLS_DIR)/reducer/ && gcc -o Reducer Reducer.c
+	if test -e $(TOOLS_DIR)/reducer/Reducer; \
+	then cp $(TOOLS_DIR)/reducer/Reducer $(FILESYSTEM_DIR)/boaroot/cgi-bin/; \
+	cd $(FILESYSTEM_DIR)/boaroot/cgi-bin/ && ./Reducer; \
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/*.bak; \
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/Reducer; \
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/ctrl.txt; \
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/basic.pbb; \
+	rm -f $(TOOLS_DIR)/reducer/Reducer; \
+	echo "Reducer successful!"; \
+	else echo "Reducer failed!"; \
+	fi
+endif
+ifneq ($(strip $(TCSUPPORT_CODE_SHRINK)),)
+#if/*TCSUPPORT_COMPILE*/ defined(WIZARD_OI_GUI)
+ifneq ($(strip $(WIZARD_OI_GUI)),)
+	cd $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/ > ctrl.txt
+	cd $(TOOLS_DIR)/reducer/ && gcc -o Reducer Reducer.c
+	if test -e $(TOOLS_DIR)/reducer/Reducer; \
+	then cp $(TOOLS_DIR)/reducer/Reducer $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/; \
+	cd $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/ && ./Reducer; \
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/*.bak; \
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/Reducer; \
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/ctrl.txt; \
+	rm -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/WizardOi/basic.pbb; \
+	rm -f $(TOOLS_DIR)/reducer/Reducer; \
+	echo "Reducer successful!"; \
+	else echo "Reducer failed!"; \
+	fi
+endif
+#endif/*TCSUPPORT_COMPILE*/
+endif
+ifeq ($(strip $(TCSUPPORT_SSH)),)
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/dropbear
+endif
+
+ifneq ($(strip $(TCSUPPORT_SYSLOG_ENHANCE)),)
+#ln /dev/log for syslogd
+#	ln -s /tmp/log $(FILESYSTEM_DIR)/dev/log
+	$(MAKE) -C $(APP_PUBLIC_DIR)/boa-asp/LogFileParser 
+	if test -e $(APP_PUBLIC_DIR)/boa-asp/LogFileParser/LogFileParser; \
+	then echo "Compile LogFileParser success"; \
+	else echo "Compile LogFileParser error!"; exit 1; \
+	fi
+	cp $(APP_PUBLIC_DIR)/boa-asp/LogFileParser/LogFileParser $(FILESYSTEM_DIR)/usr/bin
+endif
+
+	ln -s /tmp/var/romfile.cfg $(FILESYSTEM_DIR)/boaroot/html/romfile.cfg
+ifneq ($(strip $(TCSUPPORT_INIC_HOST)),)
+	ln -s /tmp/VDSL_CO_romfile $(FILESYSTEM_DIR)/boaroot/html/VDSL_CO_romfile.cfg
+endif	
+ifneq ($(strip $(TCSUPPORT_SYSLOG_ENHANCE)),)
+	ln -s /var/log/currLogFile $(FILESYSTEM_DIR)/boaroot/html/syslog.xlog
+else
+ifneq ($(strip $(TCSUPPORT_CUC)),)
+	ln -s /var/log/currLogFile $(FILESYSTEM_DIR)/boaroot/html/syslog.txt
+else
+	ln -s /tmp/var/log/messages $(FILESYSTEM_DIR)/boaroot/html/syslog.log
+endif
+endif
+	rm -rf $(FILESYSTEM_DIR)/boaroot/html/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/.svn/
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin/.svn/
+	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CD_NEW_GUI)
+ifneq ($(strip $(TCSUPPORT_CD_NEW_GUI)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/boa.conf
+	cp -a $(FILESYSTEM_DIR)/boaroot/boa_CD.conf $(FILESYSTEM_DIR)/boaroot/boa.conf
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	rm -f $(FILESYSTEM_DIR)/boaroot/boa_CD.conf
+	
+	chmod 777 $(FILESYSTEM_DIR)/boaroot/cgi-bin/*
+#endif //TC_RELEASE_BUILD
+#ln tmp,etc & linuxrc
+	rm -f $(FILESYSTEM_DIR)/var
+	ln -s /tmp/var $(FILESYSTEM_DIR)/var
+	rm -f $(FILESYSTEM_DIR)/etc
+	ln -s /tmp/etc $(FILESYSTEM_DIR)/etc
+	rm -f $(FILESYSTEM_DIR)/linuxrc
+	ln -s bin/busybox $(FILESYSTEM_DIR)/linuxrc	
+	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_USB)
+ifneq ($(strip $(TCSUPPORT_CT_USB)),)
+	rm -f $(FILESYSTEM_DIR)/mnt
+	ln -s /tmp/mnt $(FILESYSTEM_DIR)/mnt
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if defined(TCSUPPORT_FTP_USB)
+ifneq ($(strip $(TCSUPPORT_FTP_USB)),)
+	rm -f $(FILESYSTEM_DIR)/mnt
+	ln -s /tmp/mnt $(FILESYSTEM_DIR)/mnt
+endif
+#endif
+
+	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+ifneq ($(strip $(TCSUPPORT_SYSLOG)),)
+#ln /dev/log for syslogd
+#	ln -s /tmp/log $(FILESYSTEM_DIR)/dev/log
+	ln -s -f /var/log/currLogFile  $(FILESYSTEM_DIR)/boaroot/html/syslog.txt
+	cp $(APP_PUBLIC_DIR)/boa-asp/LogFileParser/LogFileParser $(FILESYSTEM_DIR)/usr/bin
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+ifeq ($(strip $(TCSUPPORT_CT)),)
+#endif/*TCSUPPORT_COMPILE*/
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/boa.conf
+	cp -a $(APP_ETC_SCRIPT_DIR)/boa_mt751020.conf $(FILESYSTEM_DIR)/boaroot/boa.conf
+ifneq ($(strip $(TCSUPPORT_CHINESE_ONLY)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/boa.conf
+	cp -a $(APP_ETC_SCRIPT_DIR)/boa_mt751020_chinese.conf $(FILESYSTEM_DIR)/boaroot/boa.conf
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7520)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/boa.conf
+	cp -a $(APP_ETC_SCRIPT_DIR)/boa_mt751020.conf $(FILESYSTEM_DIR)/boaroot/boa.conf
+ifneq ($(strip $(TCSUPPORT_CHINESE_ONLY)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/boa.conf
+	cp -a $(APP_ETC_SCRIPT_DIR)/boa_mt751020_chinese.conf $(FILESYSTEM_DIR)/boaroot/boa.conf
+endif
+endif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_UPLOAD_ALLINONE)
+ifneq ($(strip $(TCSUPPORT_CT_UPLOAD_ALLINONE)),)
+ifneq ($(strip $(TCSUPPORT_CT_DUAL_IMAGE) $(TCSUPPORT_CUC_DUAL_IMAGE)),)
+	rm -f $(FILESYSTEM_DIR)/boaroot/boa.conf
+	cp -a $(APP_ETC_SCRIPT_DIR)/ct/boa.conf $(FILESYSTEM_DIR)/boaroot/boa.conf
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_PON_SLAVEIMAGE)
+ifneq ($(strip $(TCSUPPORT_CT_PON_SLAVEIMAGE)),)
+#rm gui
+	mkdir $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp	
+	cp -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/content.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp
+	cp -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-wanset.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp
+	cp -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-dhcp.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp
+	cp -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/net-tr069.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp
+	cp -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-device.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp
+	cp -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-user.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp
+	cp -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/sta-network.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp
+	cp -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/logout.cgi $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp
+	cp -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/index.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp
+	cp -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/index2.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp
+#	cp -f $(FILESYSTEM_DIR)/boaroot/cgi-bin/index3.asp $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp
+
+	rm -rf $(FILESYSTEM_DIR)/boaroot/cgi-bin
+	mv $(FILESYSTEM_DIR)/boaroot/cgi-bin_tmp $(FILESYSTEM_DIR)/boaroot/cgi-bin
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+ifneq ($(strip $(TCSUPPORT_DMT_CO)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/boa
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/bftpd
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/dhcrelay
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/dnsmasq
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/ethphxcmd
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/ez-ipupdate
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/igmpproxy
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/inetd
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/ntpclient
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/pppoe-relay
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/ripd
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/skbmgr
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/upnpd
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/vconfig
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/zebra
+	rm -f $(FILESYSTEM_DIR)/usr/bin/adslphxcmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/algcmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/atmphxcmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/portbindcmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/pppd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/tc
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	rm -rf $(FILESYSTEM_DIR)/boaroot/
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/boa
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/bftpd
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/dhcrelay
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/dnsmasq
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/ez-ipupdate
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/igmpproxy
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/inetd
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/ntpclient
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/pppoe-relay
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/ripd
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/skbmgr
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/upnpd
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/vconfig
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/zebra
+	rm -f $(FILESYSTEM_DIR)/usr/bin/adslphxcmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/algcmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/atmphxcmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/portbindcmd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/pppd
+	rm -f $(FILESYSTEM_DIR)/usr/bin/tc
+
+	#voip
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/sipclient
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/mgapp
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/tcVoIPApiServer
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/evcom
+	
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512) $(TCSUPPORT_CPU_EN7521)),)
+	rm -f $(FILESYSTEM_DIR)/lib/modules/pcm*
+	rm -f $(FILESYSTEM_DIR)/lib/modules/slic*
+	rm -f $(FILESYSTEM_DIR)/lib/modules/ovdsp.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/ortp.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/foip.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/lec.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/ksocket.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/fxs3.ko
+endif
+
+	rm -f $(FILESYSTEM_DIR)/lib/libgcc_s.so
+endif
+
+fwbuild:
+ifneq ($(strip $(TCSUPPORT_INIC_CLIENT)),)
+	rm -rf $(INIC_CLIENT_FILE_DIR)
+endif
+
+ifneq ($(strip $(TCSUPPORT_CUSKITBUILD)),)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	if test -e $(PROFILE_DIR)/romfile.cfg; \
+	then cp $(PROFILE_DIR)/romfile.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg; \
+	fi
+	if test -e $(PROFILE_DIR)/romfile_f.cfg; \
+	then cp $(PROFILE_DIR)/romfile_f.cfg $(FILESYSTEM_DIR)/userfs/romfile_f.cfg; \
+	fi	
+	if test -e $(PROFILE_DIR)/romfile_vdsl.cfg; \
+	then cp $(PROFILE_DIR)/romfile_vdsl.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg; \
+	fi
+	if test -e $(PROFILE_DIR)/romfile_vdsl_f.cfg; \
+	then cp $(PROFILE_DIR)/romfile_vdsl_f.cfg $(FILESYSTEM_DIR)/userfs/romfile_f.cfg; \
+	fi
+	if test -e $(PROFILE_DIR)/romfile_epon.cfg; \
+	then cp $(PROFILE_DIR)/romfile_epon.cfg $(FILESYSTEM_DIR)/userfs/romfile_epon.cfg; \
+	fi
+	if test -e $(PROFILE_DIR)/tc3162_dmt.ko; \
+	then cp $(PROFILE_DIR)/tc3162_dmt.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko; \
+	fi
+	if test -e $(PROFILE_DIR)/deviceParaStatic.conf; \
+	then cp $(PROFILE_DIR)/deviceParaStatic.conf $(FILESYSTEM_DIR)/usr/etc/deviceParaStatic.conf; \
+	fi	
+	if test -e $(PROFILE_DIR)/devInf.conf; \
+	then cp $(PROFILE_DIR)/devInf.conf $(FILESYSTEM_DIR)/usr/etc/devInf.conf; \
+	fi
+	if test -e $(PROFILE_DIR)/led.conf; \
+	then cp $(PROFILE_DIR)/led.conf $(FILESYSTEM_DIR)/userfs/led.conf; \
+	dos2unix $(FILESYSTEM_DIR)/userfs/led.conf; \
+	fi
+endif
+endif
+
+#we create new romfile(with crc checksum) and put it in filesystem,so before creating rootfs,must execute buildromfile.sh first
+ifneq ($(strip $(TCSUPPORT_CT_BACKUPROMFILEENCHANCEMENT)),)
+	cp $(FILESYSTEM_DIR)/userfs/romfile.cfg $(APP_TCLINUXBUILDER_DIR)
+	cd $(APP_TCLINUXBUILDER_DIR) && chmod 777 buildromfile.sh && ./buildromfile.sh
+	if test -e $(FILESYSTEM_DIR)/userfs/ctromfile.cfg; \
+	then echo "Compile ctromfile.cfg success"; \
+	else echo "Compile ctromfile.cfg error!"; exit 1; \
+	fi
+	rm -f $(FILESYSTEM_DIR)/userfs/romfile.cfg
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_ZIPROMFILE)
+ifneq ($(strip $(TCSUPPORT_CT_ZIPROMFILE)),)
+	cp -f $(FILESYSTEM_DIR)/userfs/ctromfile.cfg ctromfile.cfg
+	tar -czvf romfile.gz ctromfile.cfg
+	rm -f $(APP_TCLINUXBUILDER_DIR)/ctromfile.cfg
+	mv -f romfile.gz $(FILESYSTEM_DIR)/userfs/ctromfile.cfg	
+endif
+#endif/*TCSUPPORT_COMPILE*/
+ifneq ($(strip $(TCSUPPORT_CT_PON_CY) $(TCSUPPORT_CT_PROLINE_SUPPORT)),)
+	cp $(FILESYSTEM_DIR)/userfs/romfile_f.cfg $(APP_TCLINUXBUILDER_DIR)
+	cd $(APP_TCLINUXBUILDER_DIR) && chmod 777 buildromfile_f.sh && ./buildromfile_f.sh
+	if test -e $(FILESYSTEM_DIR)/userfs/ctromfile_f.cfg; \
+	then echo "Compile ctromfile_f.cfg success"; \
+	else echo "Compile ctromfile_f.cfg error!"; exit 1; \
+	fi
+#	rm -f $(FILESYSTEM_DIR)/userfs/romfile_f.cfg
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_ZIPROMFILE)
+ifneq ($(strip $(TCSUPPORT_CT_ZIPROMFILE)),)
+	cp -f $(FILESYSTEM_DIR)/userfs/ctromfile_f.cfg ctromfile.cfg
+	tar -czvf romfile_f.gz ctromfile.cfg
+	rm -f $(APP_TCLINUXBUILDER_DIR)/ctromfile.cfg
+	mv -f romfile_f.gz $(FILESYSTEM_DIR)/userfs/ctromfile_f.cfg	
+endif
+#endif/*TCSUPPORT_COMPILE*/
+endif
+	if test -e $(FILESYSTEM_DIR)/userfs/romfile_epon.cfg; \
+	then cp $(FILESYSTEM_DIR)/userfs/romfile_epon.cfg $(APP_TCLINUXBUILDER_DIR); \
+	cd $(APP_TCLINUXBUILDER_DIR) && chmod 777 buildromfile_epon.sh && ./buildromfile_epon.sh; \
+	if test -e $(FILESYSTEM_DIR)/userfs/ctromfile_epon.cfg; \
+	then echo "Compile ctromfile_epon.cfg success"; \
+	else echo "Compile ctromfile_epon.cfg error!"; exit 1; \
+	fi; \
+	rm -f $(FILESYSTEM_DIR)/userfs/romfile_epon.cfg; \
+	fi
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_ZIPROMFILE)
+ifneq ($(strip $(TCSUPPORT_CT_ZIPROMFILE)),)
+	if test -e $(FILESYSTEM_DIR)/userfs/ctromfile_epon.cfg; \
+	then cp -f $(FILESYSTEM_DIR)/userfs/ctromfile_epon.cfg ctromfile.cfg; \
+	tar -czvf romfile_f.gz ctromfile.cfg; \
+	rm -f $(APP_TCLINUXBUILDER_DIR)/ctromfile.cfg; \
+	mv -f romfile_f.gz $(FILESYSTEM_DIR)/userfs/ctromfile_epon.cfg; \
+	fi	
+endif
+#endif/*TCSUPPORT_COMPILE*/
+endif
+
+	rm -rf $(TRUNK_DIR)/tmpfilesys
+	mkdir $(TRUNK_DIR)/tmpfilesys
+	cp -rf $(FILESYSTEM_DIR) $(TRUNK_DIR)/tmpfilesys
+
+	find $(TRUNK_DIR)/tmpfilesys -name ".svn" | xargs rm -rf
+	find $(TRUNK_DIR)/tmpfilesys -name "CVS" | xargs rm -rf
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_C1_CUC)
+ifneq ($(strip $(TCSUPPORT_C1_CUC)),)
+	cp $(PROJECT_DIR)/profile/CT/C1_CUC/deviceParaStatic.conf $(FILESYSTEM_DIR)/usr/etc/deviceParaStatic.conf
+	cp $(PROJECT_DIR)/profile/CT/C1_CUC/led.conf $(FILESYSTEM_DIR)/userfs/led.conf
+	cp $(PROJECT_DIR)/profile/CT/C1_CUC/romfile.cfg $(FILESYSTEM_DIR)/userfs/romfile.cfg
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+ifneq ($(strip $(TCSUPPORT_CODE_SHRINK)),)
+	$(STRIP) --strip-unneeded -R .comment  $(TRUNK_DIR)/tmpfilesys/filesystem/usr/bin/*
+	$(STRIP) --strip-unneeded -R .comment  $(TRUNK_DIR)/tmpfilesys/filesystem/userfs/bin/*
+#	$(STRIP) --strip-unneeded -R .comment  $(TRUNK_DIR)/tmpfilesys/filesystem/lib/modules/*
+endif
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_C5_HEN_SFU) || defined(TCSUPPORT_C1_ZY_SFU)
+ifneq ($(strip $(TCSUPPORT_CT_C5_HEN_SFU) $(TCSUPPORT_C1_ZY_SFU)),)
+	if test -e $(PROFILE_DIR)/rootfs_reduce.sh; \
+	then echo " reduce rootfs "; \
+		chmod 777 $(PROFILE_DIR)/rootfs_reduce.sh; \
+		/bin/sh $(PROFILE_DIR)/rootfs_reduce.sh $(TRUNK_DIR)/tmpfilesys/filesystem; \
+	fi
+endif
+#endif/*TCSUPPORT_COMPILE*/
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	$(TOOLS_DIR)/mksquashfs4 $(TRUNK_DIR)/tmpfilesys/filesystem $(TRUNK_DIR)/rootfs -comp lzma -nopad -noappend
+else
+	$(TOOLS_DIR)/mksquashfs-lzma $(TRUNK_DIR)/tmpfilesys/filesystem $(TRUNK_DIR)/rootfs -be -noappend
+endif
+	
+	cp $(TRUNK_DIR)/rootfs $(APP_TCLINUXBUILDER_DIR)
+	rm -f $(TRUNK_DIR)/rootfs
+	cp $(KERNEL_DIR)/linux.7z $(APP_TCLINUXBUILDER_DIR)
+
+#build slave image
+ifneq ($(strip $(TCSUPPORT_CT_DUAL_IMAGE)),)
+ifeq ($(strip $(TCSUPPORT_CT_PON)),)
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave
+	mkdir $(TRUNK_DIR)/tmpfilesys_slave
+	
+	cp -rf $(FILESYSTEM_DIR) $(TRUNK_DIR)/tmpfilesys_slave
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	$(STRIP) --strip-unneeded -R .comment  $(TRUNK_DIR)/tmpfilesys_slave/filesystem/usr/bin/*
+	$(STRIP) --strip-unneeded -R .comment  $(TRUNK_DIR)/tmpfilesys_slave/filesystem/userfs/bin/*
+	$(STRIP) --strip-unneeded -R .comment  $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/*.so
+endif
+
+#rm wifi drivers
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/rt3390ap.ko
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/rt3090ap.ko
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/rt5390ap.ko
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/rt3593ap.ko
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/usr/etc/Wireless/RT2860AP/
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/usr/etc/Wireless/RT61AP
+	
+#ifneq ($(strip $(TCSUPPORT_WLAN_WPS)),)
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/usr/etc/xml
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/usr/bin/wscd
+#endif
+
+#rm usb drivers
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/usbhost
+
+#rm dlna
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/userfs/dlna
+	
+#rm tc
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/usr/bin/tc
+		
+#rm voip
+#ifneq ($(strip $(TCSUPPORT_VOIP)),)
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/pcm*
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/slic*
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/ovdsp.ko
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/ortp.ko
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/foip.ko
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/lec.ko
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/ksocket.ko
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/fxs3.ko
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/userfs/bin/sipclient
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/userfs/bin/evcom
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/userfs/bin/mgapp
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/userfs/bin/tcVoIPApiServer
+#	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/userfs/bin/voipmgr
+#endif
+		
+#rm kernel file
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/2.6.36/kernel/net/sched/
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/lib/modules/2.6.36/kernel/net/sunrpc/
+	
+#rm gui
+#	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin
+#	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/html
+	mkdir $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp	
+	cp -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin/content.asp $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp
+	cp -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin/net-wanset.asp $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp
+	cp -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin/net-dhcp.asp $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp
+	cp -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin/net-tr069.asp $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp
+	cp -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin/sta-device.asp $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp
+	cp -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin/sta-user.asp $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp
+	cp -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin/sta-network.asp $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp
+	cp -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin/logout.cgi $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp
+	cp -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin/index.asp $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp
+	cp -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin/index2.asp $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp
+#	cp -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin/index3.asp $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp
+
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin
+	mv $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin_tmp $(TRUNK_DIR)/tmpfilesys_slave/filesystem/boaroot/cgi-bin
+
+
+	find $(TRUNK_DIR)/tmpfilesys_slave -name ".svn" | xargs rm -rf
+	find $(TRUNK_DIR)/tmpfilesys_slave -name "CVS" | xargs rm -rf
+	
+ifneq ($(strip $(TCSUPPORT_CODE_SHRINK)),)
+	$(STRIP) --strip-unneeded -R .comment  $(TRUNK_DIR)/tmpfilesys_slave/filesystem/usr/bin/*
+	$(STRIP) --strip-unneeded -R .comment  $(TRUNK_DIR)/tmpfilesys_slave/filesystem/userfs/bin/*
+endif
+
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	$(TOOLS_DIR)/mksquashfs4 $(TRUNK_DIR)/tmpfilesys_slave/filesystem $(TRUNK_DIR)/rootfs_slave -comp lzma -nopad -noappend
+else
+	$(TOOLS_DIR)/mksquashfs-lzma $(TRUNK_DIR)/tmpfilesys_slave/filesystem $(TRUNK_DIR)/rootfs_slave -be -noappend
+endif
+
+	cp $(TRUNK_DIR)/rootfs_slave $(APP_TCLINUXBUILDER_DIR)
+	rm -f $(TRUNK_DIR)/rootfs_slave
+	rm -rf $(TRUNK_DIR)/tmpfilesys_slave
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT_BACKUPROMFILEENCHANCEMENT)),)
+ifneq ($(strip $(TCSUPPORT_CT_PON_CY) $(TCSUPPORT_CT_PROLINE_SUPPORT)),)
+	cp $(FILESYSTEM_DIR)/userfs/ctromfile_f.cfg $(APP_TCLINUXBUILDER_DIR)
+else
+	cp $(FILESYSTEM_DIR)/userfs/ctromfile.cfg $(APP_TCLINUXBUILDER_DIR)
+endif
+else
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CY_PON)
+ifneq ($(strip $(TCSUPPORT_CY_PON)),)
+	if test -e $(FILESYSTEM_DIR)/userfs/romfile_f.cfg; \
+	then cp $(FILESYSTEM_DIR)/userfs/romfile_f.cfg $(APP_TCLINUXBUILDER_DIR); \
+	fi
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	cp $(FILESYSTEM_DIR)/userfs/romfile.cfg $(APP_TCLINUXBUILDER_DIR)
+endif
+	cd $(APP_TCLINUXBUILDER_DIR) && ./buildImage.sh
+	cp $(APP_TCLINUXBUILDER_DIR)/tclinux.bin $(PROJECT_DIR)/images	
+ifneq ($(strip $(TCSUPPORT_BOOTROM_LARGE_SIZE)),)
+ifneq ($(strip $(TCSUPPORT_BB_NAND)),)
+	cp $(APP_TCLINUXBUILDER_DIR)/tclinux_allinone $(PROJECT_DIR)/images/tclinux_allinone_spi
+	cp $(APP_TCLINUXBUILDER_DIR)/tclinux_allinone.swap $(PROJECT_DIR)/images/tclinux_allinone_spi.swap
+	cp $(APP_TCLINUXBUILDER_DIR)/tclinux_allinone_nand $(PROJECT_DIR)/images
+	cp $(APP_TCLINUXBUILDER_DIR)/tclinux_allinone_nand.swap $(PROJECT_DIR)/images
+else
+	cp $(APP_TCLINUXBUILDER_DIR)/tclinux_allinone $(PROJECT_DIR)/images
+	cp $(APP_TCLINUXBUILDER_DIR)/tclinux_allinone.swap $(PROJECT_DIR)/images
+endif
+else	
+	cp $(APP_TCLINUXBUILDER_DIR)/tclinux_allinone $(PROJECT_DIR)/images
+	cp $(APP_TCLINUXBUILDER_DIR)/tclinux_allinone.swap $(PROJECT_DIR)/images
+endif
+ifneq ($(strip $(TCSUPPORT_CT_DUAL_IMAGE)),)
+ifeq ($(strip $(TCSUPPORT_CT_PON)),)
+	cp $(APP_TCLINUXBUILDER_DIR)/tclinux_slave.bin $(PROJECT_DIR)/images
+else
+ifneq ($(strip $(TCSUPPORT_CY_E8_SFU)),)
+	cp $(APP_TCLINUXBUILDER_DIR)/tclinux_slave.bin $(PROJECT_DIR)/images
+endif
+ifneq ($(strip $(TCSUPPORT_CT_PON_SMALLSYSTEM)),)
+	cp $(APP_TCLINUXBUILDER_DIR)/small_slave.bin $(PROJECT_DIR)/images/tclinux_slave.bin
+endif
+endif
+endif
+	rm -rf $(TRUNK_DIR)/tmpfilesys
+
+#Copy MT7515 tclinux_allinone to filesystem/userfs/VDSL_CO_file
+ifneq ($(strip $(TCSUPPORT_INIC_CLIENT)),)
+	mkdir -p $(INIC_CLIENT_FILE_DIR)
+	cp $(INIC_CLIENT_FILE_BACKUP_DIR)/bootext.ram $(INIC_CLIENT_FILE_DIR)
+	cp $(PROJECT_DIR)/images/tclinux_allinone $(INIC_CLIENT_FILE_DIR)/VDSL_CO_allinone
+	cp $(FILESYSTEM_DIR)/userfs/romfile.cfg $(INIC_CLIENT_FILE_DIR)/VDSL_CO_default_romfile
+	cp $(APP_PRIVATE_DIR)/etc_script/dmt_co/rcS_bak $(FILESYSTEM_DIR)/usr/etc/init.d/rcS
+endif
+
+devkitgen:
+ifeq ($(strip $(RELEASEBSP)),)
+ifeq ($(strip $(CUSTOMERRELEASE)),)
+	rm -rf ../evo_dk
+	mkdir ../evo_dk
+	mkdir -p ../evo_dk/apps/private
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	mkdir ../evo_dk/linux-2.6.36
+	cp $(KERNEL_DIR)/linux.7z ../evo_dk/linux-2.6.36/.
+else
+	mkdir ../evo_dk/linux
+	cp $(KERNEL_DIR)/linux.7z ../evo_dk/linux/.
+endif
+	cp -rf $(TRUNK_DIR)/filesystem ../evo_dk/
+	cp -rf $(TRUNK_DIR)/Makefile ../evo_dk/
+	cp -rf $(TRUNK_DIR)/Project ../evo_dk/
+	cp -rf $(TOOLS_DIR) ../evo_dk/
+	cp -rf $(APP_TCLINUXBUILDER_DIR) ../evo_dk/apps/private/
+	
+	cp -rf $(APP_DIR)/make* ../evo_dk/apps/
+	cp -rf $(APP_DIR)/release* ../evo_dk/apps/
+	mkdir ../evo_dk/bootrom
+	cp -rf $(BOOTROM_DIR)/make_bootbase ../evo_dk/bootrom/
+	mkdir ../evo_dk/modules
+	cp -rf $(MODULE_DIR)/make_modules ../evo_dk/modules/
+	mkdir -p ../evo_dk/app_bsp/bsp_exclusive
+	mkdir -p ../evo_dk/app_bsp/API
+	cp -rf $(APP_BSP_DIR)/make_app_bsp ../evo_dk/app_bsp/
+	cp -rf $(APP_BSP_EXCLUSIVE_DIR)/make_bsp_exclusive ../evo_dk/app_bsp/bsp_exclusive
+	cp -rf $(APP_BSP_API_DIR)/make_api ../evo_dk/app_bsp/API
+	echo -n "osbnq fakeroot make PROFILE=" > ../evo_dk/build.sh
+	echo -n $(PROFILE) >> ../evo_dk/build.sh
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	echo " CUSTOM=CT TCSUPPORT_CUSKITBUILD=y fwgen" >> ../evo_dk/build.sh
+else
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512)),)
+	echo " fwgen" >> ../evo_dk/build.sh
+else
+ifneq ($(strip $(KERNEL_2_6_36)),)
+	echo " KERNEL_2_6_36=1 fwgen" >> ../evo_dk/build.sh
+else
+	echo " fwgen" >> ../evo_dk/build.sh
+endif
+endif
+
+endif
+else
+	echo " fwgen" >> ../evo_dk/build.sh
+endif
+	echo "mtkbuild -s -o Project/images" >> ../evo_dk/build.sh
+	chmod a+x ../evo_dk/build.sh
+# remove files
+	rm ../evo_dk/Project/images/tclinux*
+	rm ../evo_dk/apps/private/tclinux_builder/tclinux*
+	tar -czvf ../devkit_$(TCPLATFORM)_`date +%Y%m%d`.tgz ../evo_dk/
+	rm -rf ../evo_dk/ 
+endif
+endif

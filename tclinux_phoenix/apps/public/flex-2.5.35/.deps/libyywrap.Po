@@ -1,0 +1,4 @@
+libyywrap.o: libyywrap.c \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdc-predef.h
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdc-predef.h:

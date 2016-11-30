@@ -1,0 +1,14 @@
+kernel/drivers/mtd/mtd.ko
+kernel/drivers/mtd/mtdchar.ko
+kernel/drivers/mtd/mtd_blkdevs.ko
+kernel/drivers/mtd/mtdblock.ko
+kernel/drivers/mtd/chips/chipreg.ko
+kernel/drivers/mtd/chips/cfi_probe.ko
+kernel/drivers/mtd/chips/cfi_util.ko
+kernel/drivers/mtd/chips/gen_probe.ko
+kernel/drivers/mtd/chips/jedec_probe.ko
+kernel/drivers/mtd/chips/newspiflash.ko
+kernel/drivers/mtd/maps/tc3162-flash.ko
+kernel/drivers/mtd/nand/nand.ko
+kernel/drivers/mtd/nand/nand_ecc.ko
+kernel/drivers/mtd/nand/nand_ids.ko

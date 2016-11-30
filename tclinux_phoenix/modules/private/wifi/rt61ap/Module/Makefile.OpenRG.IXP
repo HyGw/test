@@ -1,0 +1,86 @@
+# Comment/uncomment the following line to enable/disable debugging
+RGSRC = ../../../
+include $(RGSRC)/envir.mak
+
+# Support AP client function
+#HAS_APCLIENT=y
+
+# Support IGMP snooping function
+#HAS_IGMPSNOOPING=y
+
+# Support Block Net-If during TxSw queue full.
+#HAS_BLOCK_NET_IF=y
+
+# Support Carrier Detection
+#HAS_CARRIER_DETECTION=y
+
+#ifdef WSC_SUPPORT
+# Support WSC function
+HAS_WSC=y
+#endif // WSC_SUPPORT //
+
+RA_WFLAG= -DMBSS_SUPPORT -DAGGREGATION_SUPPORT -DWDS_SUPPORT -DWMM_SUPPORT
+
+ifeq ($(HAS_APCLIENT),y)
+RA_WFLAG += -DAPCLI_SUPPORT
+endif
+
+ifeq ($(HAS_IGMPSNOOPING),y)
+RA_WFLAG += -DIGMP_SNOOP_SUPPORT
+endif
+
+ifeq ($(HAS_BLOCK_NET_IF),y)
+RA_WFLAG += -DBLOCK_NET_IF
+endif
+
+ifeq ($(HAS_CARRIER_DETECTION),y)
+RA_WFLAG += -DCARRIER_DETECTION_SUPPORT
+endif
+
+#ifdef WSC_SUPPORT
+ifeq ($(HAS_WSC),y)
+RA_WFLAG += -DWSC_SUPPORT
+endif
+#endif // WSC_SUPPORT //
+
+MOD_CFLAGS= -O2 -I. $(RA_WFLAG) -DBIG_ENDIAN -DLinux -DDBG -DRALINK_ATE
+
+MOD_TARGET = rt61ap.o
+
+O_OBJS_$(MOD_TARGET)= rtmp_main.o rtmp_task.o mlme.o connect.o sync.o assoc.o auth.o auth_rsp.o rtmp_data.o rtmp_init.o sanity.o rtmp_wep.o rtmp_info.o eeprom.o soft_ap.o md5.o wpa.o rtmp_tkip.o dls.o
+
+ifeq ($(HAS_APCLIENT),y)
+O_OBJS_$(MOD_TARGET)+= 	sta_auth.o	\
+						sta_assoc.o	\
+						sta_sync.o	\
+						sta_ctrl.o	\
+						rtmp_apcli.o	\
+						rtmp_apcli_iparp.o	\
+						rtmp_apcli_pppoe.o	\
+						sta_mlme.o
+endif
+
+ifeq ($(HAS_IGMPSNOOPING),y)
+O_OBJS_$(MOD_TARGET) += rtmp_igmpSnoop.o
+endif
+
+ifeq ($(HAS_BLOCK_NET_IF),y)
+O_OBJS_$(MOD_TARGET) += netif_block.o
+endif
+
+#ifdef WSC_SUPPORT
+ifeq ($(HAS_WSC),y)
+O_OBJS_$(MOD_TARGET) += wsc.o	\
+						wsc_tlv.o	\
+						sha2.o	\
+						hmac.o	\
+						evp_enc.o	\
+						dh_key.o
+endif
+#endif // WSC_SUPPORT //
+
+all: $(MOD_TARGET)
+#Put the 8051 bin file to the ramdisk
+RAMDISK_ETC_FILES=RT61AP.dat RT2561.bin RT2561S.bin RT2661.bin
+
+include $(RGMK)

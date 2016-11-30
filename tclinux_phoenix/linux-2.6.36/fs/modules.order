@@ -1,0 +1,7 @@
+kernel/fs/fat/msdos.ko
+kernel/fs/nls/nls_cp437.ko
+kernel/fs/nls/nls_cp936.ko
+kernel/fs/nls/nls_ascii.ko
+kernel/fs/nfs/nfs.ko
+kernel/fs/lockd/lockd.ko
+kernel/fs/fuse/fuse.ko

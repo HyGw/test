@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=/usr
+datarootdir=${prefix}/share
+datadir=${datarootdir}
+libdir=${exec_prefix}/lib
+xcbincludedir=/opt/trendchip/mips-linux-glibc-4.6.3/usr/mips-buildroot-linux-gnu/sysroot${datadir}/xcb
+pythondir=/opt/trendchip/mips-linux-glibc-4.6.3/usr/mips-buildroot-linux-gnu/sysroot${prefix}/lib/python2.7/site-packages
+
+Name: XCB Proto
+Description: X protocol descriptions for XCB
+Version: 1.11

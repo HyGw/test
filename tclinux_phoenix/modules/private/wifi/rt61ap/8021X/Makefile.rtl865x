@@ -1,0 +1,19 @@
+# Makefile 
+
+CFLAGS		= -Wall -O1 -D__MIPSEB__ -DRTL865X_SOC -DDBG\
+			-I$(KERNELDIR)/include
+
+EXEC = rt61apd
+
+OBJS = rt61apd.o eloop.o eapol_sm.o radius.o md5.o config.o ieee802_1x.o sta_info.o radius_client.o
+
+all: $(EXEC)
+
+$(EXEC): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS)
+	
+clean:
+	rm -f *.o *.bak
+
+romfs:
+	cp -f $(EXEC) $(ROMFSDIR)/bin/$(EXEC)

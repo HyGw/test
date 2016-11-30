@@ -1,0 +1,3 @@
+kernel//opt/tclinux_phoenix/modules/private/tc3162l2hp2h/tc3162l2sar.ko
+kernel//opt/tclinux_phoenix/modules/private/tc3162l2hp2h/tcledctrl.ko
+kernel//opt/tclinux_phoenix/modules/private/tc3162l2hp2h/module_sel.ko

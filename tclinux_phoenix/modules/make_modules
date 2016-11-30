@@ -1,0 +1,1802 @@
+modules: kernel_hook dmt drivers wlan autobench kprofile xpon_modules fttdp_inic_modules simcard_driver netlink_msg mtk_multicast ecnt_igmp traffic_classify personality_parm l2tp_offload
+modules_clean: kernel_hook_clean drivers_clean wlan_clean autobench_clean kprofile_clean xpon_modules_clean fttdp_inic_modules_clean simcard_driver_clean mtk_multicast_clean traffic_classify_clean personality_parm_clean l2tp_offload_clean
+
+add_7512_pcie_patch:
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/en7512_pcie_verify add_patch
+	
+rem_7512_pcie_patch:
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/en7512_pcie_verify rem_patch
+	
+7512_pcie_verify: add_7512_pcie_patch kernel rem_7512_pcie_patch
+	echo "build 7512 pcie verify driver"
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/en7512_pcie_verify clean	
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/en7512_pcie_verify
+	cp -f  $(MODULES_PRIV_SRC_DIR)/en7512_pcie_verify/*.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp -f  $(MODULES_PRIV_SRC_DIR)/en7512_pcie_verify/pcieclient $(FILESYSTEM_DIR)/usr/bin/
+	
+7512_pcie_verify_clean:
+	echo "clean 7512 pcie verify driver"
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/en7512_pcie_verify clean
+	
+mtk_multicast:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_MCST)),)
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+#	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/mtk_multicast/CFH
+else
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/mtk_multicast/CJ
+endif
+endif
+
+mtk_multicast_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_MCST)),)
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/mtk_multicast/CFH clean
+else
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/mtk_multicast/CJ clean
+endif
+endif
+
+
+ecnt_igmp:
+ifneq ($(strip $(TCSUPPORT_FWC_MCST)),)
+	echo "building ecnt_igmp module"
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/ecnt_igmp clean
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/ecnt_igmp
+	cp $(MODULES_PRIV_SRC_DIR)/ecnt_igmp/ecnt_igmp.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+
+ecnt_igmp_clean:
+ifneq ($(strip $(TCSUPPORT_FWC_MCST)),)
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/ecnt_igmp clean
+endif
+
+traffic_classify:
+	echo "*****build traffic_classify module*****"
+ifneq ($(strip $(TCSUPPORT_FWC_TRAFFIC_CLASSIFY)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/traffic_classify.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	echo "*****build traffic_classify module*****"
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/traffic_classify/ clean
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/traffic_classify/
+	cp $(MODULES_PRIV_SRC_DIR)/traffic_classify/traffic_classify.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+traffic_classify_clean:
+ifneq ($(strip $(TCSUPPORT_FWC_TRAFFIC_CLASSIFY)),)
+	echo "*****clean traffic_classify module*****"
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/traffic_classify/ clean
+endif
+
+personality_parm:
+ifneq ($(strip $(TCSUPPORT_FWC_ENV)),)
+	echo "*****build personality_parm module*****"
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/personality_parm
+	cp -f  $(MODULES_PRIV_SRC_DIR)/personality_parm/personality_parm.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+
+personality_parm_clean:
+ifneq ($(strip $(TCSUPPORT_FWC_ENV)),)
+	echo "*****clean personality_parm module*****"
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/personality_parm clean
+endif	
+
+l2tp_offload:
+ifneq ($(strip $(TCSUPPORT_L2TP_VPN_HWNAT)),)
+	echo "building L2TP VPN offload module"
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/net/l2tp_offload clean
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/net/l2tp_offload
+	cp $(MODULES_PRIV_SRC_DIR)/net/l2tp_offload/l2tp_offload.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+
+l2tp_offload_clean:
+ifneq ($(strip $(TCSUPPORT_L2TP_VPN_HWNAT)),)
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/net/l2tp_offload clean
+endif
+
+dmt:
+	echo "Delay cp dmt ko when build fs"
+	#cp $(RROFILE_DIR)/dmt/* $(FILESYSTEM_DIR)/lib/modules/
+
+pcmdrivertest:
+	echo "build pcmdrivertest"
+ifneq ($(strip $(TCSUPPORT_VOIP)),)	
+	cp $(MODULES_VOIP_KO_DIR)/pcm_lb.ko $(FILESYSTEM_DIR)/lib/modules/	
+	cp $(MODULES_VOIP_KO_DIR)/pcmdrivertest.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+pcmdrivertest_clean:
+	echo "clean slictest"
+	rm -rf $(FILESYSTEM_DIR)/lib/modules/pcm_lb.ko
+	rm -rf $(FILESYSTEM_DIR)/lib/modules/pcmdrivertest.ko
+
+slictest:
+	echo "build slictest"
+	cp $(MODULES_VOIP_KO_DIR)/pcm.ko $(FILESYSTEM_DIR)/lib/modules/	
+	cp $(MODULES_VOIP_KO_DIR)/le88221test.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(MODULES_VOIP_KO_DIR)/flash_test $(FILESYSTEM_DIR)/usr/bin/
+
+	cp $(FILESYSTEM_DIR)/userfs/romfile.cfg ./
+	tar cvf $(FILESYSTEM_DIR)/romfile.tar romfile.cfg
+	rm ./romfile.cfg
+	
+slictest_clean:
+	echo "clean slictest"
+	rm -rf $(FILESYSTEM_DIR)/lib/modules/pcm.ko
+	rm -rf $(FILESYSTEM_DIR)/lib/modules/le88221test.ko
+	rm -rf $(FILESYSTEM_DIR)/usr/bin/flash_test
+	rm -rf $(FILESYSTEM_DIR)/romfile.tar
+
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)	
+kernel_hook_clean:
+	$(MAKE) -C $(MODULES_ECNT_HOOK_DIR) clean
+
+kernel_hook:
+#build ecnt hook
+	echo "build ECNT HOOK Modules"
+	$(MAKE) -C $(MODULES_ECNT_HOOK_DIR)
+	cp $(MODULES_ECNT_HOOK_DIR)/ecnthook.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+kernel_hook_clean:
+kernel_hook:
+endif
+
+drivers:
+	echo "build qdma eth mac sar led tcci igmpsnooping drivers"
+ifneq ($(strip $(TCSUPPORT_QDMA_BUFMGR)),)
+	echo "build QDMA bufmgr modules"
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512) $(TCSUPPORT_CPU_EN7521)),)
+	cp $(MODULES_QDMA_7512_DIR)/Makefile_wan $(MODULES_QDMA_7512_DIR)/Makefile
+	$(MAKE) -C $(MODULES_QDMA_7512_DIR) clean
+	$(MAKE) -C $(MODULES_QDMA_7512_DIR)
+	cp $(MODULES_QDMA_7512_DIR)/qdma_wan.ko $(FILESYSTEM_DIR)/lib/modules/
+
+	cp $(MODULES_QDMA_7512_DIR)/Makefile_lan $(MODULES_QDMA_7512_DIR)/Makefile
+	$(MAKE) -C $(MODULES_QDMA_7512_DIR) clean
+	$(MAKE) -C $(MODULES_QDMA_7512_DIR)
+	cp $(MODULES_QDMA_7512_DIR)/qdma_lan.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_QDMA_DIR)
+	cp $(MODULES_QDMA_DIR)/qdma.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_FH_ENV)),)
+ifneq ($(strip $(TCSUPPORT_CPU_EN7521)),)
+ifneq ($(strip $(TCSUPPORT_WAN_ETHER)),)
+	$(MAKE) -C $(MODULES_FHT_VLAN_DIR) clean
+	$(MAKE) -C $(MODULES_FHT_VLAN_DIR)
+	cp $(MODULES_FHT_VLAN_DIR)/fh_vlan.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_SLM_VERIFY)),)
+	echo "build SLM Verify modules"
+	$(MAKE) -C $(MODULES_SLM_DIR) clean
+	$(MAKE) -C $(MODULES_SLM_DIR)
+	cp $(MODULES_SLM_DIR)/slm_verify.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+
+ifeq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+#	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/tc3162l2hp2h clean
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/tc3162l2hp2h
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/mt7510sar.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/mtk_sar clean
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/mtk_sar
+	cp $(MODULES_PRIV_SRC_DIR)/mtk_sar/*.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7505)),)
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/mt7510sar.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/mtk_sar clean
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/mtk_sar
+	cp $(MODULES_PRIV_SRC_DIR)/mtk_sar/*.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+ifeq ($(strip $(TCSUPPORT_CT_SIMCARD_SEPARATION)$(TCSUPPORT_SIMCARD_GENERAL)),)
+ifneq ($(strip $(TCSUPPORT_SIM_CONTROLLER)),)
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/mt7510sim.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/mtk_sim clean
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/mtk_sim
+	cp $(MODULES_PRIV_SRC_DIR)/mtk_sim/*.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_TC3162)),)
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/tc3162l2mac.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	cp $(MODULES_PRIV_SRC_DIR)/tc3162l2hp2h/tc3162l2mac.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_TC3162U)),)
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/tc3162l2mac.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	cp $(MODULES_PRIV_SRC_DIR)/tc3162l2hp2h/tc3162l2mac.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_RT63260)),)
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/tc3162l2mac.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	cp $(MODULES_PRIV_SRC_DIR)/tc3162l2hp2h/tc3162l2mac.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+ifeq ($(strip $(TCSUPPORT_CPU_MT7510) $(TCSUPPORT_CPU_MT7520) $(TCSUPPORT_CPU_MT7505)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/tc3162l2sar.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/tcledctrl.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/module_sel.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+ifeq ($(strip $(TCSUPPORT_CPU_MT7510) $(TCSUPPORT_CPU_MT7520) $(TCSUPPORT_CPU_MT7505)),)
+	cp $(MODULES_PRIV_SRC_DIR)/tc3162l2hp2h/tc3162l2sar.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+	cp $(MODULES_PRIV_SRC_DIR)/tc3162l2hp2h/tcledctrl.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(MODULES_PRIV_SRC_DIR)/tc3162l2hp2h/module_sel.ko $(FILESYSTEM_DIR)/lib/modules/
+
+endif
+#Build sif
+ifneq ($(strip $(TCSUPPORT_I2C)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/sif.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/sif
+	cp $(MODULES_PRIV_SRC_DIR)/sif/sif.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+#Build tcci
+ifeq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp -rf $(MODULES_PRIV_SRC_DIR)/obj/$(TCPLATFORM)/version.o $(MODULES_PRIV_SRC_DIR)/tcci/
+endif
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/tcci
+endif
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/tccicmd.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	cp $(MODULES_PRIV_SRC_DIR)/tcci/tccicmd.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+
+#build full cone
+	echo "build full cone NAT Modules"
+ifeq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/tcfullcone.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_FULLCONE_DIR)
+	cp $(MODULES_FULLCONE_DIR)/tcfullcone.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+ifeq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_IGMP_SNOOPING)),)
+#build igmp snooping
+	echo "build igmp snooping Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/igmpsnoop.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_IGMPSNOOP_DIR)
+	cp $(MODULES_IGMPSNOOP_DIR)/igmpsnoop.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_POWERSAVE_ENABLE)),)
+    ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+		cp $(MODULES_BACKUP)/$(TCPLATFORM)/pwm.ko $(FILESYSTEM_DIR)/lib/modules/
+    else
+		$(MAKE) -C $(MODULES_PWM_DIR)
+		cp $(MODULES_PWM_DIR)/pwm.ko $(FILESYSTEM_DIR)/lib/modules/
+    endif
+endif
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_LOOPDETECT)
+ifneq ($(strip $(TCSUPPORT_CT_LOOPDETECT)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/loopdetect.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	echo "build loopdetect Modules"
+	$(MAKE) -C $(MODULES_LOOP_DETECT_DIR)
+	cp $(MODULES_LOOP_DETECT_DIR)/loopdetect.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_MAXNET_DPI)
+ifneq ($(strip $(TCSUPPORT_CT_MAXNET_DPI)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/maxnetdpi.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	echo "build maxnet dpi Modules"
+	$(MAKE) -C $(MODULES_MAXNET_DPI_DIR)
+	cp $(MODULES_MAXNET_DPI_DIR)/maxnetdpi.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_JOYME)
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/plugin_netlimit.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	echo "build plugin netlimit Modules"
+	$(MAKE) -C $(MODULES_PLUGIN_NETLIMIT_DIR)
+	cp $(MODULES_PLUGIN_NETLIMIT_DIR)/plugin_netlimit.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	
+#build bridge detect
+ifneq ($(strip $(TCSUPPORT_EPON_DUMMY)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/bridgedetect.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	echo "build bridgedetect Modules"
+	$(MAKE) -C $(MODULES_BRIDGE_DETECT_DIR)
+	cp $(MODULES_BRIDGE_DETECT_DIR)/bridgedetect.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT_ACCESSLIMIT)),)
+#build access limit function
+	echo "build access limit Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/accesslimit.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_ACCESSLIMIT_DIR)
+	cp $(MODULES_ACCESSLIMIT_DIR)/accesslimit.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif		
+ifeq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_MLD_SNOOPING)),)
+#Build mldsnoop module
+	echo "build mld snooping Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/mldsnooping.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/net/mldsnooping
+	cp $(MODULES_PRIV_SRC_DIR)/net/mldsnooping/mldsnooping.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+endif
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_VLAN_TAG)
+ifneq ($(strip $(TCSUPPORT_CT_VLAN_TAG)),)
+	echo "build vlantag_ct Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/vlantag_ct.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_CT_VLAN_TAG_DIR)
+	cp $(MODULES_CT_VLAN_TAG_DIR)/vlantag_ct.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+
+#build smux
+ifeq ($(strip $(TCSUPPORT_FH_ENV)),)
+ifneq ($(strip $(TCSUPPORT_SMUX)),)
+	echo "build smux Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/tcsmux.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_SMUX_DIR)
+	cp $(MODULES_SMUX_DIR)/tcsmux.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+endif
+
+#build fast bridge
+
+ifneq ($(strip $(TCSUPPORT_BRIDGE_FASTPATH)),)
+	echo "build fast bridge Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/brg_shortcut.ko $(FILESYSTEM_DIR)/lib/modules/
+else	
+	$(MAKE) -C $(MODULES_FASTBRIDGE_DIR)
+	cp $(MODULES_FASTBRIDGE_DIR)/brg_shortcut.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+#build portbind
+ifneq ($(strip $(TCSUPPORT_PORTBIND)),)
+	echo "build portbind Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/tcportbind.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_PORTBIND_DIR)
+	cp $(MODULES_PORTBIND_DIR)/tcportbind.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+#build 7510 swqos
+ifneq ($(strip $(TCSUPPORT_CT_SWQOS) $(TCSUPPORT_XPON_HAL_API_QOS)),)
+	echo "build 7510 swqos Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/swqos.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_SWQOS_DIR)
+	cp $(MODULES_SWQOS_DIR)/swqos.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+#build ct url filter
+ifneq ($(strip $(TCSUPPORT_CT_URL_FILTER)),)
+	echo "build CT URL Filter Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/urlfilter.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_URL_FILTER_DIR)
+	cp $(MODULES_URL_FILTER_DIR)/urlfilter.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+#build dying gasp
+ifneq ($(strip $(TCSUPPORT_DYING_GASP)),)
+	echo "build dying gasp Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/dying_gasp.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_DYING_GASP_DIR)
+	cp $(MODULES_DYING_GASP_DIR)/dying_gasp.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+#build vlan_tag
+ifeq ($(strip $(TCSUPPORT_FH_ENV)),)
+ifneq ($(strip $(TCSUPPORT_VLAN_TAG)),)
+	echo "build vlantag Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/tcvlantag.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_VLAN_TAG_DIR)
+	cp $(MODULES_VLAN_TAG_DIR)/tcvlantag.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_DS_HWNAT_OFFLOAD)),)
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/net/soft_qdma
+endif
+
+#build hwnat
+ifneq ($(strip $(TCSUPPORT_HWNAT)),)
+	echo "build hwnat Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/hwnat.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_HWNAT_DIR)
+	cp $(MODULES_HWNAT_DIR)/hwnat.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+#build ra-hwnat
+ifneq ($(strip $(TCSUPPORT_RA_HWNAT)),)
+	echo "build ra-hwnat Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/hw_nat.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+ifneq ($(strip $(TCSUPPORT_MT7510_FE)),)
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512)),)
+	cp $(MODULES_RA_HWNAT_7510_DIR)/foe_fdb_7512.h $(MODULES_RA_HWNAT_7510_DIR)/foe_fdb.h
+else
+ifneq ($(strip $(TCSUPPORT_CPU_EN7521)),)
+	cp $(MODULES_RA_HWNAT_7510_DIR)/foe_fdb_7512.h $(MODULES_RA_HWNAT_7510_DIR)/foe_fdb.h
+else
+	cp $(MODULES_RA_HWNAT_7510_DIR)/foe_fdb_7510.h $(MODULES_RA_HWNAT_7510_DIR)/foe_fdb.h
+	-cp $(MODULES_RA_HWNAT_7510_DIR)/hwnat_ioctl.h $(LIB_DIR)
+	-cp $(MODULES_RA_HWNAT_7510_DIR)/hwnat_ioctl.h $(PUBLIC_LIB_DIR)
+endif
+endif
+	cp $(MODULES_RA_HWNAT_7510_DIR)/hwnat_ioctl.h $(GLOBAL_INC_DIR)/modules/ra_hwnat/
+	$(MAKE) -C $(MODULES_RA_HWNAT_7510_DIR)
+	cp $(MODULES_RA_HWNAT_7510_DIR)/hw_nat.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_RA_HWNAT_DIR)
+	cp $(MODULES_RA_HWNAT_DIR)/hw_nat.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+endif
+
+#build fe_ppe_test
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512) $(TCSUPPORT_CPU_EN7521)),)
+	echo "build fe_ppe_test Module"
+	$(MAKE) -C $(MODULES_FE_PPE_TEST_DIR)
+#	cp $(MODULES_FE_PPE_TEST_DIR)/fe_ppe_test.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512) $(TCSUPPORT_CPU_EN7521)),)
+	$(MAKE) -C $(MODULES_FE_7512_DIR) 
+	cp -f $(MODULES_FE_7512_DIR)/fe_core.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512) $(TCSUPPORT_CPU_EN7521)),)
+	$(MAKE) -C $(MODULES_ETHER_PHY_DIR)
+	echo 7512
+	cp $(MODULES_ETHER_PHY_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512) $(TCSUPPORT_CPU_EN7521)),)
+	$(MAKE) -C $(MODULES_ETHER_DIR)
+	echo 7512
+	cp $(MODULES_ETHER_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+ifneq ($(strip $(TCSUPPORT_CPU_RT63365)),)
+	$(MAKE) -C $(MODULES_RAETH_DIR)
+	echo 63356
+	cp $(MODULES_RAETH_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+ifneq ($(strip $(TCSUPPORT_CPU_RT63368)),)
+	$(MAKE) -C $(MODULES_RAETH_DIR)
+	echo 63368
+	cp $(MODULES_RAETH_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+	$(MAKE) -C $(MODULES_RAETH_DIR)
+	echo 7510
+	cp $(MODULES_RAETH_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7505)),)
+	$(MAKE) -C $(MODULES_RAETH_DIR)
+	echo 7505
+	cp $(MODULES_RAETH_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7520)),)
+	$(MAKE) -C $(MODULES_RAETH_DIR)
+	echo 7520
+	cp $(MODULES_RAETH_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+endif
+endif
+endif
+endif
+
+ifneq ($(strip $(TC3262_DRIVERS)),)
+	$(MAKE) -C $(MODULES_TC3262_DIR)
+	cp $(MODULES_TC3262_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+	$(MAKE) -C $(MODULES_MT7510_PTM_DIR)
+	cp $(MODULES_MT7510_PTM_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+ifneq ($(strip $(TCSUPPORT_FTTDP_V2)),)
+	$(MAKE) -C $(MODULES_MT7510_PTM_DIR)
+	cp $(MODULES_MT7510_PTM_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+endif	
+endif
+
+ifneq ($(strip $(TCSUPPORT_BONDING)),)	
+	$(MAKE) -C $(MODULES_BONDING_PCIE_DIR)
+	cp $(MODULES_BONDING_PCIE_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+
+ifneq ($(strip $(TCSUPPORT_VOIP)),)
+ifeq ($(strip $(VOIP_DSP)),MTK)
+	if test -e $(MODULES_MTK_KSOCK_DIR)/Makefile; \
+		then $(MAKE) -C $(MODULES_MTK_KSOCK_DIR); \
+	fi
+
+	if test -e $(MODULES_MTK_SLIC3_DIR)/Makefile; \
+		then $(MAKE) -C $(MODULES_MTK_SLIC3_DIR); cp $(MODULES_MTK_SLIC3_DIR)/slic3.ko $(FILESYSTEM_DIR)/lib/modules/; $(MAKE) -C $(MODULES_MTK_SLIC3_DIR) TCSUPPORT_SLIC_SEPARATE=1; cp $(MODULES_MTK_SLIC3_DIR)/slic3_sep.ko $(FILESYSTEM_DIR)/lib/modules/; \
+		if test -d $(MODULES_MTK_SLIC3_DIR)/src/silab;	\
+			then $(MAKE) -C $(MODULES_MTK_SLIC3_DIR) SLIC=SILICON; cp $(MODULES_MTK_SLIC3_DIR)/slic3_silicon.ko $(FILESYSTEM_DIR)/lib/modules/; \
+		else \
+			if test -e $(MODULES_VOIP_KO_DIR)/slic3_silicon.ko; \
+				then cp $(MODULES_VOIP_KO_DIR)/slic3_silicon.ko $(FILESYSTEM_DIR)/lib/modules/; \
+			fi \
+		fi \
+	else \
+		if test -e $(MODULES_VOIP_KO_DIR)/slic3.ko; \
+			then cp $(MODULES_VOIP_KO_DIR)/slic3.ko $(FILESYSTEM_DIR)/lib/modules/; \
+		fi; \
+		if test -e $(MODULES_VOIP_KO_DIR)/slic3_silicon.ko; \
+			then cp $(MODULES_VOIP_KO_DIR)/slic3_silicon.ko $(FILESYSTEM_DIR)/lib/modules/; \
+		fi; \
+		if test -e $(MODULES_VOIP_KO_DIR)/slic3_sep.ko; \
+			then cp $(MODULES_VOIP_KO_DIR)/slic3_sep.ko $(FILESYSTEM_DIR)/lib/modules/; \
+		fi; \
+	fi
+
+	-cp $(MODULES_MTK_KSOCK_DIR)/ksocket.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(MODULES_VOIP_KO_DIR)/lec.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(MODULES_VOIP_KO_DIR)/ovdsp.ko $(FILESYSTEM_DIR)/lib/modules/
+	-cp $(MODULES_VOIP_KO_DIR)/spi.ko $(FILESYSTEM_DIR)/lib/modules/
+	-cp $(MODULES_VOIP_KO_DIR)/pcm1.ko $(FILESYSTEM_DIR)/lib/modules/
+	-cp $(MODULES_VOIP_KO_DIR)/pcm2.ko $(FILESYSTEM_DIR)/lib/modules/
+	-cp $(MODULES_VOIP_KO_DIR)/DSPCore.ko $(FILESYSTEM_DIR)/lib/modules/
+	-cp $(MODULES_VOIP_KO_DIR)/fxs3_silicon.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(MODULES_VOIP_KO_DIR)/fxs3.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(MODULES_VOIP_KO_DIR)/sys_mod.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(MODULES_VOIP_KO_DIR)/ortp.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(MODULES_VOIP_KO_DIR)/acodec_x.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(MODULES_VOIP_KO_DIR)/pcmDump.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(MODULES_VOIP_KO_DIR)/foip.ko $(FILESYSTEM_DIR)/lib/modules/
+
+
+endif
+endif
+
+#ifneq ($(strip $(TCSUPPORT_CPU_TC3162U)),)
+
+ifneq ($(strip $(TCSUPPORT_USBHOST)),)
+	rm -rf $(FILESYSTEM_DIR)/lib/modules/usbhost
+	mkdir $(FILESYSTEM_DIR)/lib/modules/usbhost
+	cp $(KERNEL_DIR)/drivers/scsi/scsi_mod.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+ifeq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+	cp $(KERNEL_DIR)/drivers/scsi/scsi_wait_scan.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+endif
+	cp $(KERNEL_DIR)/drivers/scsi/sd_mod.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+ifeq ($(strip $(TCSUPPORT_CT_JOYME)),)
+ifeq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)	
+	-cp $(KERNEL_DIR)/drivers/usb/core/usbcore.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_MUH)),)
+ifneq ($(strip $(TCSUPPORT_MUH_TEST)),)
+	cp $(KERNEL_DIR)/drivers/usb/host/mtk_test/xhci-test.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+else
+ifeq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+	cp $(KERNEL_DIR)/drivers/usb/host/mtk_xhci/xhci-hcd.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+endif
+endif
+else
+ifeq ($(strip $(TCSUPPORT_CT_JOYME)),)	
+	cp $(KERNEL_DIR)/drivers/usb/host/ehci-hcd.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	cp $(KERNEL_DIR)/drivers/usb/host/ohci-hcd.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+	if test -e $(KERNEL_DIR)/fs/nls/nls_utf8.ko; \
+	then cp $(KERNEL_DIR)/fs/nls/nls_utf8.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/; \
+	fi
+endif
+	cp $(KERNEL_DIR)/drivers/usb/storage/usb-storage.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	if test -e $(KERNEL_DIR)/fs/fat/fat.ko; \
+	then cp $(KERNEL_DIR)/fs/fat/fat.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/; \
+	fi
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	if test -e $(KERNEL_DIR)/fs/fat/vfat.ko; \
+	then cp $(KERNEL_DIR)/fs/fat/vfat.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/; \
+	fi
+else
+	if test -e $(KERNEL_DIR)/fs/vfat/vfat.ko; \
+	then cp $(KERNEL_DIR)/fs/vfat/vfat.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/; \
+	fi
+endif
+	#cp $(KERNEL_DIR)/fs/fat/fat.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	#cp $(KERNEL_DIR)/fs/msdos/msdos.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	#cp $(KERNEL_DIR)/fs/vfat/vfat.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+ifneq ($(strip $(TCSUPPORT_SAMBA)),)
+	cp $(KERNEL_DIR)/fs/nls/nls_cp936.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	cp $(KERNEL_DIR)/fs/nls/nls_utf8.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+else
+ifneq ($(strip $(TCSUPPORT_SAMBA_IPv6)),)
+	cp $(KERNEL_DIR)/fs/nls/nls_cp936.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	cp $(KERNEL_DIR)/fs/nls/nls_utf8.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+else
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_FTP_DOWNLOADCLIENT)
+ifneq ($(strip $(TCSUPPORT_CT_FTP_DOWNLOADCLIENT)),)
+	cp $(KERNEL_DIR)/fs/nls/nls_cp936.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	cp $(KERNEL_DIR)/fs/nls/nls_ascii.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	cp $(KERNEL_DIR)/fs/nls/nls_cp437.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+endif
+endif
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_FTP_USB)
+ifneq ($(strip $(TCSUPPORT_FTP_USB)),)
+	cp -f $(KERNEL_DIR)/fs/nls/nls_cp936.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+endif
+#endif/*TCSUPPORT_COMPILE*/
+	if test -e $(KERNEL_DIR)/fs/nls/nls_base.ko; \
+	then cp $(KERNEL_DIR)/fs/nls/nls_base.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/; \
+	fi
+	#cp $(KERNEL_DIR)/fs/nls/nls_base.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	#cp $(KERNEL_DIR)/fs/nls/nls_cp437.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	$(STRIP) --strip-unneeded $(FILESYSTEM_DIR)/lib/modules/usbhost/*.ko
+	#rm -f $(FILESYSTEM_DIR)/usr/etc/init.d/rcS
+	#cp $(APP_PRIVATE_DIR)/rcS/TC3162U_USBHOST_rcS $(FILESYSTEM_DIR)/usr/etc/init.d/rcS
+endif
+ifneq ($(strip $(TCSUPPORT_USB_NTFS)),)
+	$(STRIP) --strip-unneeded $(KERNEL_DIR)/fs/fuse/fuse.ko
+	cp $(KERNEL_DIR)/fs/fuse/fuse.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+endif
+
+ifneq ($(strip $(TCSUPPORT_USB_3G_DONGLE)),)
+	$(STRIP) --strip-unneeded $(KERNEL_DIR)/drivers/usb/serial/usbserial.ko
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	$(STRIP) --strip-unneeded $(KERNEL_DIR)/drivers/usb/serial/usb_wwan.ko
+endif
+	$(STRIP) --strip-unneeded $(KERNEL_DIR)/drivers/usb/serial/option.ko
+	cp $(KERNEL_DIR)/drivers/usb/serial/usbserial.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	cp $(KERNEL_DIR)/drivers/usb/serial/usb_wwan.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+endif
+	cp $(KERNEL_DIR)/drivers/usb/serial/option.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	cp $(KERNEL_DIR)/drivers/net/ppp_async.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+
+ifneq ($(strip $(TCSUPPORT_USB_PRINTER_SERVER)),)
+	$(STRIP) --strip-unneeded $(KERNEL_DIR)/drivers/usb/class/usblp.ko
+	cp $(KERNEL_DIR)/drivers/usb/class/usblp.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+endif
+
+ifneq ($(strip $(TCSUPPORT_USB_CAMERA)),)
+	chmod 777 $(MODULES_USB_CAMERA_DRIVER)/v4l/scripts/*
+	$(MAKE) -C $(MODULES_USB_CAMERA_DRIVER) clean
+	$(MAKE) -C $(MODULES_USB_CAMERA_DRIVER)
+	$(STRIP) --strip-unneeded $(MODULES_USB_CAMERA_DRIVER)/v4l/*.ko
+	cp $(MODULES_USB_CAMERA_DRIVER)/v4l/usbvideo.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	cp $(MODULES_USB_CAMERA_DRIVER)/v4l/v4l1-compat.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	cp $(MODULES_USB_CAMERA_DRIVER)/v4l/uvcvideo.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+	cp $(MODULES_USB_CAMERA_DRIVER)/v4l/videodev.ko $(FILESYSTEM_DIR)/lib/modules/usbhost/
+endif
+ifneq ($(strip $(TCSUPPORT_USBHOST)),)
+	cd $(FILESYSTEM_DIR)/lib/modules/usbhost/ && find . -name "*.ko" -type f |xargs $(STRIP) --strip-unneeded 
+endif
+
+#endif
+
+ifneq ($(strip $(TCSUPPORT_USBDEVICE20)),)
+	echo "copy usb device module from linux into filesystem"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/tc3162_udc20.ko $(FILESYSTEM_DIR)/lib/modules
+else
+	cp $(MODULES_PRIV_SRC_DIR)/tc3162l2hp2h/tc3162_udc20.ko $(FILESYSTEM_DIR)/lib/modules
+endif
+	cp $(KERNEL_DIR)/drivers/usb/gadget/g_ether.ko $(FILESYSTEM_DIR)/lib/modules	
+	cp $(KERNEL_DIR)/drivers/usb/gadget/g_file_storage.ko $(FILESYSTEM_DIR)/lib/modules
+	#rm $(FILESYSTEM_DIR)/usr/etc/init.d/rcS
+	#cp $(APP_PRIVATE_DIR)/rcS/TC3162U_USBDEVICE_rcS $(FILESYSTEM_DIR)/usr/etc/init.d/rcS
+endif
+
+
+ifneq ($(strip $(TCSUPPORT_HW_CRYPTO)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/crypto_k.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_CRYPTO_DRIVER) KERNEL_DIR=$(KERNEL_DIR) ARCH=mips
+	cd $(MODULES_CRYPTO_DRIVER) && $(STRIP) --strip-unneeded crypto_k.ko && cp crypto_k.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_EIP93_VERIFY)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_EIP93_DRIVERS)/cryptoEngine/V-Driver_93/build clean
+	$(MAKE) -C $(MODULES_EIP93_DRIVERS)/cryptoEngine/V-Driver_93/build KERNEL_DIR=$(KERNEL_DIR) ARCH=mips
+	cd $(MODULES_EIP93_DRIVERS)/cryptoEngine/V-Driver_93/build/ && $(STRIP) --strip-unneeded vdriver_93_k.ko && cp vdriver_93_k.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+
+drivers_clean:
+ifneq ($(strip $(TCSUPPORT_QDMA_BUFMGR)),)
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512) $(TCSUPPORT_CPU_EN7521)),)
+	cp $(MODULES_QDMA_7512_DIR)/Makefile_wan $(MODULES_QDMA_7512_DIR)/Makefile
+	$(MAKE) -C $(MODULES_QDMA_7512_DIR) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f qdma_wan.ko
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f qdma_lan.ko
+else
+	$(MAKE) -C $(MODULES_QDMA_DIR) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f qdma.ko
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_FH_ENV)),)
+ifneq ($(strip $(TCSUPPORT_CPU_EN7521)),)
+ifneq ($(strip $(TCSUPPORT_WAN_ETHER)),)
+	$(MAKE) -C $(MODULES_FHT_VLAN_DIR) clean
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_DS_HWNAT_OFFLOAD)),)
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/net/soft_qdma clean
+endif
+
+#clean fe_ppe_test
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512) $(TCSUPPORT_CPU_EN7521)),)
+	echo "clean fe_ppe_test Module"
+	$(MAKE) -C $(MODULES_FE_PPE_TEST_DIR) clean
+	rm -f $(FILESYSTEM_DIR)/lib/modules/fe_ppe_test.ko
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_SLM_VERIFY)),)
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f slm_verify.ko
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512) $(TCSUPPORT_CPU_EN7521)),)
+	$(MAKE) -C $(MODULES_FE_7512_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_VOIP)),)
+ifeq ($(strip $(VOIP_DSP)),MTK)
+	$(MAKE) -C $(MODULES_MTK_KSOCK_DIR) clean
+	if test -e $(MODULES_MTK_SLIC3_DIR)/Makefile; \
+		then $(MAKE) -C $(MODULES_MTK_SLIC3_DIR) clean; \
+	fi
+endif
+endif
+	echo "Clean mac sar led tcci crypto drivers"
+ifneq ($(strip $(TCSUPPORT_HW_CRYPTO)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_CRYPTO_DRIVER) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f crypto_k.ko
+endif
+endif
+	
+ifneq ($(strip $(TCSUPPORT_EIP93_VERIFY)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_EIP93_DRIVERS)/cryptoEngine/V-Driver_93/build clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f vdriver_93_k.ko
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_I2C)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/sif clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f sif.ko
+endif
+endif
+
+ifeq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)	
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/tc3162l2hp2h clean
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/tcci clean
+endif
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+ifeq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	$(MAKE) -C $(MODULES_FULLCONE_DIR) clean
+endif	
+ifeq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_IGMP_SNOOPING)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	echo "clean igmpsnoop"
+else
+	$(MAKE) -C $(MODULES_IGMPSNOOP_DIR) clean
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_POWERSAVE_ENABLE)),)
+    ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+		$(MAKE) -C $(MODULES_PWM_DIR) clean
+    endif
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f pwm.ko
+endif
+
+ifeq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_MLD_SNOOPING)),)
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/net/mldsnooping clean
+endif
+endif
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_LOOPDETECT)
+ifneq ($(strip $(TCSUPPORT_CT_LOOPDETECT)),)
+	$(MAKE) -C $(MODULES_LOOP_DETECT_DIR) clean
+endif	
+#endif/*TCSUPPORT_COMPILE*/	
+	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_VLAN_TAG)
+ifneq ($(strip $(TCSUPPORT_CT_VLAN_TAG)),)
+	$(MAKE) -C $(MODULES_CT_VLAN_TAG_DIR) clean
+endif
+#endif/*TCSUPPORT_COMPILE*/
+ifneq ($(strip $(TCSUPPORT_SMUX)),)
+	$(MAKE) -C $(MODULES_SMUX_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_PORTBIND)),)
+	$(MAKE) -C $(MODULES_PORTBIND_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_CT_SWQOS) $(TCSUPPORT_XPON_HAL_API_QOS)),)
+	$(MAKE) -C $(MODULES_SWQOS_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_CT_URL_FILTER)),)
+	$(MAKE) -C $(MODULES_URL_FILTER_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_TC3262)),)
+	$(MAKE) -C $(MODULES_TC3262_DIR) clean
+	$(MAKE) -C $(MODULES_PCMSLIC_DIR) clean
+	$(MAKE) -C $(MODULES_SLICDRIVER_DIR) clean
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+	$(MAKE) -C $(MODULES_MT7510_PTM_DIR) clean
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+	$(MAKE) -C $(MODULES_BONDING_PCIE_DIR) clean
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_TC3182)),)
+	$(MAKE) -C $(MODULES_TC3262_DIR) clean
+endif
+
+
+else
+
+ifneq ($(strip $(TCSUPPORT_CPU_TC3182)),)
+	$(MAKE) -C $(MODULES_TC3262_DIR) clean
+
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_WLAN)),)
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+wlan:
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt61ap.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt3390ap.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt3090ap.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt5390ap.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt3593ap.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/mt7601Eap.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/mt7610e_ap.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/mt7662e_ap.ko
+	rm -f $(FILESYSTEM_DIR)/lib/modules/mt7603eap.ko
+ifneq ($(strip $(TCSUPPORT_WLAN_RT2561)),)
+   	cp $(MODULES_BACKUP)/$(TCPLATFORM)/rt61ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT61AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2561.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2561S.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2661.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP/
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT3390)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/rt3390ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT3390_PCIe_1T1R_LNA_ALC_ADT_V1_2.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT3090)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/rt3390ap.ko $(FILESYSTEM_DIR)/lib/modules/rt3090ao.ko
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT3092_PCIe_LNA_2T2R_V1_2.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5392)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/rt5390ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT5392_PCIe_2T2R_ALC_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5390)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/rt5390ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT5390_PCIe_1T1R_MAIN_ANT_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5390HL)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/rt5390ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)RT5390H_PCIe_1T1R_MAIN_ANT_V1_4.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+endif
+
+ifneq ($(strip $(TCSUPPORT_WLAN_MT7601E)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/mt7601Eap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+#	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)MT7601E_PCIe_1T1R_MAIN_ANT_V1_4.bin $(FILESYSTEM_DIR)/usr/etc/MT7601E_EEPROM.bin
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)MT7601E_PCIe_1T1R_MAIN_ANT_V1_4.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+endif
+
+ifneq ($(strip $(TCSUPPORT_WLAN_MT7592)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/mt7603eap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/eeprom/MT7592_EEPROM_layout_v15_20140806.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+endif
+
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_MT7610E)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/mt7610e_ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/MT7610E-V10-20130321-FEM-1ANT.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/RT30xxEEPROM.bin
+endif
+
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_MT7612E)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/mt7662e_ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/MT7612E_EEPROM_layout_20131121_5G_iPAiLNA_wTSSI_default_slope_offset.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/RT30xxEEPROM.bin
+endif
+
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_MT7615E)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/mt7615_ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/RT2860AP.dat
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/MT7615E1_EEPROM.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/RT30xxEEPROM.bin
+endif
+
+ifneq ($(strip $(TCSUPPORT_WLAN_MULTIDRIVER)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/rt3593ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)RT5392_PCIe_2T2R_ALC_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+#	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860APCard.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+#	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860AP0.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT2860AP1.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/
+#	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/BGN/
+#	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/AN/
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT3092_PCIe_LNA_2T2R_V1_2.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT3092E2P.bin
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT3390_PCIe_1T1R_LNA_ALC_ADT_V1_2.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT3390E2P.bin
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT5592_PCIe_2T2R_V1_5.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT5592E2P.bin
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT3593_PCIe_3T3R_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT3593E2P.bin
+#	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT3593_PCIe_3T3R_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT3593E2P.bin
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT5392_PCIe_2T2R_ALC_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT5392E2P.bin
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT5390_PCIe_1T1R_MAIN_ANT_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT5390E2P.bin
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT5390H_PCIe_1T1R_MAIN_ANT_V1_4.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT5391E2P.bin	
+	cp $(MODULES_PRIV_SRC_DIR)/wifi/$(TCPLATFORM)/RT5392_PCIe_2T2R_ALC_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin	
+endif
+
+wlan_clean:
+	echo "CUSTOMER_BUILD_RELEASECODE: Build WLAN, do nothing!"
+else
+wlan:
+	echo "Build WLAN!"
+ifneq ($(strip $(TCSUPPORT_WLAN_RT2561)),)
+#	$(MAKE) -C $(RT2561AP_DIR) clean
+	$(MAKE) -C $(RT2561AP_DIR)
+	if test -e $(RT2561AP_DIR)/rt61ap.ko; \
+	then echo "Compile RT2561 Driver success"; \
+	else echo "Compile RT2561 Driver error!"; exit 1; \
+	fi
+	cp $(RT2561AP_DIR)/rt61ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP/
+	cp $(RT2561AP_DIR)/RT61AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP/
+	cp $(RT2561AP_DIR)/RT2561.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP/
+	cp $(RT2561AP_DIR)/RT2561S.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP/
+	cp $(RT2561AP_DIR)/RT2661.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP/
+	
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT3390)),)
+#	$(MAKE) -C $(RT3390AP_DIR) clean
+	$(MAKE) -C $(RT3390AP_DIR)
+	if test -e $(RT3390AP_DIR)/os/linux/rt3390ap.ko; \
+	then echo "Compile RT3390 Driver success"; \
+	else echo "Compile RT3390 Driver error!"; exit 1; \
+	fi
+	cp $(RT3390AP_DIR)/os/linux/rt3390ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(RT3390AP_DIR)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(RT3390AP_DIR)/RT3390_PCIe_1T1R_LNA_ALC_ADT_V1_2.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt61ap.ko
+endif
+
+ifneq ($(strip $(TCSUPPORT_WLAN_RT3090)),)
+#	$(MAKE) -C $(RT3390AP_DIR) clean
+	$(MAKE) -C $(RT3390AP_DIR)
+	if test -e $(RT3390AP_DIR)/os/linux/rt3390ap.ko; \
+	then echo "Compile RT3390 Driver success"; \
+	else echo "Compile RT3390 Driver error!"; exit 1; \
+	fi
+	cp $(RT3390AP_DIR)/os/linux/rt3390ap.ko $(FILESYSTEM_DIR)/lib/modules/rt3090ap.ko
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(RT3390AP_DIR)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(RT3390AP_DIR)/RT3092_PCIe_LNA_2T2R_V1_2.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt61ap.ko
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5392)),)
+#	$(MAKE) -C $(RT5392AP_DIR) clean
+	$(MAKE) -C $(RT5392AP_DIR)
+	if test -e $(RT5392AP_DIR)/os/linux/rt5390ap.ko; \
+	then echo "Compile RT5392 Driver success"; \
+	else echo "Compile RT5392 Driver error!"; exit 1; \
+	fi
+	cp $(RT5392AP_DIR)/os/linux/rt5390ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(RT5392AP_DIR)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(RT5392AP_DIR)/RT5392_PCIe_2T2R_ALC_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt61ap.ko
+endif
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_RT5592)),)
+	$(MAKE) -C $(RT5592AP_DIR)
+	if test -e $(RT5592AP_DIR)/os/linux/rt5592ap.ko; \
+	then echo "Compile RT5592 Driver success"; \
+	else echo "Compile RT5592 Driver error!"; exit 1; \
+	fi
+	cp $(RT5592AP_DIR)/os/linux/rt5592ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860/
+	cp $(RT5592AP_DIR)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860/
+	cp $(RT5592AP_DIR)/RT5592_PCIe_2T2R_V1_5.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860/RT30xxEEPROM.bin
+endif	
+#RT3593AP_DIR
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_RT3593)),)
+	$(MAKE) -C $(RT3593AP_DIR)
+	if test -e $(RT3593AP_DIR)/os/linux/rt3593ap.ko; \
+	then echo "Compile RT3593 Driver success"; \
+	else echo "Compile RT3593 Driver error!"; exit 1; \
+	fi
+	cp $(RT3593AP_DIR)/os/linux/rt3593ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860/
+	cp $(RT3593AP_DIR)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860/
+	cp $(RT3593AP_DIR)/RT3593_PCIe_3T3R_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860/RT30xxEEPROM.bin
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_MULTIDRIVER)),)
+	$(MAKE) -C $(WIFI_MULTI_DRIVER_DIR)
+	if test -e $(WIFI_MULTI_DRIVER_DIR)/os/linux/rt3593ap.ko; \
+	then echo "Compile RT5592RT3593 Driver success"; \
+	else echo "Compile RT5592RT3593 Driver error!"; exit 1; \
+	fi
+	cp $(WIFI_MULTI_DRIVER_DIR)/os/linux/rt3593ap.ko $(FILESYSTEM_DIR)/lib/modules/
+ifneq ($(strip $(TCSUPPORT_CT_WLAN_WAPI)),)	
+	cp $(WIFI_MULTI_DRIVER_DIR)/wapi_module.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(WIFI_MULTI_DRIVER_DIR)/wapid $(FILESYSTEM_DIR)/usr/bin/
+endif	
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+#	cp $(WIFI_MULTI_DRIVER_DIR)/RT2860APCard.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+#	cp $(WIFI_MULTI_DRIVER_DIR)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(WIFI_MULTI_DRIVER_DIR)/RT2860AP0.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(WIFI_MULTI_DRIVER_DIR)/RT2860AP1.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/
+#	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/BGN/
+#	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/AN/
+	cp $(WIFI_MULTI_DRIVER_DIR)/RT3092_PCIe_LNA_2T2R_V1_2.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT3092E2P.bin
+	cp $(WIFI_MULTI_DRIVER_DIR)/RT3390_PCIe_1T1R_LNA_ALC_ADT_V1_2.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT3390E2P.bin
+	cp $(WIFI_MULTI_DRIVER_DIR)/RT5392_PCIe_2T2R_ALC_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin	
+	cp $(WIFI_MULTI_DRIVER_DIR)/RT5592_PCIe_2T2R_V1_5.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT5592E2P.bin
+	cp $(WIFI_MULTI_DRIVER_DIR)/RT3593_PCIe_3T3R_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT3593E2P.bin
+#	cp $(WIFI_MULTI_DRIVER_DIR)/RT3593_PCIe_3T3R_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT3593E2P.bin
+	cp $(WIFI_MULTI_DRIVER_DIR)/RT5392_PCIe_2T2R_ALC_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT5392E2P.bin
+	cp $(WIFI_MULTI_DRIVER_DIR)/RT5390_PCIe_1T1R_MAIN_ANT_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT5390E2P.bin
+	cp $(WIFI_MULTI_DRIVER_DIR)/RT5390H_PCIe_1T1R_MAIN_ANT_V1_4.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/E2P/RT5391E2P.bin	
+endif	
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5390)),)
+#	$(MAKE) -C $(RT5392AP_DIR) clean
+	$(MAKE) -C $(RT5392AP_DIR)
+	if test -e $(RT5392AP_DIR)/os/linux/rt5390ap.ko; \
+	then echo "Compile RT5392 Driver success"; \
+	else echo "Compile RT5392 Driver error!"; exit 1; \
+	fi
+	cp $(RT5392AP_DIR)/os/linux/rt5390ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(RT5392AP_DIR)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(RT5392AP_DIR)/RT5390_PCIe_1T1R_MAIN_ANT_V1_3.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt61ap.ko
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt3390ap.ko
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5390HL)),)
+#	$(MAKE) -C $(RT5392AP_DIR) clean
+	$(MAKE) -C $(RT5392AP_DIR)
+	if test -e $(RT5392AP_DIR)/os/linux/rt5390ap.ko; \
+	then echo "Compile RT5392 Driver success"; \
+	else echo "Compile RT5392 Driver error!"; exit 1; \
+	fi
+	cp $(RT5392AP_DIR)/os/linux/rt5390ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(RT5392AP_DIR)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(RT5392AP_DIR)/RT5390H_PCIe_1T1R_MAIN_ANT_V1_4.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt61ap.ko
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt3390ap.ko
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_WLAN_MT7601E)),)
+#	$(MAKE) -C $(MT7601EAP_DIR) clean
+	$(MAKE) -C $(MT7601EAP_DIR)
+	if test -e $(MT7601EAP_DIR)/os/linux/mt7601Eap.ko; \
+	then echo "Compile MT7601E Driver success"; \
+	else echo "Compile MT7601E Driver error!"; exit 1; \
+	fi
+	cp $(MT7601EAP_DIR)/os/linux/mt7601Eap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MT7601EAP_DIR)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+#	cp $(MT7601EAP_DIR)/MT7601E_PCIe_1T1R_MAIN_ANT_V1_4.bin $(FILESYSTEM_DIR)/usr/etc/MT7601E_EEPROM.bin
+	cp $(MT7601EAP_DIR)/MT7601E_PCIe_1T1R_MAIN_ANT_V1_4.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt61ap.ko
+endif
+
+ifneq ($(strip $(TCSUPPORT_WLAN_MT7592)),)
+#	$(MAKE) -C $(MT7592AP_DIR) clean
+	$(MAKE) -C $(MT7592AP_DIR)
+	if test -e $(MT7592AP_DIR)/os/linux/mt7603eap.ko; \
+	then echo "Compile MT7592 Driver success"; \
+	else echo "Compile MT7592 Driver error!"; exit 1; \
+	fi
+	cp $(MT7592AP_DIR)/os/linux/mt7603eap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MT7592AP_DIR)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+	cp $(MT7592AP_DIR)/eeprom/MT7592_EEPROM_layout_v15_20140806.bin $(FILESYSTEM_DIR)/usr/etc/RT30xxEEPROM.bin
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt61ap.ko
+endif
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_MT7610E)),)
+#	$(MAKE) -C $(MT7610EAP_DIR) clean
+	$(MAKE) -C $(MT7610EAP_DIR)
+	if test -e $(MT7610EAP_DIR)/os/linux/mt7610e_ap.ko; \
+	then echo "Compile MT7610E Driver success"; \
+	else echo "Compile MT7610E Driver error!"; exit 1; \
+	fi
+	cp $(MT7610EAP_DIR)/os/linux/mt7610e_ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	cp $(MT7610EAP_DIR)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	cp $(MT7610EAP_DIR)/MT7610E-V10-20130321-FEM-1ANT.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/RT30xxEEPROM.bin
+	cp $(MT7610EAP_DIR)/SingleSKU_5G.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt61ap.ko
+endif
+
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_MT7612E)),)
+#	$(MAKE) -C $(MT7612EAP_DIR) clean
+	$(MAKE) -C $(MT7612EAP_DIR)
+	if test -e $(MT7612EAP_DIR)/os/linux/mt7662e_ap.ko; \
+	then echo "Compile MT7612E Driver success"; \
+	else echo "Compile MT7612E Driver error!"; exit 1; \
+	fi
+	cp $(MT7612EAP_DIR)/os/linux/mt7662e_ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	cp $(MT7612EAP_DIR)/RT2860AP.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	cp $(MT7612EAP_DIR)/eeprom/MT7612E_EEPROM_layout_20131121_5G_iPAiLNA_wTSSI_default_slope_offset.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/RT30xxEEPROM.bin
+#	cp $(MT7612EAP_DIR)/SingleSKU_5G.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt61ap.ko
+endif
+
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_MT7615E)),)
+#	$(MAKE) -C $(MT7615EAP_DIR) clean
+	$(MAKE) -C $(MT7615EAP_DIR)/embedded
+	if test -e $(MT7615EAP_DIR)/os/linux/mt7615_ap.ko; \
+	then echo "Compile MT7615E Driver success"; \
+	else echo "Compile MT7615E Driver error!"; exit 1; \
+	fi
+	cp $(MT7615EAP_DIR)/os/linux/mt7615_ap.ko $(FILESYSTEM_DIR)/lib/modules/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	cp $(MT7615EAP_DIR)/embedded/conf/RT2860.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/RT2860AP.dat
+	cp $(MT7615EAP_DIR)/eeprom/MT7615E1_EEPROM.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/RT30xxEEPROM.bin
+#	cp $(MT7615EAP_DIR)/eeprom/MT7615E_EEPROM_layout_20131121_5G_iPAiLNA_wTSSI_default_slope_offset.bin $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/RT30xxEEPROM.bin
+ifneq ($(strip $(TCSUPPORT_SINGLE_SKU_V2)),)
+	cp $(MT7615EAP_DIR)/embedded/conf/7615_SingleSKU.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+#	cp $(MT7615EAP_DIR)/embedded/conf/7615_BF_Gain_Table.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	cp $(MT7615EAP_DIR)/embedded/conf/7615_SingleSKU_BF.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+endif	
+#	cp $(MT7615EAP_DIR)/SingleSKU_5G.dat $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP_AC/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT61AP
+	rm -f $(FILESYSTEM_DIR)/lib/modules/rt61ap.ko
+endif
+
+wlan_clean:
+	echo "Clean WLAN!"
+ifneq ($(strip $(TCSUPPORT_WLAN_RT2561)),)
+	$(MAKE) -C $(RT2561AP_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT3390)),)
+	$(MAKE) -C $(RT3390AP_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT3090)),)
+	$(MAKE) -C $(RT3390AP_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5392)),)
+	$(MAKE) -C $(RT5392AP_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5390)),)
+	$(MAKE) -C $(RT5392AP_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_RT5390HL)),)
+	$(MAKE) -C $(RT5392AP_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_MT7601E)),)
+	$(MAKE) -C $(MT7601EAP_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_MT7592)),)
+	$(MAKE) -C $(MT7592AP_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_WLAN_MULTIDRIVER)),)
+	$(MAKE) -C $(WIFI_MULTI_DRIVER_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_MT7610E)),)
+	$(MAKE) -C $(MT7610EAP_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_MT7612E)),)
+	$(MAKE) -C $(MT7612EAP_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_DUAL_WLAN_MT7615E)),)
+	$(MAKE) -C $(MT7615EAP_DIR)/embedded clean
+endif
+endif
+else
+wlan:
+	echo "No Build WLAN!"
+wlan_clean:
+	echo "No Build WLAN!"
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/Wireless/RT2860AP/
+endif
+
+
+#build autobench
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+autobench:
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/auto_bench.ko $(FILESYSTEM_DIR)/lib/modules/
+autobench_clean:
+	echo "TC_BUILD_RELEASECODE: Build AUTOBEHCH Driver, do nothing!"
+else
+autobench:
+ifneq ($(strip $(TCSUPPORT_VOIP)),)
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512) $(TCSUPPORT_CPU_EN7521)),)
+	cp -rf $(PROFILE_DIR)/voip $(FILESYSTEM_DIR)/lib/modules/
+else
+	cp $(MODULES_VOIP_KO_DIR)/sys_mod.ko $(FILESYSTEM_DIR)/lib/modules/
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)	
+	cp $(MODULES_VOIP_KO_DIR)/voice_slt.ko $(FILESYSTEM_DIR)/lib/modules/
+endif	
+	cp $(MODULES_VOIP_KO_DIR)/pcm_lb.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+	$(MAKE) -C $(MODULES_AUTOBENCH_DIR)
+	cp $(MODULES_AUTOBENCH_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+	cp $(MODULES_AUTOBENCH_DIR)/rcS_AutoBench $(FILESYSTEM_DIR)/usr/etc/init.d/
+ifeq ($(strip $(TCSUPPORT_CPU_EN7512) $(TCSUPPORT_CPU_EN7521)),)
+	$(MAKE) -C $(MODULES_RAETH_DIR)
+	cp $(MODULES_RAETH_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+autobench_clean:
+	$(MAKE) -C $(MODULES_AUTOBENCH_DIR) clean
+endif
+else
+autobench:
+	if test -e $(FILESYSTEM_DIR)/usr/etc/init.d/rcS_AutoBench; \
+	then rm -f $(FILESYSTEM_DIR)/usr/etc/init.d/rcS_AutoBench; \
+	fi
+autobench_clean:
+endif
+
+
+
+#build kprofile
+ifneq ($(strip $(TCSUPPORT_KPROFILE)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+kprofile:
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/kprofile.ko $(FILESYSTEM_DIR)/lib/modules/
+kprofile_clean:
+	echo "TC_BUILD_RELEASECODE: Build kprofile Driver, do nothing!"
+else
+kprofile:
+	$(MAKE) -C $(MODULES_KPROFILE_DIR)
+	cp $(MODULES_KPROFILE_DIR)/kprofile.ko $(FILESYSTEM_DIR)/lib/modules/
+kprofile_clean:
+	$(MAKE) -C $(MODULES_KPROFILE_DIR) clean
+endif
+else
+kprofile:
+kprofile_clean:
+endif
+
+################################################################################
+############## build phy related modules ###################################### 
+xpon_phy_modules:
+ifneq ($(strip $(TCSUPPORT_WAN_GPON) $(TCSUPPORT_WAN_EPON)),)
+	@echo "build PHY modules"
+	$(MAKE) -C $(MODULES_PHY_DIR)
+	cp $(MODULES_PRIV_SRC_DIR)/xpon_phy/phy.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+
+xpon_phy_modules_clean:
+ifneq ($(strip $(TCSUPPORT_WAN_GPON) $(TCSUPPORT_WAN_EPON)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_PHY_DIR) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f phy.ko
+endif
+endif
+
+################################################################################
+############## build xPON related modules ###################################### 
+xpon_modules:
+#build xpon-phy
+ifneq ($(strip $(TCSUPPORT_WAN_GPON) $(TCSUPPORT_WAN_EPON)),)
+	@echo "build XPON PHY modules"
+	$(MAKE) -C $(MODULES_PHY_DIR)
+	cp $(MODULES_PRIV_SRC_DIR)/xpon_phy/phy.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+
+#build xpon-wan driver
+ifneq ($(strip $(TCSUPPORT_WAN_GPON) $(TCSUPPORT_WAN_EPON)),)
+	@echo "build XPON WAN modules"
+#ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+#	cp $(MODULES_BACKUP)/$(TCPLATFORM)/xpon.ko $(FILESYSTEM_DIR)/lib/modules/
+#else
+	$(MAKE) -C $(MODULES_XPON_WAN_DIR)
+	cp $(MODULES_PRIV_SRC_DIR)/xpon/xpon.ko $(FILESYSTEM_DIR)/lib/modules/
+#endif
+endif
+
+
+#build ponvlan
+ifneq ($(strip $(TCSUPPORT_PON_VLAN)),)
+	@echo "build XPON vlan modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/ponvlan.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_PON_VLAN_DIR)
+	cp $(MODULES_PON_VLAN_DIR)/ponvlan.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+#build ponmacfilter
+ifneq ($(strip $(TCSUPPORT_PON_MAC_FILTER)),)
+	@echo "build XPON mac filter modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/ponmacfilter.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_PON_MAC_FILTER_DIR)
+	cp $(MODULES_PON_MAC_FILTER_DIR)/ponmacfilter.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+#build xponmap
+ifneq ($(strip $(TCSUPPORT_GPON_MAPPING) $(TCSUPPORT_EPON_MAPPING)),)
+	echo "build xponmap Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/xponmap.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_XPON_MAP_DIR) 
+	cp $(MODULES_XPON_MAP_DIR)/xponmap.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_XPON_IGMP)),)
+	echo "build xPON IGMP Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/xpon_igmp.ko $(FILESYSTEM_DIR)/lib/modules/
+else	
+	$(MAKE) -C $(MODULES_XPONIGMP_DIR)
+	cp $(MODULES_XPONIGMP_DIR)/xpon_igmp.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_ETHER_DOWNVLAN)),)
+	echo "build ether down vlan Modules"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/ether_downvlan.ko $(FILESYSTEM_DIR)/lib/modules/
+else	
+	$(MAKE) -C $(MODULES_ETHER_DOWNVLAN_DIR)
+	cp $(MODULES_ETHER_DOWNVLAN_DIR)/ether_downvlan.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+xpon_modules_clean:
+ifneq ($(strip $(TCSUPPORT_WAN_GPON) $(TCSUPPORT_WAN_EPON)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_PHY_DIR) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f phy.ko
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_WAN_GPON) $(TCSUPPORT_WAN_EPON)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_XPON_WAN_DIR) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f xpon.ko
+endif
+endif
+
+
+ifneq ($(strip $(TCSUPPORT_PON_VLAN)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_PON_VLAN_DIR) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f ponvlan.ko
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_PON_MAC_FILTER)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_PON_MAC_FILTER_DIR) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f ponmacfilter.ko
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_GPON_MAPPING) $(TCSUPPORT_EPON_MAPPING)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_XPON_MAP_DIR) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f xponmap.ko
+endif
+endif	
+
+ifneq ($(strip $(TCSUPPORT_XPON_IGMP)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_XPONIGMP_DIR) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f xpon_igmp.ko
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_ETHER_DOWNVLAN)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_ETHER_DOWNVLAN_DIR) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f ether_downvlan.ko
+endif
+endif
+
+fttdp_inic_modules:
+#build FTTdp iNIC driver
+ifneq ($(strip $(TCSUPPORT_INIC_HOST)),)
+	@echo "build FTTdp iNIC modules"
+#ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+#	cp $(MODULES_BACKUP)/$(TCPLATFORM)/fttdp_inic.ko $(FILESYSTEM_DIR)/lib/modules/
+#else
+	$(MAKE) -C $(MODULES_FTTDP_INIC_DIR)
+	cp $(MODULES_FTTDP_INIC_DIR)/fttdp_inic.ko $(FILESYSTEM_DIR)/lib/modules/
+#endif
+endif
+
+fttdp_inic_modules_clean:
+ifneq ($(strip $(TCSUPPORT_INIC_HOST)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_FTTDP_INIC_DIR) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f fttdp_inic.ko
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CT_SIMCARD_SEPARATION)$(TCSUPPORT_SIMCARD_GENERAL)),)
+simcard_driver:
+	@echo "build simcard_driver modules"
+ifneq ($(strip $(TCSUPPORT_SIM_CONTROLLER)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/mt7510sim.ko $(FILESYSTEM_DIR)/lib/modules/
+else
+	$(MAKE) -C $(MODULES_SIMCARD_DIR) clean
+	$(MAKE) -C $(MODULES_SIMCARD_DIR)
+	cp $(MODULES_SIMCARD_DIR)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+endif
+endif
+
+simcard_driver_clean:
+	@echo "build simcard_driver modules"
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(MODULES_SIMCARD_DIR) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f mt7510sim.ko
+endif
+else
+simcard_driver:
+simcard_driver_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+netlink_msg:
+	cp $(MODULES_BACKUP)/$(TCPLATFORM)/nlk_msg.ko $(FILESYSTEM_DIR)/lib/modules/
+netlink_msg_clean:
+else
+netlink_msg:
+	#chmod -R 777 $(MODULES_PRIV_SRC_DIR)/netlink_module
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/net/netlink_module clean
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/net/netlink_module
+	#chmod -R 777 $(MODULES_PRIV_SRC_DIR)/netlink_module/*.ko
+	cp $(MODULES_PRIV_SRC_DIR)/net/netlink_module/*.ko $(FILESYSTEM_DIR)/lib/modules/
+
+netlink_msg_clean:
+	$(MAKE) -C $(MODULES_PRIV_SRC_DIR)/net/netlink_module clean
+endif
+else
+netlink_msg:
+netlink_msg_clean:
+endif
+#########################################################################################################
+kocopy:
+	echo "buildimage: copy dmt driver"
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_PROLINE_SUPPORT) || defined(TCSUPPORT_CT_PON_CZ_GD)
+ifneq ($(strip $(TCSUPPORT_CT_PROLINE_SUPPORT) $(TCSUPPORT_CT_PON_CZ_GD)),)
+	echo -n `date` > $(FILESYSTEM_DIR)/usr/etc/compile_time
+endif
+#endif/*TCSUPPORT_COMPILE*/
+#3085 DMT
+ifneq ($(strip $(TCSUPPORT_DMT_3085)),)
+	cp $(DMT_DIR)/afe3085/tc3162_dmt.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+#3086 DMT
+ifneq ($(strip $(TCSUPPORT_DMT_3086)),)
+ifneq ($(strip $(TCSUPPORT_CPU_TC3162)),)
+	cp $(DMT_DIR)/3086/tc3162_dmt_L5P5.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_TC3162U)),)
+	cp $(DMT_DIR)/3086/tc3162_dmt_3162u.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+ifeq ($(strip $(PROFILE)),tc3162u_cht)
+	cp $(DMT_DIR)/3086/tc3162_dmt_cht.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_TC3262)),)
+	cp $(DMT_DIR)/3086/tc3162_dmt_3262.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_TC3182)),)
+	cp $(DMT_DIR)/3086/tc3162_dmt_3182.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+endif
+#3087 DMT
+ifneq ($(strip $(TCSUPPORT_DMT_3087)),)
+ifneq ($(strip $(TCSUPPORT_CPU_RT63260)),)
+	cp $(DMT_DIR)/3087/tc3162_dmt_rt63260.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_RT63365)),)
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH_DMT3087)),)
+	cp $(DMT_DIR)/3087/tc3162_dmt_rt63365_3087_test.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+	cp $(DMT_DIR)/3087/tc3162_dmt_rt63365_loopback.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif	
+else
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	cp $(DMT_DIR)/3087/tc3162_dmt_rt63365_2_6_36.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+	cp $(DMT_DIR)/3087/tc3162_dmt_rt63365.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_RT63368)),)
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	cp $(DMT_DIR)/3087/tc3162_dmt_rt63365_loopback.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	cp $(DMT_DIR)/3087/tc3162_dmt_rt63365_2_6_36.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+	cp $(DMT_DIR)/3087/tc3162_dmt_rt63365.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+endif
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_DMT_FTTDP)),)
+	cp $(DMT_DIR)/7510/tc3162_dmt_mt7510_FTTdp.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+#3095 DMT
+ifneq ($(strip $(TCSUPPORT_DMT_3095)),)
+ifneq ($(strip $(TCSUPPORT_CPU_RT65168)),)
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH_DMT3095)),)
+	cp $(DMT_DIR)/afe3095/tc3162_dmt_rt65168_3095.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+	cp $(DMT_DIR)/afe3095/tc3162_dmt_rt65168_loopback.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+else
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	cp $(DMT_DIR)/afe3095/tc3162_dmt_rt65168_2_6_36.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+	cp $(DMT_DIR)/afe3095/tc3162_dmt_rt65168.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+endif
+endif
+endif
+endif
+#7510 DMT
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+ifneq ($(strip $(TCSUPPORT_MT7510_E1)),)
+	cp $(DMT_DIR)/7510/tc3162_dmt_mt7510_e1.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	cp $(DMT_DIR)/7510/tc3162_dmt_mt7510_A60901.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+ifneq ($(strip $(TCSUPPORT_BONDING)),)
+	cp $(DMT_DIR)/7510/bonding/tc3162_dmt_master.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+	cp $(DMT_DIR)/7510/bonding/tc3162_dmt_slave.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt_slave.ko
+else
+ifneq ($(strip $(TCSUPPORT_DMT_CO)),)
+	cp $(DMT_DIR)/7515/tc3162_dmt_co_mt7515.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+ifneq ($(strip $(TCSUPPORT_DMT_FTTDP)),)
+	cp $(DMT_DIR)/7510/tc3162_dmt_mt7510_FTTdp.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+	cp $(DMT_DIR)/7510/tc3162_dmt_mt7510.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+endif
+endif
+endif
+endif
+endif
+#7505 DMT
+ifneq ($(strip $(TCSUPPORT_CPU_MT7505)),)
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+	cp $(DMT_DIR)/7505/tc3162_dmt_mt7550.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+	cp $(DMT_DIR)/7505/tc3162_dmt_mt7505.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+endif
+#7512 DMT
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512)),)
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+ifneq ($(strip $(TCSUPPORT_AUTOBENCH_AFE)),)
+	cp $(PROFILE_DIR)/tc3162_dmt_en7512_afe.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+else
+	cp $(PROFILE_DIR)/tc3162_dmt_en7512.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+else
+	cp $(DMT_DIR)/7512/tc3162_dmt_en7512.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif	
+endif
+#DMT CO for EN7521 FTTdp
+ifneq ($(strip $(TCSUPPORT_CPU_EN7521)),)
+ifneq ($(strip $(TCSUPPORT_FTTDP_V2)),)
+	cp $(DMT_DIR)/7512/tc3162_dmt_en7512.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_CT)),)
+ifneq ($(strip $(TCSUPPORT_CT_WAN_PTM)),)
+	if test -e $(PROFILE_DIR)/tc3162_dmt.ko; \
+		then cp $(PROFILE_DIR)/tc3162_dmt.ko $(FILESYSTEM_DIR)/lib/modules/tc3162_dmt.ko; \
+	fi
+endif
+endif
+
+	echo "buildimage: copy libs"
+ifeq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux)
+	cp -rf $(PROJECT_LIB_DIR)/mips-linux/. $(FILESYSTEM_DIR)/lib/
+endif
+
+ifeq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux-uclibc)
+	cp -rf $(PROJECT_LIB_DIR)/mips-linux-uclibc/. $(FILESYSTEM_DIR)/lib/
+endif
+
+ifeq ($(strip $(COMPILE_TOOLCHAIN)),mips-unknown-linux-uclibc)
+	cp -rf $(PROJECT_LIB_DIR)/mips-unknown-linux-uclibc/. $(FILESYSTEM_DIR)/lib/
+endif
+
+ifeq ($(strip $(TCSUPPORT_TOOLCHAIN_VER)),493)
+	cp -rf $(PROJECT_LIB_DIR)/mips-linux-uclibc-v4.9/* $(FILESYSTEM_DIR)/lib/
+endif
+
+ifeq ($(strip $(TCSUPPORT_GLIBC_VER)),220)
+	cp -rf $(PROJECT_LIB_DIR)/mips-linux-glibc-v4.9/* $(FILESYSTEM_DIR)/lib/
+endif

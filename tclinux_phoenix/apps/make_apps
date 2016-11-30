@@ -1,0 +1,5076 @@
+clean_fs_for_apps:
+	chmod -R 777 $(APP_DIR)
+	chmod -R 777 $(FILESYSTEM_DIR)
+	rm -rf $(FILESYSTEM_DIR)/bin/*
+	rm -rf $(FILESYSTEM_DIR)/usr/bin/*
+	rm -rf $(FILESYSTEM_DIR)/usr/sbin/*
+	rm -rf $(FILESYSTEM_DIR)/sbin/*
+	find $(FILESYSTEM_DIR) -name "dummpy.file" | xargs rm -f
+	rm -rf $(PROJECT_DIR)/images/*
+	
+#############################################################################################
+ifneq ($(strip $(BSP)),)
+apps_cp_before_cleanfs:
+	echo "don't do apps_cp_before_cleanfs"
+else
+apps_cp_before_cleanfs:
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+ifneq ($(strip $(SLAVEBIN)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	if test -e $(APP_TCLINUXBUILDER_DIR)/fs.gz; \
+		then echo "old bakcp filesystem already exist";\
+		else echo "backup filesystem..."; \
+				tar -cvzf $(APP_TCLINUXBUILDER_DIR)/fs.gz filesystem; \
+	fi
+endif
+ifneq ($(strip $(TCSUPPORT_CT_PON)),)
+ifneq ($(strip $(SLAVEBIN)),)
+	cp $(MAINIMG_PROFILE_DIR)/romfile.cfg $(PROFILE_DIR)/romfile.cfg
+	cp $(MAINIMG_PROFILE_DIR)/romfile_f.cfg $(PROFILE_DIR)/romfile_f.cfg
+	if test -e $(MAINIMG_PROFILE_DIR)/deviceParaStatic.conf; \
+	then cp $(MAINIMG_PROFILE_DIR)/deviceParaStatic.conf $(PROFILE_DIR)/deviceParaStatic.conf; \
+	fi	
+	if test -e $(MAINIMG_PROFILE_DIR)/mi.conf; \
+	then cp $(MAINIMG_PROFILE_DIR)/mi.conf $(PROFILE_DIR)/mi.conf; \
+	fi
+	if test -e $(MAINIMG_PROFILE_DIR)/led.conf; \
+	then cp $(MAINIMG_PROFILE_DIR)/led.conf $(PROFILE_DIR)/led.conf; \
+	fi
+endif
+endif
+else
+ifneq ($(strip $(TCSUPPORT_CT_DUAL_IMAGE)),)
+ifneq ($(strip $(TCSUPPORT_CT_PON)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+ifneq ($(strip $(TCSUPPORT_CY_E8_SFU)),)
+	if test -e $(APP_TCLINUXBUILDER_DIR)/fs.gz; \
+		then echo "restore bakcp filesystem...";\
+				rm -rvf $(FILESYSTEM_DIR); \
+				tar -xvzf $(APP_TCLINUXBUILDER_DIR)/fs.gz -C $(TRUNK_DIR)/; \
+	fi
+endif
+ifneq ($(strip $(TCSUPPORT_CT_PON_SMALLSYSTEM)),)
+	if test -e $(APP_TCLINUXBUILDER_DIR)/fs.gz; \
+		then echo "restore bakcp filesystem...";\
+				rm -rvf $(FILESYSTEM_DIR); \
+				tar -xvzf $(APP_TCLINUXBUILDER_DIR)/fs.gz -C $(TRUNK_DIR)/; \
+	fi
+endif
+endif
+endif
+endif
+endif
+endif
+#endif/*TCSUPPORT_COMPILE*/
+ifneq ($(strip $(TCSUPPORT_INIC_CLIENT)),)
+ifeq ($(strip $(RELEASEBSP)),)
+	rm -rf $(INIC_CLIENT_FILE_DIR)
+endif
+endif
+	chmod -R 777 $(APP_DIR)
+endif
+#################################################################################################
+
+#No support Purebridge Mode
+#ifeq ($(strip $(TCSUPPORT_PUREBRIDGE)),)
+apps: cp_compileoption_lib cp_global_inc libitfepon libitfgpon libitfswitch libitfphy libmtkitfqos libmtkitfvlan	libmtkitfsim libmtkitfpon libmtkitfsimulation libmtkitffe\
+	  libxpon	ponmgr libatm	br2684ctl brctl	libtcapi libtcapi_enhance json_lib opensource_lib libecb3 libtcapi_cwmp ctsgw_lib bundle_lib bdService bundle_state api_lib xponcmd mxml	tcapi busybox simcard_app ethcmd cfg_manager ssl wget upnp-dm cwmp	mobile-manager axel	wirelesstool cpu \
+	  iptables tc ebtables mtd pppd	tcci tcwdog	utelnetd boa dhcrelay ez-ipupdate osgi \
+	  bftpd	inetd openssl snmpd	ntpclient tftpd	stb_test wpas igmpproxy	voip_app pppoe-relay zebra radvd iproute pwctlcmd 8021X ated wscd\
+	  vconfig cmd_ci dhcpv6	dnsmasq	smuxctl	ecmh usb_3g_dongle usb_printer ntfs	automount usbmonitor epon_dummy_detect	autoip backuprestore pppoe_svr \
+	  dms ssh ip skbmgr ovs	ra_menu	siproxd	restore_linos_info samba traceroute	hw_nat sysstat fon fonV2 samba_ipv6	usb_modeswitch auto_mount_dongle vpn_tools eip93_apps \
+	  pmmgr omci epon_oam new_shell libtcapi_inic tcapi_inic inic_client_heartbeat blockProcess mtk_uh_test bandwidth plugin_monitor app_store bundle_cmd httpdetect api_cmd dbgmgr bundle_monitor fatfs charset_change homenas curl xl2tpd
+	  
+	  
+apps_clean:	libitfepon_clean libitfgpon_clean libitfswitch_clean libitfphy_clean libmtkitfqos_clean	libmtkitfvlan_clean	libmtkitfsim_clean libmtkitfpon_clean  libmtkitfsimulation_clean libmtkitffe_clean\
+	libxpon_clean ponmgr_clean libatm_clean	br2684ctl_clean	brctl_clean	libtcapi_clean libtcapi_enhance_clean opensource_lib_clean libecb3_clean libtcapi_cwmp_clean json_lib_clean ctsgw_lib_clean bundle_lib_clean bdService_clean bundle_state_clean api_lib_clean xponcmd_clean busybox_clean cfg_manager_clean ssl_clean wget_clean upnp-dm_clean cwmp_clean mobile-manager_clean axel_clean\
+	wirelesstool_clean cpu_clean iptables_clean	tc_clean ebtables_clean	mtd_clean pppd_clean tcci_clean	tcwdog_clean osgi_clean ovs_clean \
+	utelnetd_clean mxml_clean boa_clean	tcapi_clean	dhcrelay_clean ez-ipupdate_clean bftpd_clean inetd_clean openssl_clean snmpd_clean \
+	ntpclient_clean	tftpd_clean	stb_test_clean wpas_clean igmpproxy_clean voip_app_clean pppoe-relay_clean zebra_clean radvd_clean iproute_clean \
+	ethcmd_clean pwctlcmd_clean	8021X_clean	ated_clean wscd_clean vconfig_clean cmd_ci_clean dhcpv6_clean	dnsmasq_clean smuxctl_clean	ecmh_clean usb_3g_dongle_clean \
+	usb_printer_clean  ntfs_clean automount_clean usbmonitor_clean epon_dummy_detect_clean autoip_clean dms_clean ssh_clean ip_clean	skbmgr_clean ra_menu_clean siproxd_clean restore_linos_info_clean samba_clean \
+	backuprestore_clean	pppoe_svr_clean	traceroute_clean hw_nat_clean sysstat_clean	fon_clean fonV2_clean samba_ipv6_clean usb_modeswitch_clean	auto_mount_dongle_clean	vpn_tools_clean	eip93_apps_clean \
+	pmmgr_clean	omci_clean epon_oam_clean new_shell_clean libtcapi_inic_clean tcapi_inic_clean inic_client_heartbeat_clean blockProcess_clean simcard_app_clean	mtk_uh_test_clean bandwidth_clean plugin_monitor_clean app_store_clean bundle_cmd_clean httpdetect_clean dbgmgr_clean \
+	api_cmd_clean bundle_monitor_clean fatfs_clean charset_change_clean homenas_clean curl_clean xl2tpd_clean
+#endif
+
+cp_compileoption_lib:
+	echo "Copy compileoption_lib from app_bsp/lib"
+	if test -e $(APP_BSP_LIB_DIR)/libcompileoption.so.1.4; \
+	then echo "app_bsp Compile APP_COMPILEOPTION_LIB_DIR Lib success"; \
+	else echo "app_bsp Compile APP_COMPILEOPTION_LIB_DIR Lib error!"; exit 1; \
+	fi
+	cp -rf $(APP_BSP_LIB_DIR)/libcompileoption.so $(LIB_DIR)/
+	cp -rf $(APP_BSP_LIB_DIR)/libcompileoption.so.* $(LIB_DIR)/
+	cp -rf $(APP_BSP_LIB_DIR)/libcompileoption.so $(PUBLIC_LIB_DIR)/
+	cp -rf $(APP_BSP_LIB_DIR)/libcompileoption.so.* $(PUBLIC_LIB_DIR)/
+	cp -rf $(APP_BSP_LIB_DIR)/libcompileoption.h $(LIB_DIR)/
+	cp -rf $(APP_BSP_LIB_DIR)/libcompileoption.h $(PUBLIC_LIB_DIR)/
+
+cp_global_inc:
+	echo "Copy some .h from global_inc to apps"
+	cp -rf $(GLOBAL_INC_DIR)/flash_layout/prolinecmd.h $(APP_CMDCI_DIR)/
+	cp -rf $(GLOBAL_INC_DIR)/flash_layout/tc_partition.h $(APP_MTD_DIR)/
+	
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+httpdetect:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/httpdetect $(FILESYSTEM_DIR)/userfs/bin
+httpdetect_clean:
+	echo "TC_BUILD_RELEASECODE: Build httpdetect, do nothing!"
+else
+httpdetect:
+	echo "Build OPENSSL"
+	if test -e $(FILESYSTEM_DIR)/lib/libcrypto.so; \
+	then echo "already have openssl"; \
+	else $(MAKE) -C $(APP_OPENSSL_DIR_V1); \
+	$(MAKE) install -C $(APP_OPENSSL_DIR_V1); \
+	if test -e $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libcrypto.so; \
+	then echo "Compile openssl success"; \
+	cp $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libcrypto.so* $(FILESYSTEM_DIR)/lib -avd; \
+	cp $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libssl.so*    $(FILESYSTEM_DIR)/lib -avd; \
+	else echo "Compile openssl error!"; exit 1; \
+	fi; \
+	fi
+	echo "Build httpdetect"
+
+#	$(MAKE) -C $APP_HTTPDETECT_DIR) clean
+	$(MAKE) -C $(APP_HTTPDETECT_DIR)
+	if test -e $(APP_HTTPDETECT_DIR)/httpdetect; \
+	then echo "Compile httpdetect success"; \
+	else echo "Compile httpdetect error!"; exit 1; \
+	fi
+	cp  $(APP_HTTPDETECT_DIR)/httpdetect  $(FILESYSTEM_DIR)/userfs/bin/
+		
+httpdetect_clean:
+	echo "Clean httpdetect"
+	$(MAKE) -C $(APP_HTTPDETECT_DIR) clean
+	if test -e $(FILESYSTEM_DIR)/userfs/bin/httpdetect; \
+	then rm $(FILESYSTEM_DIR)/userfs/bin/httpdetect ;\
+	fi
+	touch $(APP_OPENSSL_DIR_V1)/Makefile; 
+	$(MAKE) -C $(APP_OPENSSL_DIR_V1) clean
+	if test -e $(FILESYSTEM_DIR)/lib/libcrypto.so*; \
+	then rm $(FILESYSTEM_DIR)/lib/libcrypto.so* ; \
+	fi
+	if test -e $(FILESYSTEM_DIR)/lib/libssl.so*; \
+	then rm $(FILESYSTEM_DIR)/lib/libssl.so* ;\
+	fi
+endif	
+else
+httpdetect:
+httpdetect_clean:
+endif
+
+
+#ifneq ($(strip $(TCSUPPORT_PUREBRIDGE)),)
+#apps: libatm br2684ctl brctl libtcapi busybox cfg_manager wirelesstool\
+#      mtd tcci tcwdog utelnetd mxml boa tcapi
+#      
+#apps_clean: libatm_clean br2684ctl_clean brctl_clean libtcapi_clean busybox_clean cfg_manager_clean  \
+#      mtd_clean pppd_clean tcci_clean tcwdog_clean utelnetd_clean mxml_clean boa_clean tcapi_clean
+#endif
+
+libmtkitfsimulation:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	@echo "##################Build libmtkitfsimulation#####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_simulation
+	@if	test -e	$(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_simulation/libmtk_itf_simulation.so;	\
+	then echo "Compile itf simulation  Lib	success"; \
+	else echo "Compile itf simulation  Lib	error!"; exit 1; \
+	fi
+endif
+
+libmtkitfsimulation_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	@echo "##################clean libmtkitfsimulation#####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_simulation clean
+endif
+
+libmtkitffe:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)$(TCSUPPORT_XPON_HAL_API)),)
+	@echo "##################Build libmtkitffe#####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_fe
+	@if	test -e	$(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_fe/libmtk_itf_fe.so;	\
+	then echo "Compile itf fe Lib	success"; \
+	else echo "Compile itf fe  Lib	error!"; exit 1; \
+	fi
+endif
+
+libmtkitffe_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)$(TCSUPPORT_XPON_HAL_API)),)
+	@echo "##################clean libmtkitffe#####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_fe clean
+endif
+
+libmtkitfppe:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	@echo "##################Build libmtkitfppe#####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_ppe
+	@if	test -e	$(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_ppe/libmtk_itf_ppe.so;	\
+	then echo "Compile itf ppe Lib	success"; \
+	else echo "Compile itf ppe  Lib	error!"; exit 1; \
+	fi
+endif
+
+libmtkitfppe_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	@echo "##################clean libmtkitfppe#####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_ppe clean
+endif
+
+libitfepon:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	@echo "##################Build libitfepon#####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_epon
+	@if	test -e	$(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_epon/libmtk_itf_epon.so;	\
+	then echo "Compile itf epon	Lib	success"; \
+	else echo "Compile itf epon	Lib	error!"; exit 1; \
+	fi
+endif
+
+libitfepon_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	@echo "##################clean libitfepon#####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_epon clean
+endif
+
+libitfgpon: libitfswitch
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)$(TCSUPPORT_XPON_HAL_API)),)
+	echo "Build	libitfgpon"
+	echo "#####################Build libitfgpon####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_gpon
+	@if	test -e	$(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_gpon/libmtk_itf_gpon.so;	\
+	then echo "Compile itf xpon	Lib	success"; \
+	else echo "Compile itf xpon	Lib	error!"; exit 1; \
+	fi
+endif
+
+libitfgpon_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)$(TCSUPPORT_XPON_HAL_API)),)
+	echo "#####################clean libitfgpon_clean####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_gpon clean
+endif
+
+libitfswitch:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)$(TCSUPPORT_XPON_HAL_API)),)
+	echo "Build	libitfswitch"
+	echo "#####################Build libitfswitch####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_switch
+	@if	test -e	$(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_switch/libmtk_itf_switch.so;	\
+	then echo "Compile itf switch lib success";	\
+	else echo "Compile itf switch lib error!"; exit	1; \
+	fi
+endif
+
+libitfswitch_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)$(TCSUPPORT_XPON_HAL_API)),)
+	echo "#####################clean libitfswitch_clean####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_switch clean
+endif
+
+
+libitfphy:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	echo "Build	libitfphy"
+	echo "#####################Build libitfphy####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_phy
+	@if	test -e	$(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_phy/libmtk_itf_phy.so; \
+	then echo "Compile itf phy lib success"; \
+	else echo "Compile itf phy lib error!";	exit 1;	\
+	fi
+endif
+
+
+libitfphy_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	echo "#####################clean libitfphy_clean####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_phy clean
+endif
+
+libmtkitfqos:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	echo "Build	libmtkitfqos"
+	echo "#####################Build libmtkitfqos####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_qos
+	@if	test -e	$(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_qos/libmtk_itf_qos.so; \
+	then echo "Compile mtk itf qos Lib success"; \
+	else echo "Compile mtk itf qos Lib error!";	exit 1;	\
+	fi
+endif
+
+libmtkitfqos_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	echo "#####################clean libmtkitfqos_clean####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_qos clean
+endif
+
+libmtkitfvlan:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	echo "Build	libmtkitfvlan"
+	echo "#####################Build libmtkitfvlan####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_vlan
+	@if	test -e	$(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_vlan/libmtk_itf_vlan.so;	\
+	then echo "Compile mtk itf vlan	Lib	success"; \
+	else echo "Compile mtk itf vlan	Lib	error!"; exit 1; \
+	fi
+endif
+
+libmtkitfvlan_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	echo "#####################clean libmtkitfvlan_clean####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_vlan clean
+endif
+
+libmtkitfsim:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	echo "Build	libmtkitfsim"
+	echo "#####################Build libmtkitfsim####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_sim
+	@if	test -e	$(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_sim/libmtk_itf_sim.so; \
+	then echo "Compile mtk itf sim Lib success"; \
+	else echo "Compile mtk itf sim Lib error!";	exit 1;	\
+	fi
+endif
+
+libmtkitfsim_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	echo "#####################clean libmtkitfsim_clean####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_sim clean
+endif
+
+libmtkitfpon:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	echo "Build	libmtkitfpon"
+	echo "#####################Build libmtkitfpon####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_pon
+	@if	test -e	$(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_pon/libmtk_itf_pon.so; \
+	then echo "Compile mtk itf pon Lib success"; \
+	else echo "Compile mtk itf pon Lib error!";	exit 1;	\
+	fi
+endif
+
+libmtkitfpon_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	echo "#####################clean libmtkitfpon_clean####################"
+	$(MAKE)	-C $(APP_PRIVATE_DIR)/mtk_itf/mtk_itf_pon clean
+endif
+
+tcpdump:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	echo "##############Build tcpdump###########################"
+	#ac_cv_linux_vers=2.6.36
+	cd $(APP_PUBLIC_DIR)/libpcap-master	&& ./configure --host=mips-linux --with-pcap=linux
+	$(MAKE)	-C $(APP_PUBLIC_DIR)/libpcap-master
+	#ac_cv_lib_crypto_DES_cbc_encrypt
+	cd $(APP_PUBLIC_DIR)/tcpdump-master	&& ./configure CPPFLAGS="-I$(APP_PUBLIC_DIR)/libpcap-master" LDFLAGS="-L$(APP_PUBLIC_DIR)/libpcap-master" --host=mips-linux	--disable-FEATURE
+	$(MAKE)	-C $(APP_PUBLIC_DIR)/tcpdump-master
+endif
+	
+tcpdump_clean:
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	echo "#############clean tcpdump###########################"
+	$(MAKE)	-C $(APP_PUBLIC_DIR)/libpcap-master	 clean
+	$(MAKE)	-C $(APP_PUBLIC_DIR)/tcpdump-master	 clean
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_MT7520)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+libxpon:
+	@echo "TC_BUILD_RELEASECODE: Build libxpon"
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/* $(LIB_XPON_DIR)/
+ifneq ($(strip $(TCSUPPORT_WAN_EPON)),)
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libepon.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libepon.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libepon.so $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libepon.so.* $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libepon.so $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libepon.so.* $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/epon/libepon.h $(LIB_DIR)/	
+endif
+ifneq ($(strip $(TCSUPPORT_EPON_MAPPING)),)
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libeponmap.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libeponmap.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libeponmap.so $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libeponmap.so.* $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libeponmap.so $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libeponmap.so.* $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/eponmap/libeponmap.h $(LIB_DIR)/	
+endif
+ifneq ($(strip $(TCSUPPORT_GPON_MAPPING)),)
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libgponmap.so $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libgponmap.so.* $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libgponmap.so $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libgponmap.so.* $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libgponmap.so $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libgponmap.so.* $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/gponmap/libgponmap.h $(LIB_DIR)/
+endif
+ifneq ($(strip $(TCSUPPORT_PON_VLAN)),)
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libpon_vlan.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libpon_vlan.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libpon_vlan.so $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libpon_vlan.so.* $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libpon_vlan.so $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libpon_vlan.so.* $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/pon_vlan/lib_pon_vlan.h $(LIB_DIR)/	
+endif
+ifneq ($(strip $(TCSUPPORT_PON_MAC_FILTER)),)
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libpon_mac_filter.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libpon_mac_filter.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libpon_mac_filter.so $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libpon_mac_filter.so.* $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libpon_mac_filter.so $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libpon_mac_filter.so.* $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/pon_mac_filter/lib_pon_mac_filter.h $(LIB_DIR)/	
+endif
+ifneq ($(strip $(TCSUPPORT_XPON_IGMP)),)
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libxpon_igmp.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libxpon_igmp.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libxpon_igmp.so $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libxpon_igmp.so.* $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libxpon_igmp.so $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/$(TCPLATFORM)/libxpon_igmp.so.* $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/xpon_igmp/lib_xpon_igmp.h $(LIB_DIR)/	
+endif
+libxpon_clean:
+	@echo "TC_BUILD_RELEASECODE: Clean libxpon, do nothing!"
+else
+libxpon:
+	@echo "Build libxpon"
+	$(MAKE) -C $(LIB_XPON_DIR)
+ifneq ($(strip $(TCSUPPORT_WAN_EPON)),)
+	@if test -e $(LIB_XPON_DIR)/libepon.so.1; \
+	then echo "Compile epon Lib success"; \
+	else echo "Compile epon Lib error!"; exit 1; \
+	fi
+	cp  $(LIB_XPON_DIR)/libepon.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/libepon.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/libepon.so $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libepon.so.* $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/epon/libepon.h $(LIB_DIR)/	
+	cp  $(LIB_XPON_DIR)/libepon.so $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libepon.so.* $(PUBLIC_LIB_DIR)/
+endif
+ifneq ($(strip $(TCSUPPORT_EPON_MAPPING)),)
+	@if test -e $(LIB_XPON_DIR)/libeponmap.so.1; \
+	then echo "Compile eponmap Lib success"; \
+	else echo "Compile eponmap Lib error!"; exit 1; \
+	fi
+	cp  $(LIB_XPON_DIR)/libeponmap.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/libeponmap.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/libeponmap.so $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libeponmap.so.* $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/eponmap/libeponmap.h $(LIB_DIR)/	
+	cp  $(LIB_XPON_DIR)/libeponmap.so $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libeponmap.so.* $(PUBLIC_LIB_DIR)/
+endif
+ifneq ($(strip $(TCSUPPORT_GPON_MAPPING)),)
+	@if test -e $(LIB_XPON_DIR)/libgponmap.so.1; \
+	then echo "Compile gponmap Lib success"; \
+	else echo "Compile gponmap Lib error!"; exit 1; \
+	fi
+	cp  $(LIB_XPON_DIR)/libgponmap.so $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/libgponmap.so.* $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/libgponmap.so $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libgponmap.so.* $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/gponmap/libgponmap.h $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libgponmap.so $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libgponmap.so.* $(PUBLIC_LIB_DIR)/
+endif
+ifneq ($(strip $(TCSUPPORT_PON_VLAN)),)
+	@if test -e $(LIB_XPON_DIR)/libpon_vlan.so.1; \
+	then echo "Compile pon vlan Lib success"; \
+	else echo "Compile pon vlan Lib error!"; exit 1; \
+	fi
+	cp  $(LIB_XPON_DIR)/libpon_vlan.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/libpon_vlan.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/libpon_vlan.so $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libpon_vlan.so.* $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/pon_vlan/lib_pon_vlan.h $(LIB_DIR)/	
+	cp  $(LIB_XPON_DIR)/libpon_vlan.so $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libpon_vlan.so.* $(PUBLIC_LIB_DIR)/
+endif
+ifneq ($(strip $(TCSUPPORT_PON_MAC_FILTER)),)
+	@if test -e $(LIB_XPON_DIR)/libpon_mac_filter.so.1; \
+	then echo "Compile mac filter Lib success"; \
+	else echo "Compile mac filter Lib error!"; exit 1; \
+	fi
+	cp  $(LIB_XPON_DIR)/libpon_mac_filter.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/libpon_mac_filter.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/libpon_mac_filter.so $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libpon_mac_filter.so.* $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/pon_mac_filter/lib_pon_mac_filter.h $(LIB_DIR)/	
+	cp  $(LIB_XPON_DIR)/libpon_mac_filter.so $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libpon_mac_filter.so.* $(PUBLIC_LIB_DIR)/
+endif
+ifneq ($(strip $(TCSUPPORT_XPON_IGMP)),)
+	@if test -e $(LIB_XPON_DIR)/libxpon_igmp.so.1; \
+	then echo "Compile xpon igmp Lib success"; \
+	else echo "Compile xpon igmp Lib error!"; exit 1; \
+	fi
+	cp  $(LIB_XPON_DIR)/libxpon_igmp.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/libxpon_igmp.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(LIB_XPON_DIR)/libxpon_igmp.so $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libxpon_igmp.so.* $(LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/xpon_igmp/lib_xpon_igmp.h $(LIB_DIR)/	
+	cp  $(LIB_XPON_DIR)/libxpon_igmp.so $(PUBLIC_LIB_DIR)/
+	cp  $(LIB_XPON_DIR)/libxpon_igmp.so.* $(PUBLIC_LIB_DIR)/
+endif
+
+libxpon_clean:
+	@echo "Clean libxpon!"
+	$(MAKE) -C $(LIB_XPON_DIR) clean	
+endif
+	
+xponcmd:
+	@echo "Build xponcmd"
+	$(MAKE) -C $(APP_XPON_CMD_DIR)
+ifneq ($(strip $(TCSUPPORT_WAN_EPON)),)
+	@if test -e $(APP_XPON_CMD_DIR)/eponcmd; \
+	then echo "Compile eponcmd success"; \
+	else echo "Compile eponcmd error!"; exit 1; \
+	fi
+	cp $(APP_XPON_CMD_DIR)/eponcmd $(FILESYSTEM_DIR)/usr/bin
+endif
+ifneq ($(strip $(TCSUPPORT_EPON_MAPPING)),)
+	@if test -e $(APP_XPON_CMD_DIR)/eponmapcmd; \
+	then echo "Compile eponmapcmd success"; \
+	else echo "Compile eponmapcmd error!"; exit 1; \
+	fi
+	cp $(APP_XPON_CMD_DIR)/eponmapcmd $(FILESYSTEM_DIR)/usr/bin/
+endif
+ifneq ($(strip $(TCSUPPORT_GPON_MAPPING)),)
+	@if test -e $(APP_XPON_CMD_DIR)/gponmapcmd; \
+	then echo "Compile gponmapcmd success"; \
+	else echo "Compile gponmapcmd error!"; exit 1; \
+	fi
+	cp $(APP_XPON_CMD_DIR)/gponmapcmd $(FILESYSTEM_DIR)/usr/bin
+endif
+ifneq ($(strip $(TCSUPPORT_PON_VLAN)),)
+	@if test -e $(APP_XPON_CMD_DIR)/ponvlancmd; \
+	then echo "Compile pon vlan cmd success"; \
+	else echo "Compile pon vlan cmd error!"; exit 1; \
+	fi
+	cp $(APP_XPON_CMD_DIR)/ponvlancmd $(FILESYSTEM_DIR)/usr/bin/
+endif
+ifneq ($(strip $(TCSUPPORT_PON_MAC_FILTER)),)
+	@if test -e $(APP_XPON_CMD_DIR)/ponmacfiltercmd; \
+	then echo "Compile pon mac filter cmd success"; \
+	else echo "Compile pon mac filter cmd error!"; exit 1; \
+	fi
+	cp $(APP_XPON_CMD_DIR)/ponmacfiltercmd $(FILESYSTEM_DIR)/usr/bin/
+endif
+ifneq ($(strip $(TCSUPPORT_XPON_IGMP)),)
+	@if test -e $(APP_XPON_CMD_DIR)/xponigmpcmd; \
+	then echo "Compile xpon igmp cmd success"; \
+	else echo "Compile xpon igmp cmd error!"; exit 1; \
+	fi
+	cp $(APP_XPON_CMD_DIR)/xponigmpcmd $(FILESYSTEM_DIR)/usr/bin/
+endif
+xponcmd_clean:
+	@echo "Clean xponcmd!"
+	$(MAKE) -C $(APP_XPON_CMD_DIR) clean
+else
+libxpon:
+libxpon_clean:
+xponcmd:
+xponcmd_clean:
+endif
+
+tcapi_inic:
+ifneq ($(strip $(TCSUPPORT_INIC_HOST)),)
+	@echo "Build tcapi_inic"
+	$(MAKE) -C $(APP_TCAPI_INIC_DIR)
+	@if test -e $(APP_TCAPI_INIC_DIR)/tcapi_inic;\
+	then echo "Compile tcapi_inic success"; \
+	else echo "Compile tcapi_inic error!"; exit 1;\
+	fi
+
+	$(MAKE) -C $(APP_TCAPI_INIC_DIR) install
+endif
+
+tcapi_inic_clean:
+ifneq ($(strip $(TCSUPPORT_INIC_HOST)),)
+	@echo "Clean tcapi_inic"
+	$(MAKE) -C $(APP_TCAPI_INIC_DIR) clean
+endif
+
+inic_client_heartbeat:
+ifneq ($(strip $(TCSUPPORT_INIC_HOST)),)
+	@echo "Build inic_client_heartbeat"
+	$(MAKE) -C $(APP_INIC_CLIENT_HEARTBEAT_DIR)
+	@if test -e $(APP_INIC_CLIENT_HEARTBEAT_DIR)/inic_client_heartbeat;\
+	then echo "Compile inic_client_heartbeat success"; \
+	else echo "Compile inic_client_heartbeat error!"; exit 1;\
+	fi
+
+	$(MAKE) -C $(APP_INIC_CLIENT_HEARTBEAT_DIR) install
+endif
+
+inic_client_heartbeat_clean:
+ifneq ($(strip $(TCSUPPORT_INIC_HOST)),)
+	@echo "Clean inic_client_heartbeat"
+	$(MAKE) -C $(APP_INIC_CLIENT_HEARTBEAT_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_OMCI)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+omci:
+	@echo "Build OMCI"
+	cp -rf $(APP_OMCI_DIR)/$(TCPLATFORM)/*.o $(APP_OMCI_DIR)/
+	$(MAKE) -C $(APP_OMCI_DIR)
+	@if test -e $(APP_OMCI_DIR)/omci;\
+	then echo "Compile omci success"; \
+	else echo "Compile omci error!"; exit 1;\
+	fi
+	cp $(APP_OMCI_DIR)/omci $(FILESYSTEM_DIR)/userfs/bin/
+omci_clean:
+	@echo "Clean OMCI!"
+	$(MAKE) -C $(APP_OMCI_DIR) clean
+else
+ifeq ($(strip $(TCSUPPORT_AUTOBENCH)),)
+omci:
+	#@echo "Build OMCI!"
+ifeq ($(strip $(TCSUPPORT_PARALLEL_BUILD_KERNEL_OFF)),)
+	@echo -e "\e[33mParallel build omci!\e[0m"
+endif
+	$(MAKE) $(TC_PARALLEL_BUILD_PARAM_KERNEL) -C $(APP_OMCI_DIR)	
+	@if test -e $(APP_OMCI_DIR)/omci;\
+	then echo "Compile omci success"; \
+	else echo "Compile omci error!"; exit 1;\
+	fi
+	cp $(APP_OMCI_DIR)/omci $(FILESYSTEM_DIR)/userfs/bin/
+omci_clean:
+	@echo "Clean OMCI!"
+	@$(MAKE) -C $(APP_OMCI_DIR) clean
+else
+omci:
+	@echo "Build OMCI!"
+omci_clean:
+	@echo "Clean OMCI!"
+endif
+endif
+else
+omci:
+omci_clean:
+endif	
+
+
+
+
+ifneq ($(strip $(TCSUPPORT_EPON_OAM)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+epon_oam:
+	@echo "Build epon_oam!"
+	cp -rf $(APP_EPON_OAM_DIR)/$(TCPLATFORM)/*.o $(APP_EPON_OAM_DIR)/
+	$(MAKE) -C $(APP_EPON_OAM_DIR)
+	@if test -e $(APP_EPON_OAM_DIR)/epon_oam;\
+	then echo "Compile epon_oam success"; \
+	else echo "Compile epon_oam error!"; exit 1;\
+	fi
+	cp $(APP_EPON_OAM_DIR)/epon_oam $(FILESYSTEM_DIR)/userfs/bin/
+epon_oam_clean:
+	@echo "Clean epon_oam!"
+	$(MAKE) -C $(APP_EPON_OAM_DIR) clean
+else
+epon_oam:
+	@echo "Build epon_oam!"
+	$(MAKE) -C $(APP_EPON_OAM_DIR) clean
+	$(MAKE) -C $(APP_EPON_OAM_DIR)
+	@if test -e $(APP_EPON_OAM_DIR)/epon_oam;\
+	then echo "Compile epon_oam success"; \
+	else echo "Compile epon_oam error!"; exit 1;\
+	fi
+	cp $(APP_EPON_OAM_DIR)/epon_oam $(FILESYSTEM_DIR)/userfs/bin/
+epon_oam_clean:
+	@echo "Clean epon_oam!"
+	$(MAKE) -C $(APP_EPON_OAM_DIR) clean
+endif
+else
+epon_oam:
+epon_oam_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_PONMGR)),)
+ponmgr:
+	echo "Build PONMGR !"
+	$(MAKE) -C $(APP_PONMGR_DIR) all
+	if test -e $(APP_PONMGR_DIR)/bin/libponapi.a;\
+	then echo "Compile ponmgr success"; \
+	else echo "Compile ponmgr error!"; exit 1;\
+	fi
+	cp $(APP_PONMGR_DIR)/bin/$@ $(FILESYSTEM_DIR)/userfs/bin/
+ponmgr_clean:
+	echo "Clean PON MGR !"
+	$(MAKE) -C $(APP_PONMGR_DIR) distclean	
+else
+ponmgr:
+ponmgr_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_PMMGR)),)
+pmmgr:
+	@echo "Build PMMGR !"
+	$(MAKE) -C $(APP_PMMGR_DIR) clean
+	$(MAKE) -C $(APP_PMMGR_DIR)
+	if test -e $(APP_PMMGR_DIR)/libpmapi.a;\
+	then echo "Compile pmmgr success"; \
+	else echo "Compile pmmgr error!"; exit 1;\
+	fi
+pmmgr_clean:
+	echo "Clean Performance Monitor MGR !"
+	$(MAKE) -C $(APP_PMMGR_DIR) clean
+else
+pmmgr:
+pmmgr_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_GPON_MAPPING)),)
+gpon_map:
+	echo "Build gponmapcmd !"
+	$(MAKE) -C $(APP_GPONMAP_DIR) clean
+	$(MAKE) -C $(APP_GPONMAP_DIR)
+	if test -e $(APP_GPONMAP_DIR)/gponmapcmd; \
+	then echo "Compile gponmapcmd success";\
+	else echo "Compile gponmapcmd error!"; exit 1;\
+	fi
+	cp $(APP_GPONMAP_DIR)/gponmapcmd $(FILESYSTEM_DIR)/usr/bin/
+	cp $(APP_GPONMAP_DIR)/test_gponmap $(FILESYSTEM_DIR)/usr/bin/
+gpon_map_clean:
+	echo "Clean gponmapcmd !"
+	$(MAKE) -C $(APP_GPONMAP_DIR) clean
+else
+gpon_map:
+gpon_map_clean:
+endif
+
+
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+#ifneq ($(strip $(TCSUPPORT_CT)),)
+#cfg_manager:
+#	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/cfg_manager $(FILESYSTEM_DIR)/userfs/bin
+#cfg_manager_clean:
+#	echo "Clean CFG_MANAGER! do nothing."
+
+cfg_manager:
+ifneq ($(strip $(TCSUPPORT_ECN_SIP))_$(strip $(TCSUPPORT_ECN_MEGACO)),_)
+	echo ======support ecn general_cfg_manager_ct=======
+else
+ifneq ($(strip $(TCSUPPORT_VOIP_IMSSIP)),)
+	cp -rf $(APP_VOIP_IMSSIP_BIN_DIR)/voip_data_util.o  $(APP_CFG_MANAGER_DIR)/
+	cp -rf $(APP_VOIP_IMSSIP_BIN_DIR)/vpcom.a  $(APP_CFG_MANAGER_DIR)/
+endif
+ifneq ($(strip $(VP_MEGACO)),)
+	cp -rf $(APP_VOIP_MEGACO_BIN_DIR)/pmegaco_support.o  $(APP_CFG_MANAGER_DIR)/
+	cp -rf $(APP_VOIP_MEGACO_BIN_DIR)/sp_common.a  $(APP_CFG_MANAGER_DIR)/
+endif
+endif
+
+	echo "Build CFG_MANAGER!"
+	cp -rf $(APP_CFG_MANAGER_DIR)/$(TCPLATFORM)/cfg_manager.o $(APP_CFG_MANAGER_DIR)/
+	$(MAKE) -C $(APP_CFG_MANAGER_DIR)
+	if test -e $(APP_CFG_MANAGER_DIR)/cfg_manager; \
+	then echo "Compile cfg_manager success"; \
+	else echo "Compile cfg_manager error!"; exit 1; \
+	fi
+	cp  $(APP_CFG_MANAGER_DIR)/cfg_manager  $(FILESYSTEM_DIR)/userfs/bin/
+
+
+cfg_manager_clean:
+	echo "Clean CFG_MANAGER!"
+	$(MAKE) -C $(APP_CFG_MANAGER_DIR) clean	
+#endif
+else
+cfg_manager: 
+ifneq ($(strip $(TCSUPPORT_ECN_SIP))_$(strip $(TCSUPPORT_ECN_MEGACO)),_)
+	echo ======support ecn general_cfg_manager_ct=======
+else
+ifneq ($(strip $(TCSUPPORT_VOIP_IMSSIP)),)
+	cp -rf $(APP_VOIP_IMSSIP_BIN_DIR)/voip_data_util.o  $(APP_CFG_MANAGER_DIR)/
+	cp -rf $(APP_VOIP_IMSSIP_BIN_DIR)/vpcom.a  $(APP_CFG_MANAGER_DIR)/
+	rm -rf $(APP_CFG_MANAGER_DIR)/voip.o
+	cp -rf $(APP_VOIP_IMSSIP_BIN_DIR)/voip.o  $(APP_CFG_MANAGER_DIR)/
+endif
+ifneq ($(strip $(VP_MEGACO)),)
+	cp -rf $(APP_VOIP_MEGACO_BIN_DIR)/pmegaco_support.o  $(APP_CFG_MANAGER_DIR)/
+	cp -rf $(APP_VOIP_MEGACO_BIN_DIR)/sp_common.a  $(APP_CFG_MANAGER_DIR)/
+endif
+endif
+
+	echo "Build CFG_MANAGER!"
+	$(MAKE) -C $(APP_CFG_MANAGER_DIR)
+	if test -e $(APP_CFG_MANAGER_DIR)/cfg_manager; \
+	then echo "Compile cfg_manager success"; \
+	else echo "Compile cfg_manager error!"; exit 1; \
+	fi
+	cp  $(APP_CFG_MANAGER_DIR)/cfg_manager  $(FILESYSTEM_DIR)/userfs/bin/
+
+cfg_manager_clean:
+	echo "Clean CFG_MANAGER!"
+	$(MAKE) -C $(APP_CFG_MANAGER_DIR) clean	
+
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT)),)
+skbmgr:
+skbmgr_clean:
+else
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+skbmgr:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/skbmgr $(FILESYSTEM_DIR)/userfs/bin/
+skbmgr_clean:
+else
+skbmgr:
+	echo "Build SKBMGR!"
+	$(MAKE) -C $(APP_SKB_MANAGER_DIR)
+	if test -e $(APP_SKB_MANAGER_DIR)/skbmgr; \
+	then echo "Compile skbmgr success"; \
+	else echo "Compile skbmgr error!"; exit 1; \
+	fi
+	cp  $(APP_SKB_MANAGER_DIR)/skbmgr  $(FILESYSTEM_DIR)/userfs/bin/
+
+
+skbmgr_clean:
+	echo "Clean SKB_MANAGER!"
+	$(MAKE) -C $(APP_SKB_MANAGER_DIR) clean	
+endif
+endif
+
+
+ifneq ($(strip $(TCSUPPORT_CWMP_SSL)),)
+ssl:
+	rm -f $(FILESYSTEM_DIR)/userfs/default_ssl_ca.pem
+	cp $(APP_PRIVATE_DIR)/etc_script/default_ssl_ca.pem $(FILESYSTEM_DIR)/userfs/
+
+	echo "Build Matrix-ssl!"
+	$(MAKE) -C $(APP_SSL_DIR)
+	if test -e $(APP_SSL_DIR)/libmatrixssl.so; \
+	then echo "Compile Matrix-ssl success"; \
+	else echo "Compile Matrix-ssl error!"; exit 1; \
+	fi
+	cp $(APP_SSL_DIR)/libmatrixssl.so  $(FILESYSTEM_DIR)/lib/
+		
+ssl_clean:
+	rm -f $(FILESYSTEM_DIR)/userfs/default_ssl_ca.pem
+	$(MAKE) -C $(APP_SSL_DIR) clean
+else
+ssl:		
+ssl_clean:
+endif
+
+ifneq ($(strip $(WIZARD_OI_GUI) $(TCSUPPORT_CT_PHONEAPP) $(TCSUPPORT_CT_TR143_WGET_DOWNLOAD) $(TCSUPPORT_PON_ROSTELECOM)),)
+wget:
+	#cp $(APP_PRIVATE_DIR)/etc_script/default_ssl_ca.pem $(FILESYSTEM_DIR)/userfs/
+
+	echo "Build Matrix-ssl!"
+	$(MAKE) -C $(APP_SSL_DIR)
+	if test -e $(APP_SSL_DIR)/libmatrixssl.so; \
+	then echo "Compile Matrix-ssl success"; \
+	else echo "Compile Matrix-ssl error!"; exit 1; \
+	fi
+	mkdir -p $(APP_WGET_DIR)/lib
+	cp -rf $(APP_SSL_DIR)/libmatrixssl.so  $(APP_WGET_DIR)/src/
+	cp -rf $(FILESYSTEM_DIR)/lib/libtcapi.so $(APP_WGET_DIR)/src/libtcapi.so
+
+	echo "Build wget"
+	cd $(APP_WGET_DIR) 
+	$(MAKE) -C $(APP_WGET_DIR)/src
+	if test -e $(APP_WGET_DIR)/src/wget; \
+	then echo "Compile wget success"; \
+	else echo "Compile wget error!"; exit 1; \
+	fi
+	cp -rf $(APP_WGET_DIR)/src/wget  $(FILESYSTEM_DIR)/userfs/bin/
+		
+wget_clean:
+	echo "Clean wget"
+	rm -f $(FILESYSTEM_DIR)/userfs/default_ssl_ca.pem
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/wget
+	$(MAKE) -C $(APP_WGET_DIR) clean
+else
+wget:		
+wget_clean:
+endif
+	
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_MIDWARE)
+ifneq ($(strip $(TCSUPPORT_CT_MIDWARE)),)
+midware-server:
+	echo "Build midware-server"
+	$(MAKE) -C $(APP_CWMP_DIR)/midware-server
+	if test -e $(APP_CWMP_DIR)/midware-server/midware-server; \
+	then echo "Compile midware-server success"; \
+	else echo "Compile midware-server error!"; exit 1; \
+	fi
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/midware-server
+	cp $(APP_CWMP_DIR)/midware-server/midware-server  $(FILESYSTEM_DIR)/userfs/bin/
+	#cp $(APP_CWMP_DIR)/midware-server/allbin/*  $(FILESYSTEM_DIR)/userfs/bin/
+	
+midware-server_clean:
+	echo "Clean midware-server"
+	$(MAKE) -C $(APP_CWMP_DIR)/midware-server clean
+endif   	
+#endif/*TCSUPPORT_COMPILE*/
+
+ifneq ($(TCSUPPORT_CT_UPNP_DM),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+upnp-dm:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/upnp-dm $(FILESYSTEM_DIR)/userfs/bin/
+upnp-dm_clean:
+	echo "TC_BUILD_RELEASECODE: Build upnp-dm, do nothing!"
+else
+upnp-dm:
+	echo "Build upnp-dm"
+	$(MAKE) -C $(APP_UPNP_DM_DIR)
+	if test -e $(APP_UPNP_DM_DIR)/upnp-dm; \
+	then echo "Compile ctc-upnp-dm success"; \
+	else echo "Compile ctc-upnp-dm error!"; exit 1; \
+	fi
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/upnp-dm
+	cp $(APP_UPNP_DM_DIR)/upnp-dm  $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_UPNP_DM_DIR)/tr069client  $(FILESYSTEM_DIR)/userfs/bin/
+	
+upnp-dm_clean:
+	echo "Clean upnp-dm"
+	$(MAKE) -C $(APP_UPNP_DM_DIR) clean
+endif
+else
+upnp-dm:
+upnp-dm_clean:
+endif
+
+ifneq ($(TCSUPPORT_CT_BLOCK_PROCESS),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+blockProcess:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/blockProcess $(FILESYSTEM_DIR)/userfs/bin/
+blockProcess_clean:
+	echo "TC_BUILD_RELEASECODE: Build blockProcess, do nothing!"
+else
+blockProcess:
+	echo "Build blockProcess"
+	$(MAKE) -C $(APP_BLOCK_PROCESS_DIR)
+	if test -e $(APP_BLOCK_PROCESS_DIR)/blockProcess; \
+	then echo "Compile blockProcess success"; \
+	else echo "Compile blockProcess error!"; exit 1; \
+	fi
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/blockProcess
+	cp $(APP_BLOCK_PROCESS_DIR)/blockProcess  $(FILESYSTEM_DIR)/userfs/bin/
+	
+blockProcess_clean:
+	echo "Clean blockProcess"
+	$(MAKE) -C $(APP_BLOCK_PROCESS_DIR) clean
+endif
+else
+blockProcess:
+blockProcess_clean:
+endif
+
+
+ifneq ($(TCSUPPORT_CT_SIMCARD_SEPARATION),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+simcard_app:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/simtest $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/simCard $(FILESYSTEM_DIR)/userfs/bin/
+simcard_app_clean:
+	echo "TC_BUILD_RELEASECODE: Build simCard, do nothing!"
+else
+simcard_app:
+	$(MAKE) -C $(APP_SIM_CARD_DIR)/ all
+	if test -e $(APP_SIM_CARD_DIR)/simCard; \
+	then echo "Compile simCard success"; \
+	else echo "Compile simCard error!"; exit 1; \
+	fi
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/simCard
+	cp $(APP_SIM_CARD_DIR)/simCard  $(FILESYSTEM_DIR)/userfs/bin/
+	
+	@if test -e $(APP_SIM_CARD_DIR)/simcardapp/simtest;\
+	then echo "Compile simcard app success"; \
+	else echo "Compile simcard app error!"; exit 1;\
+	fi
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/simtest
+	cp $(APP_PRIVATE_DIR)/simcard_app/simcardapp/simtest $(FILESYSTEM_DIR)/userfs/bin/
+simcard_app_clean:
+	$(MAKE) -C $(APP_SIM_CARD_DIR) clean
+endif
+else
+simcard_app:
+simcard_app_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_MUH_TEST)),)
+mtk_uh_test:
+	echo "Build mtk_uh_test"
+ifeq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux)
+	export TEMPCC=$(CC)
+	export CC="$(CC)$(TC3162_CFLAG)"
+endif
+	$(MAKE) -C $(APP_MTK_UH_TEST_DIR)
+	if test -e $(APP_MTK_UH_TEST_DIR)/mtk_xhci_test_cli; \
+	then echo "Compile mtk_uh_test success"; \
+	else echo "Compile mtk_uh_test error!"; exit 1; \
+	fi
+	cp  $(APP_MTK_UH_TEST_DIR)/mtk_xhci_test_cli  $(FILESYSTEM_DIR)/usr/bin/
+ifeq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux)
+	CC=$(TEMPCC)
+endif
+	
+mtk_uh_test_clean:
+	echo "Clean mtk_uh_test"
+	$(MAKE) -C $(APP_MTK_UH_TEST_DIR) clean
+else
+mtk_uh_test:		
+mtk_uh_test_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_CWMP)),)
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+cwmp:
+	cp  $(APP_BINARY_DIR)/$(TCPLATFORM)/tr69  $(FILESYSTEM_DIR)/userfs/bin
+cwmp_clean:
+	echo "TC_BUILD_RELEASECODE: Build CWMP, do nothing!"
+else
+cwmp:
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp -rf $(APP_CWMP_DIR)/$(TCPLATFORM)/*.o $(APP_CWMP_DIR)/
+ifeq ($(TCSUPPORT_WLAN),)
+	cp -rf $(APP_CWMP_DIR)/$(TCPLATFORM)/IgdClmp_noWlan.o $(APP_CWMP_DIR)/IgdClmp.o
+	cp -rf $(APP_CWMP_DIR)/$(TCPLATFORM)/IgdStubsClmp_noWlan.o $(APP_CWMP_DIR)/IgdStubsClmp.o
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp -rf $(APP_CWMP_DIR)/$(TCPLATFORM)/cwmp_ct_noWlan.o $(APP_CWMP_DIR)/cwmp_ct.o
+endif
+#endif/*TCSUPPORT_COMPILE*/
+endif
+endif
+	echo "Build CWMP!"
+	$(MAKE) -C $(APP_CWMP_DIR)
+	if test -e $(APP_CWMP_DIR)/tr69; \
+	then echo "Compile tr69 success"; \
+	else echo "Compile tr69 error!"; exit 1; \
+	fi
+	cp $(APP_CWMP_DIR)/tr69  $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_PRIVATE_DIR)/etc_script/devInf.conf $(FILESYSTEM_DIR)/usr/etc/
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_MIDWARE)
+ifneq ($(strip $(TCSUPPORT_CT_MIDWARE)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/ctadmin  $(FILESYSTEM_DIR)/userfs/bin/
+	rm -f $(FILESYSTEM_DIR)/usr/script/mw_restart.sh
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/mw_restart.sh $(FILESYSTEM_DIR)/usr/script/mw_restart.sh
+endif   	
+#endif/*TCSUPPORT_COMPILE*/
+
+		
+cwmp_clean:
+	rm -f $(FILESYSTEM_DIR)/usr/script/mw_restart.sh
+	$(MAKE) -C $(APP_CWMP_DIR) clean
+endif
+else
+cwmp:
+	echo "No Build CWMP!, but we will build upnpd"
+	$(MAKE) -C $(APP_UPNP_DIR)
+	if test -e $(APP_UPNP_DIR)/upnpd; \
+	then echo "Compile upnpd success"; \
+	else echo "Compile upnpd error!"; exit 1; \
+	fi
+	cp $(APP_UPNP_DIR)/upnpd  $(FILESYSTEM_DIR)/userfs/bin/
+	
+cwmp_clean:
+	echo "No Clean CWMP! we clean upnpd"
+	$(MAKE) -C $(APP_UPNP_DIR) clean	
+endif
+ifneq ($(strip $(TCSUPPORT_CT_JOYME2)),)
+ubi:
+	$(MAKE) -C $(APP_MTDUTILS_DIR) all install
+
+ubi_clean:
+	$(MAKE) -C $(APP_MTDUTILS_DIR)/ clean
+
+endif
+ifneq ($(TCSUPPORT_CT_OSGI),)
+osgi:
+	$(MAKE) -C $(OSGI_DIR) install
+	cp -rf $(OSGI_DIR)/zlib_install/lib/libz.so* $(FILESYSTEM_DIR)/lib
+	#$(TOOLS_DIR)/mkfs.jffs2 -s 0x800 -e 0x20000 -p 0x2800000 -d $(OSGI_DIR)/_install_jffs2/ -o $(PROJECT_DIR)/images/osgi.img -b -n
+ifneq ($(strip $(TCSUPPORT_CPU_EN7512) $(TCSUPPORT_CPU_EN7521)),)	
+	$(TOOLS_DIR)/mkyaffs2image $(OSGI_DIR)/_install_yaffs2/ $(PROJECT_DIR)/images/osgi.yaffs convert 0 0 0
+else
+	$(TOOLS_DIR)/mkyaffs2image $(OSGI_DIR)/_install_yaffs2/ $(PROJECT_DIR)/images/osgi.yaffs convert 8 0 0
+endif
+	#$(MAKE) -C $(OSGI_DIR) install
+	cp -rf $(OSGI_DIR)/zlib_install/lib/libz.so* $(FILESYSTEM_DIR)/lib
+	$(TOOLS_DIR)/mkfs.jffs2 -s 0x800 -e 0x20000 -p 0x4000000 -d $(OSGI_DIR)/_install_jffs2/ -o $(PROJECT_DIR)/images/osgi.jffs -b -n
+	#$(TOOLS_DIR)/mkyaffs2image $(OSGI_DIR)/_install_yaffs2/ $(PROJECT_DIR)/images/osgi.yaffs convert
+
+osgi_clean:
+	rm -rf $(FILESYSTEM_DIR)/usr/lib
+	rm -rf $(FILESYSTEM_DIR)/usr/share
+	rm -rf $(FILESYSTEM_DIR)/usr/bin/jamvm 
+	rm -rf $(FILESYSTEM_DIR)/lib/libz.so* 
+
+ddns:
+	$(MAKE) -C $(OSGI_DIR) ddns
+ddns_clean:
+	$(MAKE) -C $(OSGI_DIR) ddns-clean
+	
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+jamvm:
+	$(MAKE) -C $(OSGI_DIR) jamvm
+	
+jamvm_clean:
+	$(MAKE) -C $(OSGI_DIR) jamvm-clean
+
+classpath:
+	$(MAKE) -C $(OSGI_DIR) classpath
+
+classpath_clean:
+	$(MAKE) -C $(OSGI_DIR) classpath-clean
+endif
+else
+osgi:
+osgi_clean:
+jamvm:
+jamvm_clean:
+classpath:
+classpath_clean:
+endif
+ifneq ($(TCSUPPORT_CT_PHONEAPP),)
+mobile-manager:
+	echo "Build OPENSSL"
+	if test -e $(FILESYSTEM_DIR)/lib/libcrypto.so; \
+	then echo "already have openssl"; \
+	else touch $(APP_OPENSSL_DIR_V1)/Makefile; \
+	$(MAKE) -C $(APP_OPENSSL_DIR_V1); \
+	$(MAKE) install -C $(APP_OPENSSL_DIR_V1); \
+	if test -e $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libcrypto.so; \
+	then echo "Compile openssl success"; \
+	cp $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libcrypto.so* $(FILESYSTEM_DIR)/lib -avd; \
+	cp $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libssl.so*    $(FILESYSTEM_DIR)/lib -avd; \
+	else echo "Compile openssl error!"; exit 1; \
+	fi; \
+	fi
+	echo "Build mobile-manager!"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp -rf $(MOBILE_MANAGEER_DIR)/$(TCPLATFORM)/src/* $(MOBILE_MANAGEER_DIR)/src/
+	cp -rf $(MOBILE_MANAGEER_DIR)/$(TCPLATFORM)/libmobile/* $(MOBILE_MANAGEER_DIR)/libmobile/
+endif
+	$(MAKE) -C $(MOBILE_MANAGEER_DIR)
+	if test -e $(MOBILE_MANAGEER_DIR)/mobile-manager; \
+	then echo "Compile mobile-manager success"; \
+	else echo "Compile mobile-manager error!"; exit 1; \
+	fi
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/mobile-manager
+	ln -fs /usr/osgi/mobile/mobile-manager $(FILESYSTEM_DIR)/userfs/bin/mobile-manager
+else
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/mobile-manager
+	cp $(MOBILE_MANAGEER_DIR)/mobile-manager  $(FILESYSTEM_DIR)/userfs/bin/	
+endif
+mobile-manager_clean:
+	echo "Clean mobile-manager!"
+	$(MAKE) -C $(MOBILE_MANAGEER_DIR) clean
+	touch $(APP_OPENSSL_DIR_V1)/Makefile; 
+	$(MAKE) -C $(APP_OPENSSL_DIR_V1) clean
+	if test -e $(FILESYSTEM_DIR)/lib/libcrypto.so; \
+	then rm -f $(FILESYSTEM_DIR)/lib/libcrypto.so* ; \
+	rm -f $(FILESYSTEM_DIR)/lib/libssl.so* ;\
+	fi
+
+axel:
+	echo "Build axel"
+	$(MAKE) -C $(APP_AXEL_DIR)
+	if test -e $(APP_AXEL_DIR)/axel; \
+	then echo "Compile axel success"; \
+	else echo "Compile axel error!"; exit 1; \
+	fi
+	cp $(APP_AXEL_DIR)/axel  $(FILESYSTEM_DIR)/userfs/bin/
+		
+axel_clean:
+	echo "Clean axel"
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/axel
+	$(MAKE) -C $(APP_AXEL_DIR) clean
+else
+mobile-manager:
+	echo "donot build mobile-manager!"
+mobile-manager_clean:
+axel:
+axel_clean:
+endif
+
+#Build linux-atm
+libatm:
+	echo "Build linux-atm library"
+	$(MAKE) -C $(APP_LIBATM_DIR)
+	if test -e $(APP_LIBATM_DIR)/lib/libatm.a; \
+	then echo "Compile LIB ATM success"; \
+	else echo "Compile LIB ATM error!"; exit 1; \
+	fi
+	
+libatm_clean:
+	echo "Clean linux-atm library"
+	$(MAKE) -C $(APP_LIBATM_DIR) clean
+
+#Build br2684ctl
+br2684ctl:
+	echo "Building br2684ctl"
+	$(MAKE) -C $(APP_BR2684CTL_DIR)
+	if test -e $(APP_BR2684CTL_DIR)/br2684ctl; \
+	then echo "Compile Br2684ctl success"; \
+	else echo "Compile Br2684ctl error!"; exit 1; \
+	fi
+	cp  $(APP_BR2684CTL_DIR)/br2684ctl  $(FILESYSTEM_DIR)/usr/bin/
+
+br2684ctl_clean:
+	echo "Clean br2684ctl"
+	$(MAKE) -C $(APP_BR2684CTL_DIR) clean
+
+#Build smuxctl
+ifneq ($(strip $(TCSUPPORT_SMUX)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+smuxctl:
+	cp  $(APP_BINARY_DIR)/$(TCPLATFORM)/smuxctl  $(FILESYSTEM_DIR)/usr/bin
+smuxctl_clean:
+	echo "TC_BUILD_RELEASECODE: Build SMUXCTL, do nothing!"
+else
+smuxctl:
+	echo "Building smuxctl"
+	$(MAKE) -C $(APP_SMUXCTL_DIR)
+	if test -e $(APP_SMUXCTL_DIR)/smuxctl; \
+	then echo "Compile smuxctl success"; \
+	else echo "Compile smuxctl error!"; exit 1; \
+	fi
+	cp  $(APP_SMUXCTL_DIR)/smuxctl  $(FILESYSTEM_DIR)/usr/bin/
+
+smuxctl_clean:
+	echo "Clean smuxctl"
+	$(MAKE) -C $(APP_SMUXCTL_DIR) clean
+endif
+else
+smuxctl:		
+smuxctl_clean:
+endif
+
+#Build bridge-utils-1.0.6
+brctl:
+	echo "Build bridge-utils-1.0.6"
+	$(MAKE) -C $(APP_BRCTL_DIR)
+	if test -e $(APP_BRCTL_DIR)/brctl/brctl; \
+	then echo "Compile Brctl success"; \
+	else echo "Compile Brctl error!"; exit 1; \
+	fi
+	cp  $(APP_BRCTL_DIR)/brctl/brctl  $(FILESYSTEM_DIR)/usr/bin/
+
+brctl_clean:
+	echo "Clean bridge-utils-1.0.6"
+	$(MAKE) -C $(APP_BRCTL_DIR) clean
+
+#Build tcapi library
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+libtcapi:
+	cp  $(APP_TCAPILIB_DIR)/$(TCPLATFORM)/* $(APP_TCAPILIB_DIR)/
+	cp  $(APP_TCAPILIB_DIR)/$(TCPLATFORM)/libtcapi.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPILIB_DIR)/$(TCPLATFORM)/libtcapi.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPILIB_DIR)/$(TCPLATFORM)/libtcapi.so $(LIB_DIR)/
+	cp  $(APP_TCAPILIB_DIR)/$(TCPLATFORM)/libtcapi.so.* $(LIB_DIR)/
+	cp  $(APP_TCAPILIB_DIR)/$(TCPLATFORM)/libtcapi.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_TCAPILIB_DIR)/$(TCPLATFORM)/libtcapi.so.* $(PUBLIC_LIB_DIR)/
+libtcapi_clean:
+	echo "TC_BUILD_RELEASECODE: Building tcapi library, do nothing!"
+else
+libtcapi:
+	echo "Building tcapi library"
+	$(MAKE) -C $(APP_TCAPILIB_DIR)
+	if test -e $(APP_TCAPILIB_DIR)/libtcapi.so.1.4; \
+	then echo "Compile TCAPI Lib success"; \
+	else echo "Compile TCAPI Lib error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_TCAPILIB_DIR) install
+	cp  $(APP_TCAPILIB_DIR)/libtcapi.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPILIB_DIR)/libtcapi.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPILIB_DIR)/libtcapi.so $(LIB_DIR)/
+	cp  $(APP_TCAPILIB_DIR)/libtcapi.so.* $(LIB_DIR)/
+	cp  $(APP_TCAPILIB_DIR)/libtcapi.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_TCAPILIB_DIR)/libtcapi.so.* $(PUBLIC_LIB_DIR)/
+
+
+libtcapi_clean:
+	echo "Clean tcapi library"
+	$(MAKE) -C $(APP_TCAPILIB_DIR) clean
+endif
+
+ifneq ($(strip $(TCSUPPORT_TCAPI_ENHANCE)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+libtcapi_enhance:
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/$(TCPLATFORM)/* $(APP_TCAPILIB_DIR)/
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/$(TCPLATFORM)/libtcapi_enhance.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/$(TCPLATFORM)/libtcapi_enhance.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/$(TCPLATFORM)/libtcapi_enhance.so $(LIB_DIR)/
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/$(TCPLATFORM)/libtcapi_enhance.so.* $(LIB_DIR)/
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/$(TCPLATFORM)/libtcapi_enhance.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/$(TCPLATFORM)/libtcapi_enhance.so.* $(PUBLIC_LIB_DIR)/
+libtcapi_enhance_clean:
+	echo "TC_BUILD_RELEASECODE: Building tcapi Enhance library, do nothing!"
+else
+libtcapi_enhance:
+	echo "Building tcapi library"
+	$(MAKE) -C $(APP_TCAPILIB_ENHANCE_DIR)
+	if test -e $(APP_TCAPILIB_ENHANCE_DIR)/libtcapi_enhance.so.1.4; \
+	then echo "Compile TCAPI Enhance Lib success"; \
+	else echo "Compile TCAPI Enhance Lib error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_TCAPILIB_ENHANCE_DIR) install
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/libtcapi_enhance.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/libtcapi_enhance.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/libtcapi_enhance.so $(LIB_DIR)/
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/libtcapi_enhance.so.* $(LIB_DIR)/
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/libtcapi_enhance.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_TCAPILIB_ENHANCE_DIR)/libtcapi_enhance.so.* $(PUBLIC_LIB_DIR)/
+
+
+libtcapi_enhance_clean:
+	echo "Clean tcapi Enhance library"
+	$(MAKE) -C $(APP_TCAPILIB_ENHANCE_DIR) clean
+endif
+else
+libtcapi_enhance:
+libtcapi_enhance_clean:
+endif
+
+ifneq ($(TCSUPPORT_CT_PHONEAPP),)
+json_lib:
+	echo "Building json_lib library"	
+	$(MAKE) -C $(APP_JSON_DIR)
+	if test -e $(APP_JSON_DIR)/libmjson-1.5.so; \
+	then echo "Compile APP_JSON_DIR Lib success"; \
+	else echo "Compile APP_JSON_DIR Lib error!"; exit 1; \
+	fi
+	
+	$(MAKE) -C $(APP_JSON_DIR) install
+	cp  $(APP_JSON_DIR)/libmjson-1.5.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_JSON_DIR)/libmjson-1.5.so $(LIB_DIR)/
+	cp  $(APP_JSON_DIR)/libmjson-1.5.so $(PUBLIC_LIB_DIR)/
+
+
+json_lib_clean: 
+	echo "Clean APP_JSON_DIR library"
+	$(MAKE) -C $(APP_JSON_DIR) clean
+else
+json_lib:
+json_lib_clean: 
+endif
+
+
+
+ifneq ($(strip $(TCSUPPORT_CT_JOYME_BANDWIDTH)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+bandwidth:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/bandwidth $(FILESYSTEM_DIR)/userfs/bin
+bandwidth_clean:
+	echo "TC_BUILD_RELEASECODE: Build bandwidth, do nothing!"
+else
+bandwidth:
+	echo "Build bandwidth"
+	$(MAKE) -C $(APP_BANDWIDTH_DIR)
+	if test -e $(APP_BANDWIDTH_DIR); \
+	then echo "Compile bandwidth success"; \
+	else echo "Compile bandwidth error!"; exit 1; \
+	fi
+	
+	cp $(APP_BANDWIDTH_DIR)/bandwidth $(FILESYSTEM_DIR)/userfs/bin
+
+bandwidth_clean:
+	$(MAKE) -C $(APP_BANDWIDTH_DIR) clean
+endif
+else
+bandwidth:
+bandwidth_clean: 	
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+plugin_monitor:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/plugin_monitor $(FILESYSTEM_DIR)/userfs/bin
+plugin_monitor_clean:
+	echo "TC_BUILD_RELEASECODE: Build plugin_monitor, do nothing!"
+else
+plugin_monitor:
+	echo "Build plugin_monitor"
+	$(MAKE) -C $(APP_PLUGIN_MONITOR_DIR)
+	if test -e $(APP_PLUGIN_MONITOR_DIR); \
+	then echo "Compile plugin_monitor success"; \
+	else echo "Compile plugin_monitor error!"; exit 1; \
+	fi
+	
+	cp $(APP_PLUGIN_MONITOR_DIR)/plugin_monitor $(FILESYSTEM_DIR)/userfs/bin
+
+plugin_monitor_clean:
+	$(MAKE) -C $(APP_PLUGIN_MONITOR_DIR) clean
+endif
+
+joyme_lib:
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp  $(APP_JOYME_DIR)/$(TCPLATFORM)/* $(APP_JOYME_DIR)/
+endif
+	echo "Building joyme_lib library"	
+	$(MAKE) -C $(APP_JOYME_DIR)
+	if test -e $(APP_JOYME_DIR)/libjoyme.so.1.4; \
+	then echo "Compile APP_JOYME_DIR Lib success"; \
+	else echo "Compile APP_JOYME_DIR Lib error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_JOYME_DIR) install
+	rm -f $(FILESYSTEM_DIR)/lib/libjoyme.so*
+	ln -fs /usr/osgi/ctgwlib/libjoyme.so.1.4 $(FILESYSTEM_DIR)/lib/libjoyme.so
+	ln -fs /usr/osgi/ctgwlib/libjoyme.so.1.4 $(FILESYSTEM_DIR)/lib/libjoyme.so.1
+	cp  $(APP_JOYME_DIR)/libjoyme.so $(LIB_DIR)/
+	cp  $(APP_JOYME_DIR)/libjoyme.so.* $(LIB_DIR)/
+	cp  $(APP_JOYME_DIR)/libjoyme.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_JOYME_DIR)/libjoyme.so.* $(PUBLIC_LIB_DIR)/
+
+
+joyme_lib_clean: 
+	echo "Clean APP_JOYME_DIR library"
+	$(MAKE) -C $(APP_JOYME_DIR) clean
+
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+
+ctsgw_lib: joyme_lib
+	cp  $(APP_CTSGWLIB_DIR)/$(TCPLATFORM)/* $(APP_CTSGWLIB_DIR)/
+	$(MAKE) -C $(APP_CTSGWLIB_DIR) install
+	rm -f $(FILESYSTEM_DIR)/lib/libctsgw.so*
+	ln -fs /usr/osgi/ctgwlib/libctsgw.so.1.4 $(FILESYSTEM_DIR)/lib/libctsgw.so
+	ln -fs /usr/osgi/ctgwlib/libctsgw.so.1.4 $(FILESYSTEM_DIR)/lib/libctsgw.so.1
+	cp  $(APP_CTSGWLIB_DIR)/$(TCPLATFORM)/libctsgw.so $(LIB_DIR)/
+	cp  $(APP_CTSGWLIB_DIR)/$(TCPLATFORM)/libctsgw.so.* $(LIB_DIR)/
+	cp  $(APP_CTSGWLIB_DIR)/$(TCPLATFORM)/libctsgw.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_CTSGWLIB_DIR)/$(TCPLATFORM)/libctsgw.so.* $(PUBLIC_LIB_DIR)/
+	cp  $(APP_CTSGWLIB_DIR)/$(TCPLATFORM)/ctsgw_test  $(FILESYSTEM_DIR)/userfs/bin/
+
+ctsgw_lib_clean:joyme_lib_clean
+	echo "TC_BUILD_RELEASECODE: Building ctsgw_lib library, do nothing!"
+
+bundle_lib:
+	cp  $(APP_BUNDLELIB_DIR)/$(TCPLATFORM)/* $(APP_BUNDLELIB_DIR)/
+	$(MAKE) -C $(APP_BUNDLELIB_DIR) install
+	cp  $(APP_BUNDLELIB_DIR)/$(TCPLATFORM)/libbundle.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_BUNDLELIB_DIR)/$(TCPLATFORM)/libbundle.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_BUNDLELIB_DIR)/$(TCPLATFORM)/libbundle.so $(LIB_DIR)/
+	cp  $(APP_BUNDLELIB_DIR)/$(TCPLATFORM)/libbundle.so.* $(LIB_DIR)/
+	cp  $(APP_BUNDLELIB_DIR)/$(TCPLATFORM)/libbundle.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_BUNDLELIB_DIR)/$(TCPLATFORM)/libbundle.so.* $(PUBLIC_LIB_DIR)/
+
+bundle_lib_clean:
+	echo "TC_BUILD_RELEASECODE: Building bundle_lib library, do nothing!"
+
+bdService:
+	cp  $(APP_BDSERVICE_DIR)/$(TCPLATFORM)/* $(FILESYSTEM_DIR)/lib/
+bdService_clean:
+	echo "TC_BUILD_RELEASECODE: Building bdService library, do nothing!"
+else
+
+ctsgw_lib: joyme_lib
+	echo "Building ctsgw_lib library"	
+	$(MAKE) -C $(APP_CTSGWLIB_DIR)
+	if test -e $(APP_CTSGWLIB_DIR)/libctsgw.so.1.4; \
+	then echo "Compile APP_CTSGWLIB_DIR Lib success"; \
+	else echo "Compile APP_CTSGWLIB_DIR Lib error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_CTSGWLIB_DIR) install
+	rm -f $(FILESYSTEM_DIR)/lib/libctsgw.so*
+	ln -fs /usr/osgi/ctgwlib/libctsgw.so.1.4 $(FILESYSTEM_DIR)/lib/libctsgw.so
+	ln -fs /usr/osgi/ctgwlib/libctsgw.so.1.4 $(FILESYSTEM_DIR)/lib/libctsgw.so.1
+	cp  $(APP_CTSGWLIB_DIR)/libctsgw.so $(LIB_DIR)/
+	cp  $(APP_CTSGWLIB_DIR)/libctsgw.so.* $(LIB_DIR)/
+	cp  $(APP_CTSGWLIB_DIR)/libctsgw.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_CTSGWLIB_DIR)/libctsgw.so.* $(PUBLIC_LIB_DIR)/
+
+	$(MAKE) -C $(APP_CTSGWLIB_DIR)/ctsgw_test
+	if test -e $(APP_CTSGWLIB_DIR)/ctsgw_test/ctsgw_test; \
+	then echo "Compile ctsgw_test success"; \
+	else echo "Compile ctsgw_test error!"; exit 1; \
+	fi
+	cp $(APP_CTSGWLIB_DIR)/ctsgw_test/ctsgw_test  $(FILESYSTEM_DIR)/userfs/bin/
+
+ctsgw_lib_clean:joyme_lib_clean
+	echo "Clean APP_CTSGWLIB_DIR library"
+	$(MAKE) -C $(APP_CTSGWLIB_DIR) clean
+
+bundle_lib:
+	echo "Building bundle_lib library"	
+	$(MAKE) -C $(APP_BUNDLELIB_DIR)
+	if test -e $(APP_BUNDLELIB_DIR)/libbundle.so.1.4; \
+	then echo "Compile APP_BUNDLELIB_DIR Lib success"; \
+	else echo "Compile APP_BUNDLELIB_DIR Lib error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_BUNDLELIB_DIR) install
+	cp  $(APP_BUNDLELIB_DIR)/libbundle.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_BUNDLELIB_DIR)/libbundle.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_BUNDLELIB_DIR)/libbundle.so $(LIB_DIR)/
+	cp  $(APP_BUNDLELIB_DIR)/libbundle.so.* $(LIB_DIR)/
+	cp  $(APP_BUNDLELIB_DIR)/libbundle.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_BUNDLELIB_DIR)/libbundle.so.* $(PUBLIC_LIB_DIR)/
+
+
+bundle_lib_clean:
+	echo "Clean APP_BUNDLELIB_DIR library"
+	$(MAKE) -C $(APP_BUNDLELIB_DIR) clean
+	
+bdService:
+	echo "Building bundleService library"	
+	$(MAKE) -C $(APP_BDSERVICE_DIR)
+	if test -e $(APP_BDSERVICE_DIR)/libbdService.so; \
+	then echo "Compile APP_BDSERVICE_DIR Lib success"; \
+	else echo "Compile APP_BDSERVICE_DIR Lib error!"; exit 1; \
+	fi
+	cp  $(APP_BDSERVICE_DIR)/libbdService.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_ETC_SCRIPT_DIR)/dms_start_plugin.sh $(FILESYSTEM_DIR)/usr/script/
+
+
+bdService_clean:
+	echo "Clean APP_BDSERVICE_DIR library"
+	$(MAKE) -C $(APP_BDSERVICE_DIR) clean
+	
+endif
+else
+plugin_monitor:
+plugin_monitor_clean: 	
+
+joyme_lib:
+joyme_lib_clean: 
+
+ctsgw_lib: 
+ctsgw_lib_clean:
+
+bundle_lib:
+bundle_lib_clean:
+
+bdService:
+bdService_clean:
+endif
+
+bundle_state:
+	echo "Building bundle_state library"	
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+ifneq ($(strip $(TCSUPPORT_CMCC)),)	
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp  $(BUNDLE_STATE_DIR)/$(TCPLATFORM)/* $(BUNDLE_STATE_DIR)/
+	$(MAKE) -C $(BUNDLE_STATE_DIR) install
+	cp  $(BUNDLE_STATE_DIR)/$(TCPLATFORM)/libbundleState.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(BUNDLE_STATE_DIR)/$(TCPLATFORM)/libbundleState.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(BUNDLE_STATE_DIR)/$(TCPLATFORM)/libbundleState.so $(LIB_DIR)/
+	cp  $(BUNDLE_STATE_DIR)/$(TCPLATFORM)/libbundleState.so.* $(LIB_DIR)/
+	cp  $(BUNDLE_STATE_DIR)/$(TCPLATFORM)/libbundleState.so $(PUBLIC_LIB_DIR)/
+	cp  $(BUNDLE_STATE_DIR)/$(TCPLATFORM)/libbundleState.so.* $(PUBLIC_LIB_DIR)/
+else
+	echo "Building bundle_state library"	
+	$(MAKE) -C $(BUNDLE_STATE_DIR)
+	if test -e $(BUNDLE_STATE_DIR)/libbundleState.so.1.4; \
+	then echo "Compile BUNDLE_STATE_DIR Lib success"; \
+	else echo "Compile BUNDLE_STATE_DIR Lib error!"; exit 1; \
+	fi
+	cp  $(BUNDLE_STATE_DIR)/libbundleState.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(BUNDLE_STATE_DIR)/libbundleState.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(BUNDLE_STATE_DIR)/libbundleState.so $(LIB_DIR)/
+	cp  $(BUNDLE_STATE_DIR)/libbundleState.so.* $(LIB_DIR)/
+	cp  $(BUNDLE_STATE_DIR)/libbundleState.so $(PUBLIC_LIB_DIR)/
+	cp  $(BUNDLE_STATE_DIR)/libbundleState.so.* $(PUBLIC_LIB_DIR)/
+endif
+endif
+endif
+
+bundle_state_clean:
+	echo "Clean BUNDLE_STATE_DIR library"
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+ifneq ($(strip $(TCSUPPORT_CMCC)),)	
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	echo "TC_BUILD_RELEASECODE: Building bundle_state library, do nothing!"
+else
+	echo "Clean BUNDLE_STATE_DIR library"
+	$(MAKE) -C $(BUNDLE_STATE_DIR) clean
+endif
+endif
+endif
+
+opensource_lib: libtcapi
+	echo "Building opensource_lib library"	
+	$(MAKE) -C $(APP_OPENSOURCELIB_DIR)
+	if test -e $(APP_OPENSOURCELIB_DIR)/libopensource.so.1.4; \
+	then echo "Compile APP_OPENSOURCELIB_DIR Lib success"; \
+	else echo "Compile APP_OPENSOURCELIB_DIR Lib error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_OPENSOURCELIB_DIR) install
+	cp  $(APP_OPENSOURCELIB_DIR)/libopensource.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_OPENSOURCELIB_DIR)/libopensource.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_OPENSOURCELIB_DIR)/libopensource.so $(LIB_DIR)/
+	cp  $(APP_OPENSOURCELIB_DIR)/libopensource.so.* $(LIB_DIR)/
+	cp  $(APP_OPENSOURCELIB_DIR)/libopensource.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_OPENSOURCELIB_DIR)/libopensource.so.* $(PUBLIC_LIB_DIR)/
+
+
+opensource_lib_clean: libtcapi_clean
+	echo "Clean APP_OPENSOURCELIB_DIR library"
+	$(MAKE) -C $(APP_OPENSOURCELIB_DIR) clean
+
+libtcapi_inic:
+ifneq ($(strip $(TCSUPPORT_INIC_HOST)),)
+	echo "Building tcapi_inic library"
+	$(MAKE) -C $(APP_TCAPILIB_INIC_DIR)
+	if test -e $(APP_TCAPILIB_INIC_DIR)/libtcapi_inic.so.1.4; \
+	then echo "Compile TCAPI_INIC Lib success"; \
+	else echo "Compile TCAPI_INIC Lib error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_TCAPILIB_INIC_DIR) install
+	cp  $(APP_TCAPILIB_INIC_DIR)/libtcapi_inic.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPILIB_INIC_DIR)/libtcapi_inic.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPILIB_INIC_DIR)/libtcapi_inic.so $(LIB_DIR)/
+	cp  $(APP_TCAPILIB_INIC_DIR)/libtcapi_inic.so.* $(LIB_DIR)/
+	cp  $(APP_TCAPILIB_INIC_DIR)/libtcapi_inic.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_TCAPILIB_INIC_DIR)/libtcapi_inic.so.* $(PUBLIC_LIB_DIR)/
+endif
+
+libtcapi_inic_clean:
+ifneq ($(strip $(TCSUPPORT_INIC_HOST)),)
+	echo "Clean tcapi_inic library"
+	$(MAKE) -C $(APP_TCAPILIB_INIC_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_CT_DHCPC_OPTION60) $(TCSUPPORT_CT_DHCP6_OPTION) $(TCSUPPORT_CT_SIMCARD_SEPARATION)$(TCSUPPORT_SIMCARD_GENERAL)),)
+libecb3:
+	echo "Building ecb3 library"
+	$(MAKE) -C $(APP_ECB3LIB_DIR)
+	if test -e $(APP_ECB3LIB_DIR)/libecb3.so.1.4; \
+	then echo "Compile ECB3 Lib success"; \
+	else echo "Compile ECB3 Lib error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_ECB3LIB_DIR) install
+	cp  $(APP_ECB3LIB_DIR)/libecb3.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_ECB3LIB_DIR)/libecb3.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_ECB3LIB_DIR)/libecb3.so $(LIB_DIR)/
+	cp  $(APP_ECB3LIB_DIR)/libecb3.so.* $(LIB_DIR)/
+	cp  $(APP_ECB3LIB_DIR)/libecb3.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_ECB3LIB_DIR)/libecb3.so.* $(PUBLIC_LIB_DIR)/
+libecb3_clean:
+	echo "Clean ecb3 library"
+	$(MAKE) -C $(APP_ECB3LIB_DIR) clean
+else
+libecb3:		
+libecb3_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_CWMP_FAST_GET)),)
+#Build tcapi_cwmp library
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+libtcapi_cwmp:
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/$(TCPLATFORM)/* $(APP_TCAPILIB_DIR)/
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/$(TCPLATFORM)/libtcapi_cwmp.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/$(TCPLATFORM)/libtcapi_cwmp.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/$(TCPLATFORM)/libtcapi_cwmp.so $(LIB_DIR)/
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/$(TCPLATFORM)/libtcapi_cwmp.so.* $(LIB_DIR)/
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/$(TCPLATFORM)/libtcapi_cwmp.so $(PUBLIC_LIB_DIR_CWMP)/
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/$(TCPLATFORM)/libtcapi_cwmp.so.* $(PUBLIC_LIB_DIR_CWMP)/
+libtcapi_cwmp_clean:
+	echo "TC_BUILD_RELEASECODE: Building tcapi library, do nothing!"
+else
+libtcapi_cwmp:
+	echo "Building tcapi_cwmp library"
+	$(MAKE) -C $(APP_TCAPI_CWMP_LIB_DIR)
+	if test -e $(APP_TCAPI_CWMP_LIB_DIR)/libtcapi_cwmp.so.1.4; \
+	then echo "Compile TCAPI Lib success"; \
+	else echo "Compile TCAPI Lib error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_TCAPI_CWMP_LIB_DIR) install
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/libtcapi_cwmp.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/libtcapi_cwmp.so.*  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/libtcapi_cwmp.so $(LIB_DIR_CWMP)/
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/libtcapi_cwmp.so.* $(LIB_DIR_CWMP)/
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/libtcapi_cwmp.so $(PUBLIC_LIB_DIR)/
+	cp  $(APP_TCAPI_CWMP_LIB_DIR)/libtcapi_cwmp.so.* $(PUBLIC_LIB_DIR)/
+
+
+libtcapi_cwmp_clean:
+	echo "Clean tcapi_cwmp library"
+	$(MAKE) -C $(APP_TCAPI_CWMP_LIB_DIR) clean
+endif
+else
+libtcapi_cwmp:
+libtcapi_cwmp_clean:
+endif
+
+#Build busybox-1.00
+busybox:
+	echo "Building Busybox-1.00"
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_AUTO)),)
+	cd $(PROJECT_AUTOCONFIG_DIR) && ./create_busybox_config
+	cp $(PROJECT_AUTOCONFIG_DIR)/busybox.config $(APP_BUSYBOX_DIR)/.config
+else
+
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3162)),)
+	cp $(APP_BUSYBOX_DIR)/3162_config $(APP_BUSYBOX_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3162_PB)),)
+	cp $(APP_BUSYBOX_DIR)/3162_pb_config $(APP_BUSYBOX_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3162_IPv6)),)
+	cp $(APP_BUSYBOX_DIR)/3162_ipv6_config $(APP_BUSYBOX_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3162U)),)
+	cp $(APP_BUSYBOX_DIR)/3162u_config $(APP_BUSYBOX_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3162U_IPv6)),)
+	cp $(APP_BUSYBOX_DIR)/3162u_ipv6_config $(APP_BUSYBOX_DIR)/.config;
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(APP_BUSYBOX_DIR)/3162u_ipv6_ct_config $(APP_BUSYBOX_DIR)/.config;
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3162U_IPv6_E8B)),)
+	cp $(APP_BUSYBOX_DIR)/3162u_ipv6_e8b_config $(APP_BUSYBOX_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3262)),)
+ifneq ($(strip $(TCSUPPORT_NEWTOOLCHAIN)),)
+	cp $(APP_BUSYBOX_DIR)/3262_new_toolchain_config $(APP_BUSYBOX_DIR)/.config;
+else
+	cp $(APP_BUSYBOX_DIR)/3262_config $(APP_BUSYBOX_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(APP_BUSYBOX_DIR)/3262_ct_config $(APP_BUSYBOX_DIR)/.config;
+endif
+endif
+
+endif
+
+	#copy if user make menuconfig
+	if test -e $(PROFILE_DIR)/busybox.config; \
+	then cp $(PROFILE_DIR)/busybox.config $(APP_BUSYBOX_DIR)/.config; \
+	fi
+
+ifneq ($(strip $(TCSUPPORT_NEWTOOLCHAIN)),)
+	if test -e $(PROFILE_DIR)/busybox_new_toolchain.config; \
+	then cp $(PROFILE_DIR)/busybox_new_toolchain.config $(APP_BUSYBOX_DIR)/.config; \
+	fi
+endif
+
+	#copy mow kernel config as busybox_config to support release BSP
+	rm -f $(APP_BUSYBOX_DIR)/busybox_config
+	cp $(APP_BUSYBOX_DIR)/.config $(APP_BUSYBOX_DIR)/busybox_config
+	echo "" > $(APP_BUSYBOX_DIR)/.depend
+	
+	#$(MAKE) -C $(APP_BUSYBOX_DIR) clean
+	$(MAKE) -C $(APP_BUSYBOX_DIR)
+	if test -e $(APP_BUSYBOX_DIR)/busybox; \
+	then echo "Compile BusyBox success"; \
+	else echo "Compile BusyBox error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_BUSYBOX_DIR) install
+	
+ifneq ($(TCSUPPORT_TRACEROUTE),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/traceroute
+	ln -fs ../../bin/busybox $(FILESYSTEM_DIR)/usr/bin/traceroute
+endif
+
+busybox_menuconfig:
+	echo "busybox menuconfig"
+	echo "Building Busybox menuconfig"
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_AUTO)),)
+	cd $(PROJECT_AUTOCONFIG_DIR) && ./create_busybox_config
+	cp $(PROJECT_AUTOCONFIG_DIR)/busybox.config $(APP_BUSYBOX_DIR)/.config
+else
+
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3162)),)
+	cp $(APP_BUSYBOX_DIR)/3162_config $(APP_BUSYBOX_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3162_PB)),)
+	cp $(APP_BUSYBOX_DIR)/3162_pb_config $(APP_BUSYBOX_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3162_IPv6)),)
+	cp $(APP_BUSYBOX_DIR)/3162_ipv6_config $(APP_BUSYBOX_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3162U)),)
+	cp $(APP_BUSYBOX_DIR)/3162u_config $(APP_BUSYBOX_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3162U_IPv6)),)
+	cp $(APP_BUSYBOX_DIR)/3162u_ipv6_config $(APP_BUSYBOX_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3162U_IPv6_E8B)),)
+	cp $(APP_BUSYBOX_DIR)/3162u_ipv6_e8b_config $(APP_BUSYBOX_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_BUSYBOXCONFIG_TC3262)),)
+ifneq ($(strip $(TCSUPPORT_NEWTOOLCHAIN)),)
+	cp $(APP_BUSYBOX_DIR)/3262_new_toolchain_config $(APP_BUSYBOX_DIR)/.config;
+else
+	cp $(APP_BUSYBOX_DIR)/3262_config $(APP_BUSYBOX_DIR)/.config;
+endif
+endif
+
+endif
+
+	#copy if user make menuconfig
+	if test -e $(PROFILE_DIR)/busybox.config; \
+	then cp $(PROFILE_DIR)/busybox.config $(APP_BUSYBOX_DIR)/.config; \
+	fi
+
+ifneq ($(strip $(TCSUPPORT_NEWTOOLCHAIN)),)
+	if test -e $(PROFILE_DIR)/busybox_new_toolchain.config; \
+	then cp $(PROFILE_DIR)/busybox_new_toolchain.config $(APP_BUSYBOX_DIR)/.config; \
+	fi
+endif	
+
+	#copy mow kernel config as busybox_config to support release BSP
+	rm -f $(APP_BUSYBOX_DIR)/busybox_config
+	cp $(APP_BUSYBOX_DIR)/.config $(APP_BUSYBOX_DIR)/busybox_config
+
+	$(MAKE) -C $(APP_BUSYBOX_DIR) menuconfig
+#	cp $(APP_BUSYBOX_DIR)/.config  $(PROFILE_DIR)/busybox_template.config
+#	cp $(APP_BUSYBOX_DIR)/.config  $(PROFILE_DIR)/busybox.config
+ifneq ($(strip $(TCSUPPORT_NEWTOOLCHAIN)),)
+	cp $(APP_BUSYBOX_DIR)/.config $(PROFILE_DIR)/busybox_new_toolchain.config
+else
+	cp $(APP_BUSYBOX_DIR)/.config  $(PROFILE_DIR)/busybox.config
+endif
+	
+busybox_clean:
+	echo "Clean Busybox-1.00"
+	$(MAKE) -C $(APP_BUSYBOX_DIR) clean
+	
+cpu:
+	echo "Build cpu"
+ifeq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux)
+	export TEMPCC=$(CC)
+	export CC="$(CC)$(TC3162_CFLAG)"
+endif
+#	$(MAKE) -C $(APP_CPU_DIR) clean
+	$(MAKE) -C $(APP_CPU_DIR)
+	if test -e $(APP_CPU_DIR)/cpu; \
+	then echo "Compile cpu success"; \
+	else echo "Compile cpu error!"; exit 1; \
+	fi
+	cp  $(APP_CPU_DIR)/cpu  $(FILESYSTEM_DIR)/usr/bin/
+ifeq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux)
+	CC=$(TEMPCC)
+endif
+	
+cpu_clean:
+	echo "Clean cpu"
+	$(MAKE) -C $(APP_CPU_DIR) clean
+
+iptables:
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	echo "Build iptables 1.4.10"
+	cd $(APP_IPTABLES_DIR) && ./configure --host=$(HOST) --target=$(COMPILE_TOOLCHAIN) --with-kernel=$(IPTABLE_KERNEL_DIR) --prefix=$(APP_IPTABLES_INSTALL_DIR) --enable-static --disable-shared CFLAGS="$(CFG_CFLAGS)"
+	make -C $(APP_IPTABLES_DIR) CC=$(CROSS)gcc AR=$(CROSS)ar RANLIB=$(CROSS)ranlib LD=$(CROSS)ld clean
+	cd $(APP_IPTABLES_DIR) && ./configure --host=$(HOST) --target=$(COMPILE_TOOLCHAIN) --with-kernel=$(IPTABLE_KERNEL_DIR) --prefix=$(APP_IPTABLES_INSTALL_DIR) --enable-static --disable-shared CFLAGS="$(CFG_CFLAGS)"	
+	make -C $(APP_IPTABLES_DIR) CC=$(CROSS)gcc AR=$(CROSS)ar RANLIB=$(CROSS)ranlib LD=$(CROSS)ld
+	make -C $(APP_IPTABLES_DIR) CC=$(CROSS)gcc AR=$(CROSS)ar RANLIB=$(CROSS)ranlib LD=$(CROSS)ld install
+	if test -e $(APP_IPTABLES_INSTALL_DIR)/sbin/iptables-multi; \
+	then echo "Compile iptables 1.4.10 success"; \
+	else echo "Compile iptables 1.4.10 error!"; exit 1; \
+	fi
+	$(STRIP) --strip-unneeded $(APP_IPTABLES_INSTALL_DIR)/sbin/iptables-multi;\
+	cp  $(APP_IPTABLES_INSTALL_DIR)/sbin/iptables-multi  $(FILESYSTEM_DIR)/usr/bin/iptables
+ifneq ($(strip $(TCSUPPORT_IPV6_ADVANCE)),)
+	$(STRIP) --strip-unneeded $(APP_IPTABLES_INSTALL_DIR)/sbin/ip6tables-multi;\
+	cp  $(APP_IPTABLES_INSTALL_DIR)/sbin/ip6tables-multi  $(FILESYSTEM_DIR)/usr/bin/ip6tables
+endif
+iptables_clean:
+	echo "Clean iptables 1.4.10"
+#	ln -s $(KERNEL_DIR)/include/asm-mips $(KERNEL_DIR)/include/asm
+	cd $(APP_IPTABLES_DIR) && ./configure --host=$(HOST) --target=$(COMPILE_TOOLCHAIN) --with-kernel=$(IPTABLE_KERNEL_DIR) --prefix=$(APP_IPTABLES_INSTALL_DIR) --enable-static --disable-shared CFLAGS="$(CFG_CFLAGS)"
+	make -C $(APP_IPTABLES_DIR) CC=$(CROSS)gcc AR=$(CROSS)ar RANLIB=$(CROSS)ranlib LD=$(CROSS)ld clean
+	rm -f $(APP_IPTABLES_DIR)/extensions/.*.o.d
+
+else
+	echo "Build iptables"
+	$(MAKE) -C $(APP_IPTABLES_DIR)
+	if test -e $(APP_IPTABLES_DIR)/iptables; \
+	then echo "Compile iptables success"; \
+	else echo "Compile iptables error!"; exit 1; \
+	fi
+	cp  $(APP_IPTABLES_DIR)/iptables  $(FILESYSTEM_DIR)/usr/bin/		
+ifneq ($(strip $(TCSUPPORT_IPV6_ADVANCE)),)
+	cp  $(APP_IPTABLES_DIR)/ip6tables  $(FILESYSTEM_DIR)/usr/bin/
+endif
+	
+iptables_clean:
+	echo "Clean iptables"
+#	ln -s $(KERNEL_DIR)/include/asm-mips $(KERNEL_DIR)/include/asm
+	$(MAKE) -C $(APP_IPTABLES_DIR) clean
+endif
+
+tc:
+	echo "Build tc"
+	$(MAKE) -C $(APP_IPROUTE_TC_DIR)
+	if test -e $(APP_IPROUTE_TC_DIR)/tc/tc; \
+	then echo "Compile tc success"; \
+	else echo "Compile tc error;" exit 1; \
+	fi
+ifeq ($(strip $(TCSUPPORT_CT_SWQOS) $(TCSUPPORT_XPON_HAL_API_QOS)),)	
+	cp $(APP_IPROUTE_TC_DIR)/tc/tc $(FILESYSTEM_DIR)/usr/bin/
+endif
+	cp $(APP_IPROUTE_TC_DIR)/ip/ip $(FILESYSTEM_DIR)/usr/bin/
+
+	
+tc_clean:
+	echo "Clean tc"
+	$(MAKE) -C $(APP_IPROUTE_TC_DIR) clean
+#Use new version ip command for DS-Lite and 6rd
+ifneq ($(strip $(TCSUPPORT_DSLITE)),)
+ip:
+	echo "Build ip"
+	$(MAKE) -C $(APP_IPROUTE_IP_DIR)
+	if test -e $(APP_IPROUTE_IP_DIR)/ip/ip; \
+	then echo "Compile ip success"; \
+	else echo "Compile ip error;" exit 1; \
+	fi
+	cp $(APP_IPROUTE_IP_DIR)/ip/ip $(FILESYSTEM_DIR)/usr/bin/
+
+	
+ip_clean:
+	echo "Clean ip"
+	$(MAKE) -C $(APP_IPROUTE_IP_DIR) clean
+
+else
+
+ifneq ($(strip $(TCSUPPORT_6RD)),)
+ip:
+	echo "Build ip"
+	$(MAKE) -C $(APP_IPROUTE_IP_DIR)
+	if test -e $(APP_IPROUTE_IP_DIR)/ip/ip; \
+	then echo "Compile ip success"; \
+	else echo "Compile ip error;" exit 1; \
+	fi
+	cp $(APP_IPROUTE_IP_DIR)/ip/ip $(FILESYSTEM_DIR)/usr/bin/	
+ip_clean:
+	echo "Clean ip"
+	$(MAKE) -C $(APP_IPROUTE_IP_DIR) clean
+else
+ip:
+ip_clean:
+endif
+
+ip:
+ip_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+ipnew:
+	echo "Build ipnew"
+	cd $(APP_IPROUTE_IP_NEW_DIR) && ./configure --host=$(COMPILE_TOOLCHAIN) --target=$(COMPILE_TOOLCHAIN)
+	$(MAKE) -C $(APP_IPROUTE_IP_NEW_DIR)
+	if test -e $(APP_IPROUTE_IP_NEW_DIR)/ip/ip; \
+	then echo "Compile ipnew success"; \
+	else echo "Compile ipnew error;" exit 1; \
+	fi
+	cp $(APP_IPROUTE_IP_NEW_DIR)/ip/ip $(FILESYSTEM_DIR)/usr/bin
+	cp $(APP_IPROUTE_IP_NEW_DIR)/bridge/bridge $(FILESYSTEM_DIR)/usr/bin/	
+ipnew_clean:
+	echo "Clean ipnew"
+	$(MAKE) -C $(APP_IPROUTE_IP_NEW_DIR) clean
+else
+ipnew:
+ipnew_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_SDN_OVS)),)
+ovs:ipnew
+	echo "Build OPENSSL"
+	if test -e $(FILESYSTEM_DIR)/lib/libcrypto.so; \
+	then echo "already have openssl"; \
+	else touch $(APP_OPENSSL_DIR_V1)/Makefile; \
+	$(MAKE) -C $(APP_OPENSSL_DIR_V1); \
+	$(MAKE) install -C $(APP_OPENSSL_DIR_V1); \
+	if test -e $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libcrypto.so; \
+	then echo "Compile openssl success"; \
+	cp $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libcrypto.so* $(FILESYSTEM_DIR)/lib -avd; \
+	cp $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libssl.so*    $(FILESYSTEM_DIR)/lib -avd; \
+	else echo "Compile openssl error!"; exit 1; \
+	fi; \
+	fi
+
+	echo "Build ovs 2.5.0"
+	if test -e $(APP_OVS_DIR)/openvswitch-2.5.0; \
+	then echo "already tar"; \
+	else cd $(APP_OVS_DIR) && tar -zxvf openvswitch-2.5.0.tar.gz;\
+	fi
+	cp $(APP_OVS_DIR)/make $(APP_OVS_DIR)/openvswitch-2.5.0
+	cd $(APP_OVS_DIR)/openvswitch-2.5.0 && ./configure --host=$(COMPILE_TOOLCHAIN) --target=$(COMPILE_TOOLCHAIN) --with-linux=$(KERNEL_DIR) --with-rundir=/tmp/openvswitch/run --with-dbdir=/tmp/openvswitch/run --with-logdir=/tmp/openvswitch/log --prefix=/usr/ovs --with-openssl=$(APP_OPENSSL_DIR_V1)/OPSSL --enable-static --disable-shared CFLAGS="$(CFG_CFLAGS) -std=gnu99" KARCH=mips
+	cd $(APP_OVS_DIR)/openvswitch-2.5.0 && ./make -C $(APP_OVS_DIR)/openvswitch-2.5.0 CC=$(CROSS)gcc AR=$(CROSS)ar RANLIB=$(CROSS)ranlib LD=$(CROSS)ld
+	cd $(APP_OVS_DIR)/openvswitch-2.5.0 && ./make -C $(APP_OVS_DIR)/openvswitch-2.5.0 CC=$(CROSS)gcc AR=$(CROSS)ar RANLIB=$(CROSS)ranlib LD=$(CROSS)ld prefix=$(FILESYSTEM_DIR)/usr/ovs install 
+	
+	if test -e $(APP_OVS_DIR)/openvswitch-2.5.0/datapath/linux/openvswitch.ko; \
+	then cp $(APP_OVS_DIR)/openvswitch-2.5.0/datapath/linux/openvswitch.ko $(FILESYSTEM_DIR)/lib/modules/; \
+	rm -rf $(FILESYSTEM_DIR)/usr/ovs/include; \
+	rm -rf $(FILESYSTEM_DIR)/usr/ovs/lib; \
+	rm -rf $(FILESYSTEM_DIR)/usr/ovs/share/man; \
+	echo "Compile ovs 2.5.0 success"; \
+	else echo "Compile ovs 2.5.0 error!"; exit 1; \
+	fi
+	
+ovs_clean:ipnew_clean
+	echo "Clean ovs 2.5.0"
+	if test -e $(APP_OVS_DIR)/openvswitch-2.5.0; \
+	then echo "already tar"; \
+	else cd $(APP_OVS_DIR) && tar -zxvf openvswitch-2.5.0.tar.gz;\
+	fi
+	cp $(APP_OVS_DIR)/make $(APP_OVS_DIR)/openvswitch-2.5.0
+	cd $(APP_OVS_DIR)/openvswitch-2.5.0 && ./configure --host=$(COMPILE_TOOLCHAIN) --target=$(COMPILE_TOOLCHAIN) --with-rundir=/tmp/openvswitch/run --with-dbdir=/tmp/openvswitch/run --with-logdir=/tmp/openvswitch/log --prefix=/usr/ovs --with-openssl=$(APP_OPENSSL_DIR_V1)/OPSSL --enable-static --disable-shared CFLAGS="$(CFG_CFLAGS)" KARCH=mips
+	cd $(APP_OVS_DIR)/openvswitch-2.5.0 && ./make -C $(APP_OVS_DIR)/openvswitch-2.5.0 clean
+	
+	rm -f $(FILESYSTEM_DIR)/lib/modules/openvswitch.ko
+	rm -rf $(FILESYSTEM_DIR)/usr/ovs
+else
+ovs:
+ovs_clean:
+endif
+
+#ifeq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+ebtables:
+	echo "Build ebtables"
+	$(MAKE) -C $(APP_EBTABLES_DIR)
+	if test -e $(APP_EBTABLES_DIR)/ebtables; \
+	then echo "Compile ebtables success"; \
+	else echo "Compile ebtables error!"; exit 1; \
+	fi
+	cp $(APP_EBTABLES_DIR)/ebtables  $(FILESYSTEM_DIR)/usr/bin/		
+	cp $(APP_EBTABLES_DIR)/libebtc.so $(FILESYSTEM_DIR)/lib
+	cp $(APP_EBTABLES_DIR)/extensions/*.so $(FILESYSTEM_DIR)/lib/
+	cp $(APP_EBTABLES_DIR)/ethertypes $(FILESYSTEM_DIR)/usr/etc/
+	
+ebtables_clean:
+	echo "Clean ebtables"
+	$(MAKE) -C $(APP_EBTABLES_DIR) clean
+#else
+#ebtables:
+#ebtables_clean:
+#endif	
+flash:
+	echo "Build flash"
+	$(MAKE) -C $(APP_FLASH_DIR)
+	if test -e $(APP_FLASH_DIR)/flash; \
+	then echo "Compile flash success"; \
+	else echo "Compile flash error!"; exit 1; \
+	fi
+	cp $(APP_FLASH_DIR)/flash  $(FILESYSTEM_DIR)/userfs/bin/
+	
+flash_clean:
+	echo "Clean flash"
+	$(MAKE) -C $(APP_FLASH_DIR) clean
+
+mtd:
+	echo "Build mtd"
+	$(MAKE) -C $(APP_MTD_DIR)
+	if test -e $(APP_MTD_DIR)/mtd; \
+	then echo "Compile mtd success"; \
+	else echo "Compile mtd error!"; exit 1; \
+	fi
+	cp $(APP_MTD_DIR)/mtd  $(FILESYSTEM_DIR)/userfs/bin/
+	
+mtd_clean:
+	echo "Clean mtd"
+	$(MAKE) -C $(APP_MTD_DIR) clean
+
+ifneq ($(strip $(TCSUPPORT_CT)),)
+pppd:
+	echo "Build pppd"
+	$(MAKE) -C $(APP_PPPD_DIR)
+	if test -e $(APP_PPPD_DIR)/pppd/pppd; \
+	then echo "Compile pppd success"; \
+	else echo "Compile pppd error!"; exit 1; \
+	fi
+	if test -e $(APP_PPPD_DIR)/pppd/plugins/libpppoatm.so; \
+	then echo "Compile libpppoatm.so success"; \
+	else echo "Compile libpppoatm.so error!"; exit 1; \
+	fi
+	if test -e $(APP_PPPD_DIR)/pppd/plugins/pppoe/libpppoe.so; \
+	then echo "Compile libpppoe.so success"; \
+	else echo "Compile libpppoe.so error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_PPPD_DIR) install
+else
+pppd:
+	echo "Build pppd"
+	$(MAKE) -C $(APP_PPPD_DIR)
+	if test -e $(APP_PPPD_DIR)/pppd/pppd; \
+	then echo "Compile pppd success"; \
+	else echo "Compile pppd error!"; exit 1; \
+	fi
+	if test -e $(APP_PPPD_DIR)/pppd/plugins/pppoatm/libpppoatm.so; \
+	then echo "Compile libpppoatm.so success"; \
+	else echo "Compile libpppoatm.so error!"; exit 1; \
+	fi
+	if test -e $(APP_PPPD_DIR)/pppd/plugins/rp-pppoe/libpppoe.so; \
+	then echo "Compile libpppoe.so success"; \
+	else echo "Compile libpppoe.so error!"; exit 1; \
+	fi
+	cp $(APP_PPPD_DIR)/pppd/plugins/pppoatm/libpppoatm.so $(FILESYSTEM_DIR)/lib
+	cp $(APP_PPPD_DIR)/pppd/plugins/rp-pppoe/libpppoe.so $(FILESYSTEM_DIR)/lib
+	cp $(APP_PPPD_DIR)/pppd/pppd $(FILESYSTEM_DIR)/usr/bin/
+#	$(MAKE) -C $(APP_PPPD_DIR) install
+endif
+
+pppd_clean:
+	echo "Clean pppd"
+	$(MAKE) -C $(APP_PPPD_DIR) clean
+
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+tcci:
+	cp  $(APP_BINARY_DIR)/$(TCPLATFORM)/tcci  $(FILESYSTEM_DIR)/usr/bin
+	rm -f $(FILESYSTEM_DIR)/usr/bin/tce
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/tce
+	rm -f $(FILESYSTEM_DIR)/usr/bin/sys
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/sys
+	rm -f $(FILESYSTEM_DIR)/usr/bin/wan
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/wan
+	rm -f $(FILESYSTEM_DIR)/usr/bin/w
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/w
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/hwnat
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/hwnat
+endif
+ifneq ($(strip $(TCSUPPORT_WAN_EPON)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/epon
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/epon
+endif
+ifneq ($(strip $(TCSUPPORT_TC2031)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/ether
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/ether
+	rm -f $(FILESYSTEM_DIR)/usr/bin/etherd
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/etherd
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/sendicmp  $(FILESYSTEM_DIR)/userfs/bin/			
+endif
+
+ifneq ($(strip $(TCSUPPORT_CPU_TC3162U)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/usb
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/usb
+	rm -f $(FILESYSTEM_DIR)/usr/bin/etherd
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/etherd	
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_RT63260)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/usb
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/usb
+	rm -f $(FILESYSTEM_DIR)/usr/bin/etherd
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/etherd	
+endif
+ifneq ($(strip $(TCSUPPORT_KPROFILE)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/profiling
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/profiling	
+endif
+
+tcci_clean:
+	echo "TC_BUILD_RELEASECODE: Build tcci, do nothing!"
+else
+tcci:
+	echo "Build tcci"
+	$(MAKE) -C $(APP_TCCI_DIR)
+	if test -e $(APP_TCCI_DIR)/tcci; \
+	then echo "Compile tcci success"; \
+	else echo "Compile tcci error!"; exit 1; \
+	fi
+	cp $(APP_TCCI_DIR)/tcci  $(FILESYSTEM_DIR)/usr/bin/
+	rm -f $(FILESYSTEM_DIR)/usr/bin/tce
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/tce
+	rm -f $(FILESYSTEM_DIR)/usr/bin/sys
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/sys
+	rm -f $(FILESYSTEM_DIR)/usr/bin/wan
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/wan
+	rm -f $(FILESYSTEM_DIR)/usr/bin/w
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/w
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/hwnat
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/hwnat
+endif
+ifneq ($(strip $(TCSUPPORT_I2C)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/sifm
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/sifm
+endif
+ifneq ($(strip $(TCSUPPORT_WAN_EPON)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/epon
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/epon
+endif
+ifneq ($(strip $(TCSUPPORT_TC2031)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/ether
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/ether
+	rm -f $(FILESYSTEM_DIR)/usr/bin/etherd
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/etherd
+	
+	echo "Building sendicmp"
+	$(MAKE) -C $(APP_SENDICMP_DIR)
+	if test -e $(APP_SENDICMP_DIR)/sendicmp; \
+	then echo "Compile sendicmp success"; \
+	else echo "Compile sendicmp error!"; exit 1; \
+	fi
+	cp $(APP_SENDICMP_DIR)/sendicmp  $(FILESYSTEM_DIR)/userfs/bin/
+			
+endif
+	
+ifneq ($(strip $(TCSUPPORT_CPU_TC3162U)),)
+	#rm -f $(FILESYSTEM_DIR)/usr/bin/usb
+	#ln -s tcci $(FILESYSTEM_DIR)/usr/bin/usb
+	rm -f $(FILESYSTEM_DIR)/usr/bin/etherd
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/etherd	
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_RT63260)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/etherd
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/etherd	
+endif
+ifneq ($(strip $(TCSUPPORT_USBDEVICE20)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/usb
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/usb
+endif
+ifneq ($(strip $(TCSUPPORT_KPROFILE)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/profiling
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/profiling	
+endif
+ifneq ($(strip $(TCSUPPORT_HEC_6906)),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/amcv
+	ln -s tcci $(FILESYSTEM_DIR)/usr/bin/amcv	
+endif
+		
+tcci_clean:
+	echo "Clean tcci"
+	$(MAKE) -C $(APP_TCCI_DIR) clean
+endif
+
+#Building tcwdog
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+tcwdog:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/tcwdog $(FILESYSTEM_DIR)/usr/bin/
+tcwdog_clean:
+	echo "TC_BUILD_RELEASECODE: Build tcwdog, do nothing!"
+else
+tcwdog:
+	echo "Build tcwdog"
+	$(MAKE) -C $(APP_TCWDOG_DIR)
+	if test -e $(APP_TCWDOG_DIR)/tcwdog; \
+	then echo "Compile tcwdog success"; \
+	else echo "Compile tcwdog error!"; exit 1; \
+	fi
+	cp $(APP_TCWDOG_DIR)/tcwdog  $(FILESYSTEM_DIR)/usr/bin/
+	
+tcwdog_clean:
+	echo "Clean tcwdog"
+	$(MAKE) -C $(APP_TCWDOG_DIR) clean
+endif
+
+utelnetd:
+	echo "Build utelnetd"
+	$(MAKE) -C $(APP_UTELNETD_DIR)
+	if test -e $(APP_UTELNETD_DIR)/utelnetd; \
+	then echo "Compile utelnetd success"; \
+	else echo "Compile utelnetd error!"; exit 1; \
+	fi
+	cp $(APP_UTELNETD_DIR)/utelnetd  $(FILESYSTEM_DIR)/usr/bin/
+	
+utelnetd_clean:
+	echo "Clean tcwdog"
+	$(MAKE) -C $(APP_UTELNETD_DIR) clean
+	
+mxml:
+	echo "Build mxml"
+	$(MAKE) -C $(APP_MXML_DIR)
+	if test -e $(APP_MXML_DIR)/libmxml.so.1.4; \
+	then echo "Compile mxml success"; \
+	else echo "Compile mxml error!"; exit 1; \
+	fi
+	$(STRIP) --strip-unneeded $(APP_MXML_DIR)/libmxml.so.1.4
+	$(MAKE) -C $(APP_MXML_DIR) install
+	mv $(APP_MXML_DIR)/libmxml.so  $(FILESYSTEM_DIR)/lib/
+	mv $(APP_MXML_DIR)/libmxml.so.*  $(FILESYSTEM_DIR)/lib/
+	
+mxml_clean:
+	echo "Clean mxml"
+	$(MAKE) -C $(APP_MXML_DIR) clean
+
+boa:
+ifneq ($(strip $(TCSUPPORT_WEBSERVER_SSL)),)
+	echo "Build Matrix-ssl!"
+	$(MAKE) -C $(APP_SSL_DIR)
+	if test -e $(APP_SSL_DIR)/libmatrixssl.so; \
+	then echo "Compile Matrix-ssl success"; \
+	else echo "Compile Matrix-ssl error!"; exit 1; \
+	fi
+	cp $(APP_SSL_DIR)/libmatrixssl.so  $(FILESYSTEM_DIR)/lib/
+	cp $(APP_BOA_DIR)/../key.pem $(FILESYSTEM_DIR)/usr/etc/
+	cp $(APP_BOA_DIR)/../cert.pem $(FILESYSTEM_DIR)/usr/etc/
+endif
+	
+	echo "Build boa"
+	$(MAKE) -C $(APP_BOA_DIR)
+	if test -e $(APP_BOA_DIR)/boa; \
+	then echo "Compile boa success"; \
+	else echo "Compile boa error!"; exit 1; \
+	fi
+	cp $(APP_BOA_DIR)/boa  $(FILESYSTEM_DIR)/userfs/bin/
+		
+boa_clean:
+	echo "Clean boa"
+	$(MAKE) -C $(APP_BOA_DIR) clean
+ifneq ($(strip $(TCSUPPORT_WEBSERVER_SSL)),)
+	$(MAKE) -C $(APP_SSL_DIR) clean
+endif
+
+
+#Build tcapi
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+tcapi:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/tcapi $(FILESYSTEM_DIR)/userfs/bin/
+tcapi_clean:
+	echo "TC_BUILD_RELEASECODE: Build tcapi, do nothing!"
+else
+tcapi:
+	echo "Build tcapi"
+	$(MAKE) -C $(APP_TCAPI_DIR)
+	if test -e $(APP_TCAPI_DIR)/tcapi; \
+	then echo "Compile tcapi success"; \
+	else echo "Compile tcapi error!"; exit 1; \
+	fi
+	cp $(APP_TCAPI_DIR)/tcapi  $(FILESYSTEM_DIR)/userfs/bin/
+	
+tcapi_clean:
+	echo "Clean tcapi"
+	$(MAKE) -C $(APP_TCAPI_DIR) clean
+
+endif
+
+dhcrelay:
+	echo "Build dhcrelay"
+	$(MAKE) -C $(APP_DHCPRELAY_DIR)
+	if test -e $(APP_DHCPRELAY_DIR)/relay/dhcrelay; \
+	then echo "Compile dhcrelay success"; \
+	else echo "Compile dhcrelay error!"; exit 1; \
+	fi
+	cp $(APP_DHCPRELAY_DIR)/relay/dhcrelay  $(FILESYSTEM_DIR)/userfs/bin/
+	
+dhcrelay_clean:
+	echo "Clean dhcrelay"
+	$(MAKE) -C $(APP_DHCPRELAY_DIR) clean
+	
+dproxy:
+	echo "Build dproxy"
+	$(MAKE) -C $(APP_DPROXY_DIR)
+	if test -e $(APP_DPROXY_DIR)/dproxy; \
+	then echo "Compile dproxy success"; \
+	else echo "Compile dproxy error!"; exit 1; \
+	fi
+	cp $(APP_DPROXY_DIR)/dproxy  $(FILESYSTEM_DIR)/userfs/bin/
+	
+dproxy_clean:
+	echo "Clean dproxy"
+	$(MAKE) -C $(APP_DPROXY_DIR) clean
+
+ez-ipupdate:
+	echo "Build dsdfsdns"
+ifneq ($(strip $(TCSUPPORT_CT_E8DDNS)),)
+#	cd $(APP_ZEBRA_DIR) && ./configure --host=mips-linux --enable-user=admin --enable-group=root --disable-bgpd --disable-ospfd --disable-ospf6d --disable-watchquagga --disable-bgp-announce --disable-ospfapi --disable-ospfclient CFLAGS=" -DTCSUPPORT_CT_E8DDNS $(CFG_CFLAGS)"
+endif
+	$(MAKE) -C $(APP_EZ-IPUPDATE_DIR)
+	if test -e $(APP_EZ-IPUPDATE_DIR)/ez-ipupdate; \
+	then echo "Compile ez-ipupdate success"; \
+	else echo "Compile ez-ipupdate error!"; exit 1; \
+	fi
+	cp $(APP_EZ-IPUPDATE_DIR)/ez-ipupdate  $(FILESYSTEM_DIR)/userfs/bin/
+	
+ez-ipupdate_clean:
+	echo "Clean ddns"
+	$(MAKE) -C $(APP_EZ-IPUPDATE_DIR) clean
+
+bftpd:
+	echo "Build bftpd"
+	$(MAKE) -C $(APP_BFTPD_DIR)
+	if test -e $(APP_BFTPD_DIR)/bftpd; \
+	then echo "Compile bftpd success"; \
+	else echo "Compile bftpd error!"; exit 1; \
+	fi
+	cp $(APP_BFTPD_DIR)/bftpd  $(FILESYSTEM_DIR)/userfs/bin/
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CZ_GENERAL)
+ifneq ($(strip $(TCSUPPORT_CZ_GENERAL)),)
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/bftpd.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/zte/bftpd.conf $(FILESYSTEM_DIR)/usr/etc/bftpd.conf
+endif   	
+#endif/*TCSUPPORT_COMPILE*/
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_FTP_DOWNLOADCLIENT)
+ifneq ($(strip $(TCSUPPORT_CT_FTP_DOWNLOADCLIENT)),)
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/bftpd.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/ct/bftpd.conf $(FILESYSTEM_DIR)/usr/etc/bftpd.conf
+endif   	
+#endif/*TCSUPPORT_COMPILE*/
+
+ifneq ($(strip $(TCSUPPORT_USB_FTP_SERVER)),)
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/bftpd.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/bftpd/bftpd.conf $(FILESYSTEM_DIR)/usr/etc/bftpd.conf
+endif   	
+
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_FTP_USB)
+ifneq ($(strip $(TCSUPPORT_FTP_USB)),)
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/bftpd.conf
+	cp $(APP_PRIVATE_DIR)/etc_script/dlink/bftpd_wind.conf $(FILESYSTEM_DIR)/usr/etc/bftpd.conf
+endif   	
+#endif/*TCSUPPORT_COMPILE*/
+
+bftpd_clean:
+	echo "Clean bftpd"
+	$(MAKE) -C $(APP_BFTPD_DIR) clean
+
+
+#Build inetd
+inetd:
+	echo "Build inetd"
+	$(MAKE) -C $(APP_INETD_DIR)
+	if test -e $(APP_INETD_DIR)/inetd; \
+	then echo "Compile inetd success"; \
+	else echo "Compile inetd error!"; exit 1; \
+	fi
+	cp $(APP_INETD_DIR)/inetd  $(FILESYSTEM_DIR)/userfs/bin/
+	
+inetd_clean:
+	echo "Clean inetd"
+	$(MAKE) -C $(APP_INETD_DIR) clean
+	
+#build openssl
+ifneq ($(strip $(TCSUPPORT_ENCRYPT_ROMFILE_AES)),)	
+openssl:
+	echo "Build OPENSSL"
+	$(MAKE) -C $(APP_OPENSSL_DIR)
+	$(MAKE) install -C $(APP_OPENSSL_DIR)
+	if test -e $(APP_OPENSSL_DIR)/OPSSL/bin/openssl; \
+	then cp -f $(APP_OPENSSL_DIR)/OPSSL/bin/openssl $(FILESYSTEM_DIR)/userfs/bin/; \
+	fi
+openssl_clean:	
+	$(MAKE) -C $(APP_OPENSSL_DIR) clean
+	if test -e $(FILESYSTEM_DIR)/userfs/bin/openssl; \
+	then rm $(FILESYSTEM_DIR)/userfs/bin/openssl; \
+	fi
+else
+openssl:
+openssl_clean:
+endif
+
+#Build NET-SNMP
+ifneq ($(strip $(TCSUPPORT_SNMP)),) 
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+snmpd:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/snmpd $(FILESYSTEM_DIR)/userfs/bin/
+snmpd_clean:
+	echo "TC_BUILD_RELEASECODE: Build snmpd, do nothing!"
+else
+snmpd:
+	echo "Build  snmpd"
+ifneq ($(strip $(TCSUPPORT_SNMP_V3)),)
+	echo "Build OPENSSL"
+	$(MAKE) -C $(APP_OPENSSL_DIR)
+	$(MAKE) install -C $(APP_OPENSSL_DIR)
+	if test -e $(APP_OPENSSL_DIR)/OPSSL/lib/libcrypto.a; \
+	then echo "Compile openssl success"; \
+	else echo "Compile openssl error!"; exit 1; \
+	fi
+	cp -rf $(APP_OPENSSL_DIR)/OPSSL  $(APP_PUBLIC_DIR)/net-snmp-5.3.1/
+	
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/net-snmp/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/net-snmp
+	mkdir $(FILESYSTEM_DIR)/usr/etc/net-snmp/snmp
+endif   	
+	rm -rf $(APP_SNMPD_DIR)
+	cp -rf $(APP_PUBLIC_DIR)/net-snmp-5.3.1 $(APP_SNMPD_DIR)
+	
+	cd $(APP_PUBLIC_DIR) && find . -name ".svn" | xargs rm -rf
+	chmod 777 $(APP_PRIVATE_DIR)/code_reduce_patch/net-snmp-5.3.1_config.sh
+	cd $(APP_SNMPD_DIR) && ../code_reduce_patch/net-snmp-5.3.1_config.sh
+	
+	if test -e $(APP_SNMPD_DIR)/agent/snmpd; \
+	then echo "Compile snmpd success"; \
+	else echo "Compile snmpd error!"; exit 1; \
+	fi
+	cp $(APP_SNMPD_DIR)/agent/snmpd  $(FILESYSTEM_DIR)/userfs/bin/
+	
+snmpd_clean:
+	echo "Clean snmpd"
+	rm -rf $(APP_SNMPD_DIR)
+endif
+else
+snmpd:
+snmpd_clean:
+endif
+
+#Build ntpclinet
+ntpclient:
+	echo "Build ntpclient"
+ifeq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux)
+	export TEMPCC=$(CC)
+	export CC="$(CC)$(TC3162_CFLAG)"
+	echo $(CC)
+endif
+	$(MAKE) -C $(APP_NTPCLIENT_DIR)
+	if test -e $(APP_NTPCLIENT_DIR)/ntpclient; \
+	then echo "Compile ntpclient success"; \
+	else echo "Compile ntpclient error!"; exit 1; \
+	fi
+	cp $(APP_NTPCLIENT_DIR)/ntpclient  $(FILESYSTEM_DIR)/userfs/bin/
+ifeq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux)
+	CC=$(TEMPCC)
+endif
+	
+ntpclient_clean:
+	echo "Clean ntpclient"
+	$(MAKE) -C $(APP_NTPCLIENT_DIR) clean
+
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+zebra:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/zebra $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/ripd $(FILESYSTEM_DIR)/userfs/bin/
+ifneq ($(strip $(TCSUPPORT_IPV6_RIPNG)),)
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/ripngd $(FILESYSTEM_DIR)/userfs/bin/
+endif
+zebra_clean:
+	echo "TC_BUILD_RELEASECODE: Zebra do nothing!"
+else
+zebra:
+ifneq ($(strip $(TCSUPPORT_CZ_GENERAL)),)
+ifneq ($(strip $(TCSUPPORT_IPV6_RIPNG)),)
+	cd $(APP_ZEBRA_DIR) && ./configure --host=mips-linux --enable-user=admin --enable-group=root --disable-bgpd --disable-ospfd --disable-ospf6d --disable-watchquagga --disable-bgp-announce --disable-ospfapi --disable-ospfclient CFLAGS=" -DTCSUPPORT_CZ_GENERAL $(CFG_CFLAGS)"
+else
+	cd $(APP_ZEBRA_DIR) && ./configure --host=mips-linux --enable-user=admin --enable-group=root  --disable-ipv6 --disable-bgpd --disable-ospfd --disable-ospf6d --disable-watchquagga --disable-bgp-announce --disable-ospfapi --disable-ospfclient CFLAGS="-DTCSUPPORT_CZ_GENERAL $(CFG_CFLAGS)"
+endif
+else
+ifneq ($(strip $(TCSUPPORT_IPV6_RIPNG)),)
+	cd $(APP_ZEBRA_DIR) && ./configure --host=mips-linux --enable-netlink --enable-user=admin --enable-group=root --disable-bgpd --disable-ospfd --disable-ospf6d --disable-watchquagga --disable-bgp-announce --disable-ospfapi --disable-ospfclient CFLAGS="$(CFG_CFLAGS)"
+else
+	cd $(APP_ZEBRA_DIR) && ./configure --host=mips-linux --enable-netlink --enable-user=admin --enable-group=root  --disable-ipv6 --disable-bgpd --disable-ospfd --disable-ospf6d --disable-watchquagga --disable-bgp-announce --disable-ospfapi --disable-ospfclient CFLAGS="$(CFG_CFLAGS)"
+endif
+endif
+	$(MAKE) -C $(APP_ZEBRA_DIR)
+	if test -e $(APP_ZEBRA_DIR)/zebra/zebra; \
+	then echo "Compile zebra success"; \
+	else echo "Compile zebra error!"; exit 1; \
+	fi	
+	if test -e $(APP_ZEBRA_DIR)/ripd/ripd; \
+	then echo "Compile ripd success"; \
+	else echo "Compile ripd error!"; exit 1; \
+	fi
+ifneq ($(strip $(TCSUPPORT_IPV6_RIPNG)),)
+	if test -e $(APP_ZEBRA_DIR)/ripngd/ripngd; \
+	then echo "Compile ripngd success"; \
+	else echo "Compile ripngd error!"; exit 1; \
+	fi
+endif
+	$(STRIP) --strip-unneeded $(APP_ZEBRA_DIR)/zebra/zebra
+	$(STRIP) --strip-unneeded $(APP_ZEBRA_DIR)/ripd/ripd
+ifneq ($(strip $(TCSUPPORT_IPV6_RIPNG)),)
+	$(STRIP) --strip-unneeded $(APP_ZEBRA_DIR)/ripngd/ripngd
+endif
+	cp $(APP_ZEBRA_DIR)/zebra/zebra  $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_ZEBRA_DIR)/ripd/ripd  $(FILESYSTEM_DIR)/userfs/bin/
+ifneq ($(strip $(TCSUPPORT_IPV6_RIPNG)),)
+	cp $(APP_ZEBRA_DIR)/ripngd/ripngd  $(FILESYSTEM_DIR)/userfs/bin/
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT)),)
+ifneq ($(strip $(TCSUPPORT_RIPD)),)
+	echo "Compile zebra success"
+	echo "Compile ripd success"
+else
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/zebra
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/ripd
+endif
+endif
+
+zebra_clean:
+ifneq ($(strip $(TCSUPPORT_IPV6_RIPNG)),)
+	cd $(APP_ZEBRA_DIR) && ./configure --host=mips-linux --enable-user=admin --enable-group=root  --disable-bgpd --disable-ospfd --disable-ospf6d --disable-watchquagga --disable-bgp-announce --disable-ospfapi --disable-ospfclient CFLAGS="$(CFG_CFLAGS)"
+else
+	cd $(APP_ZEBRA_DIR) && ./configure --host=mips-linux --enable-user=admin --enable-group=root  --disable-ipv6 --disable-bgpd --disable-ospfd --disable-ospf6d --disable-watchquagga --disable-bgp-announce --disable-ospfapi --disable-ospfclient CFLAGS="$(CFG_CFLAGS)"
+endif
+	$(MAKE) -C $(APP_ZEBRA_DIR) clean
+ifneq ($(strip $(TCSUPPORT_IPV6_RIPNG)),)
+	if test -e $(FILESYSTEM_DIR)/userfs/bin/ripngd; \
+	then rm $(FILESYSTEM_DIR)/userfs/bin/ripngd; \
+	fi
+endif
+endif
+
+#Build tftp-1.0
+tftpd:
+	echo "Build tftpd"
+	$(MAKE) -C $(APP_TFTPD_DIR)
+	if test -e $(APP_TFTPD_DIR)/tftpd; \
+	then echo "Compile tftpd success"; \
+	else echo "Compile tftpd error!"; exit 1; \
+	fi
+	cp $(APP_TFTPD_DIR)/tftpd  $(FILESYSTEM_DIR)/userfs/bin/
+tftpd_clean:
+	echo "Clean tftpd"
+	$(MAKE) -C $(APP_TFTPD_DIR) clean
+
+#Build stb_test
+ifneq ($(strip $(TCSUPPORT_CT_STB_TEST)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+stb_test:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/stb_test $(FILESYSTEM_DIR)/userfs/bin/
+stb_test_clean:
+	echo "TC_BUILD_RELEASECODE: Build stb_test, do nothing!"
+else
+stb_test:
+	echo "Build stb_test"
+	$(MAKE) -C $(APP_STB_TEST_DIR)
+	if test -e $(APP_STB_TEST_DIR)/stb_test; \
+	then echo "Compile stb_test success"; \
+	else echo "Compile stb_test error!"; exit 1; \
+	fi
+	cp $(APP_STB_TEST_DIR)/stb_test  $(FILESYSTEM_DIR)/userfs/bin/
+stb_test_clean:
+	echo "Clean stb_test"
+	$(MAKE) -C $(APP_STB_TEST_DIR) clean
+endif
+else
+stb_test:
+	echo "No Build stb_test!"
+stb_test_clean:
+	echo "No Clean stb_test!"
+endif
+	
+#Build wpas
+ifneq ($(strip $(TCSUPPORT_WPA_SUPPLICANT)),)
+wpas:
+	echo "BUILD WPA SUPPLICANT"
+	$(MAKE) -C $(APP_OPENSSL_DIR)
+	$(MAKE) install -C $(APP_OPENSSL_DIR)
+	
+	cp -r $(APP_OPENSSL_DIR)/OPSSL $(APP_WPA_SUPP_DIR)/
+	
+	$(MAKE) wpa_supplicant -C $(APP_WPA_SUPP_DIR)
+	if test -e $(APP_WPA_SUPP_DIR)/wpa_supplicant; \
+	then echo "Wpa supplicant success"; \
+	else echo "Wpa supplicant error"; exit 1; \
+	fi;
+
+	$(MAKE) wpa_cli -C $(APP_WPA_SUPP_DIR)
+	if test -e $(APP_WPA_SUPP_DIR)/wpa_cli; \
+	then echo "Wpa cli success"; \
+	else echo "Wpa cli error"; exit 1; \
+	fi;
+
+	$(STRIP) $(APP_WPA_SUPP_DIR)/wpa_supplicant
+	$(STRIP) $(APP_WPA_SUPP_DIR)/wpa_cli
+
+	cp $(APP_WPA_SUPP_DIR)/wpa_supplicant $(FILESYSTEM_DIR)/userfs/bin
+	cp $(APP_WPA_SUPP_DIR)/wpa_cli $(FILESYSTEM_DIR)/userfs/bin
+
+wpas_clean:
+	$(MAKE) -C $(APP_WPA_SUPP_DIR) clean
+	$(MAKE) -C $(APP_OPENSSL_DIR) clean
+else
+wpas:
+	echo "NO Build WPA supplicant"
+wpas_clean:
+	echo "NO clean WPA supplicant"
+endif
+
+#Build wireless_tools.28
+ifneq ($(strip $(TCSUPPORT_WLAN)),)
+wirelesstool:
+	echo "Build wirelesstool"
+	$(MAKE) -C $(APP_WRIELESSTOOL_DIR) clean
+	$(MAKE) -C $(APP_WRIELESSTOOL_DIR)
+	if test -e $(APP_WRIELESSTOOL_DIR)/iwpriv; \
+	then echo "Compile iwpriv success"; \
+	else echo "Compile iwpriv error!"; exit 1; \
+	fi
+	if test -e $(APP_WRIELESSTOOL_DIR)/libiw.so.28; \
+	then echo "Compile libiw.so.28 success"; \
+	else echo "Compile libiw.so.28 error!"; exit 1; \
+	fi
+	cp $(APP_WRIELESSTOOL_DIR)/iwpriv  $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_WRIELESSTOOL_DIR)/libiw.so.28  $(FILESYSTEM_DIR)/lib/
+	
+wirelesstool_clean:
+	echo "Clean wirelesstool"
+	$(MAKE) -C $(APP_WRIELESSTOOL_DIR) clean
+	
+else
+wirelesstool:
+	echo "No Build Wireless!"
+wirelesstool_clean:
+	echo "No Clean Wireless!"	
+endif
+
+
+#Build igmpproxy
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+ifneq ($(strip $(TCSUPPORT_IGMP_PROXY_V3)),)
+igmpproxy:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/igmpproxy $(FILESYSTEM_DIR)/userfs/bin/
+igmpproxy_clean:
+	echo "TC_BUILD_RELEASECODE: Build igmpproxy, do nothing!"
+else
+igmpproxy:
+	echo "Build igmpproxy"
+	$(MAKE) -C $(APP_IGMPPROXY_DIR)
+	if test -e $(APP_IGMPPROXY_DIR)/igmpproxy; \
+	then echo "Compile igmpproxy success"; \
+	else echo "Compile igmpproxy error!"; exit 1; \
+	fi
+	$(STRIP) $(APP_IGMPPROXY_DIR)/igmpproxy
+	cp $(APP_IGMPPROXY_DIR)/igmpproxy  $(FILESYSTEM_DIR)/userfs/bin/
+	
+igmpproxy_clean:
+	echo "Clean igmpproxy"
+	$(MAKE) -C $(APP_IGMPPROXY_DIR) clean
+endif
+else
+igmpproxy:
+	echo "Build igmpproxy"
+	$(MAKE) -C $(APP_IGMPPROXY_DIR)
+	if test -e $(APP_IGMPPROXY_DIR)/igmpproxy; \
+	then echo "Compile igmpproxy success"; \
+	else echo "Compile igmpproxy error!"; exit 1; \
+	fi
+	$(STRIP) $(APP_IGMPPROXY_DIR)/igmpproxy
+	cp $(APP_IGMPPROXY_DIR)/igmpproxy  $(FILESYSTEM_DIR)/userfs/bin/
+	
+igmpproxy_clean:
+	echo "Clean igmpproxy"
+	$(MAKE) -C $(APP_IGMPPROXY_DIR) clean
+endif
+ifneq ($(strip $(TCSUPPORT_CT)),)
+traceroute:
+	echo "Build traceroute"
+	$(MAKE) -C $(APP_TRACEROUTE_DIR)
+	if test -e $(APP_TRACEROUTE_DIR)/traceroute/traceroute; \
+	then echo "Compile traceroute success"; \
+	else echo "Compile traceroute error!"; exit 1; \
+	fi
+	$(STRIP) --strip-unneeded $(APP_TRACEROUTE_DIR)/traceroute/traceroute	
+	cp $(APP_TRACEROUTE_DIR)/traceroute/traceroute  $(FILESYSTEM_DIR)/userfs/bin/traceroute6
+	
+traceroute_clean:
+	echo "Clean traceroute"
+	$(MAKE) -C $(APP_TRACEROUTE_DIR) clean
+else
+traceroute:
+traceroute_clean:
+endif
+
+#Build hw_nat
+ifneq ($(strip $(TCSUPPORT_RA_HWNAT)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+hw_nat:
+ifeq ($(strip $(TCSUPPORT_MT7510_FE)),)
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/ac $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/acl $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/mtr $(FILESYSTEM_DIR)/userfs/bin/
+endif
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/hw_nat $(FILESYSTEM_DIR)/userfs/bin/
+hw_nat_clean:
+	echo "TC_BUILD_RELEASECODE: Build hw_nat, do nothing!"
+else
+hw_nat:
+	echo "Build hw_nat"
+ifneq ($(strip $(TCSUPPORT_MT7510_FE)),)
+	$(MAKE) -C $(APP_RA_HWNAT_7510_DIR)
+	if test -e $(APP_RA_HWNAT_7510_DIR)/hw_nat; \
+	then echo "Compile hw_nat success"; \
+	else echo "Compile hw_nat error!"; exit 1; \
+	fi
+	cp $(APP_RA_HWNAT_7510_DIR)/hw_nat  $(FILESYSTEM_DIR)/userfs/bin/
+else
+	$(MAKE) -C $(APP_RA_HWNAT_DIR)
+	if test -e $(APP_RA_HWNAT_DIR)/hw_nat; \
+	then echo "Compile hw_nat success"; \
+	else echo "Compile hw_nat error!"; exit 1; \
+	fi
+	cp $(APP_RA_HWNAT_DIR)/ac  $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_RA_HWNAT_DIR)/acl  $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_RA_HWNAT_DIR)/hw_nat  $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_RA_HWNAT_DIR)/mtr  $(FILESYSTEM_DIR)/userfs/bin/
+endif	
+hw_nat_clean:
+	echo "Clean hw_nat"
+ifneq ($(strip $(TCSUPPORT_MT7510_FE)),)
+	$(MAKE) -C $(APP_RA_HWNAT_7510_DIR) clean
+else
+	$(MAKE) -C $(APP_RA_HWNAT_DIR) clean
+endif
+endif
+else
+hw_nat:
+	echo "No Build hw_nat!"
+hw_nat_clean:
+	echo "No Clean hw_nat!"
+endif
+
+#Build sysstat
+sysstat:
+	echo "Build sysstat"
+	$(MAKE) -C $(APP_SYSSTAT_DIR)
+	if test -e $(APP_SYSSTAT_DIR)/mpstat; \
+	then echo "Compile sysstat success"; \
+	else echo "Compile sysstat error!"; exit 1; \
+	fi
+	cp $(APP_SYSSTAT_DIR)/mpstat  $(FILESYSTEM_DIR)/usr/bin/
+	
+sysstat_clean:
+	echo "Clean sysstat"
+	$(MAKE) -C $(APP_SYSSTAT_DIR) clean
+
+ifneq ($(strip $(RELEASEBSP)),)
+	rm -rf $(APP_PRIVATE_DIR)/voip/Dare/
+	rm -rf $(APP_PRIVATE_DIR)/voip/dare_megaco/
+	rm -rf $(APP_PRIVATE_DIR)/voip/imssip/
+endif
+
+ifneq ($(strip $(TCSUPPORT_VOIP)),)
+ifeq ($(strip $(VOIP_DSP)),MTK)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+voip_app:	
+	echo "Build mtk"
+#	$(MAKE) -C $(APP_VOIP_EVA_DIR) PLATFORM=tc3182 DSP=mtk
+	-cp -rf $(APP_VOIP_EVA_DIR)/bin/*.so  $(FILESYSTEM_DIR)/lib
+	-cp -rf $(APP_MTKSIP_DIR)/install/lib/*.so  $(FILESYSTEM_DIR)/lib
+ifneq ($(strip $(TCSUPPORT_ECN_SIP))_$(strip $(TCSUPPORT_ECN_MEGACO)),_)
+ifneq ($(strip $(TCSUPPORT_ECN_SIP)),)
+	cp $(APP_VOIP_BIN_DIR)/sipclient  $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_VOIP_BIN_DIR)/voip_sys.cfg  $(FILESYSTEM_DIR)/usr/etc/
+endif
+ifneq ($(strip $(TCSUPPORT_ECN_MEGACO)),)
+	cp -rf $(APP_VOIP_BIN_DIR)/mgapp  $(FILESYSTEM_DIR)/userfs/bin/
+	cp -rf $(APP_VOIP_BIN_DIR)/tcVoIPApiServer  $(FILESYSTEM_DIR)/userfs/bin/
+endif
+else
+ifneq ($(strip $(TCSUPPORT_VOIP_IMSSIP)),)
+	cp -rf $(APP_VOIP_IMSSIP_BIN_DIR)/vpMsgSvr  $(FILESYSTEM_DIR)/userfs/bin/
+	cp -rf $(APP_VOIP_IMSSIP_BIN_DIR)/sipapp  $(FILESYSTEM_DIR)/userfs/bin/
+	cp -rf $(APP_VOIP_IMSSIP_BIN_DIR)/vpsip  $(FILESYSTEM_DIR)/userfs/bin/
+	cp -rf $(APP_VOIP_IMSSIP_BIN_DIR)/vpdrc  $(FILESYSTEM_DIR)/userfs/bin/
+	cp -rf $(APP_VOIP_IMSSIP_BIN_DIR)/vpcfg  $(FILESYSTEM_DIR)/userfs/bin/
+endif
+ifneq ($(strip $(VP_MEGACO)),)
+	cp -rf $(APP_VOIP_MEGACO_BIN_DIR)/voip  $(FILESYSTEM_DIR)/userfs/bin/
+endif
+endif
+	echo "Installing CountrySetting..."
+	cp -rf $(APP_PRIVATE_DIR)/voip/CountrySetting $(FILESYSTEM_DIR)/userfs/
+	-cp -rf $(APP_VOIP_EVA_DIR)/bin/evcom  $(FILESYSTEM_DIR)/userfs/bin/
+	-cp -rf $(APP_VOIP_EVA_DIR)/bin/voip_loader $(FILESYSTEM_DIR)/userfs/bin/
+#	-cp -rf $(APP_API_CMD_VOIP_DIR)/voipmgr $(FILESYSTEM_DIR)/userfs/bin/
+voip_app_clean:
+#	$(MAKE) -C $(APP_VOIP_EVA_DIR) PLATFORM=tc3182 DSP=mtk clean
+ifneq ($(strip $(TCSUPPORT_ECN_SIP))_$(strip $(TCSUPPORT_ECN_MEGACO)),_)
+ifneq ($(strip $(TCSUPPORT_ECN_SIP)),)
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/sipclient
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/voip_sys.cfg
+endif
+ifneq ($(strip $(TCSUPPORT_ECN_MEGACO)),)
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/mgapp
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/tcVoIPApiServer
+endif
+else
+ifneq ($(strip $(TCSUPPORT_VOIP_IMSSIP)),)
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/vpMsgSvr
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/sipapp
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/vpsip
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/vpdrc
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/vpcfg
+endif
+ifneq ($(strip $(VP_MEGACO)),)
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/voip
+endif
+endif
+	echo "Uninstalling CountrySetting..."
+	rm -rf $(FILESYSTEM_DIR)/userfs/CountrySetting
+else
+voip_app:
+	echo "Build mtk"
+	find $(APP_MTKSIP_DIR)/ -path  $(APP_MTKSIP_DIR)/install -prune -o -type d ! -name MTK_SIP/ -print | xargs rm -rf
+	rm -rf $(APP_MTKSIP_DIR)/install/include
+#	$(MAKE) -C $(APP_VOIP_EVA_DIR) PLATFORM=tc3182 DSP=mtk
+	-cp -rf $(APP_VOIP_EVA_DIR)/bin/*.so  $(FILESYSTEM_DIR)/lib
+	-cp -rf $(APP_MTKSIP_DIR)/install/lib/*.so  $(FILESYSTEM_DIR)/lib
+ifneq ($(strip $(TCSUPPORT_ECN_SIP)),)
+	cp $(APP_VOIP_BIN_DIR)/sipclient  $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_VOIP_BIN_DIR)/voip_sys.cfg  $(FILESYSTEM_DIR)/usr/etc/
+endif
+ifneq ($(strip $(TCSUPPORT_ECN_MEGACO)),)
+	-cp -rf $(APP_VOIP_BIN_DIR)/mgapp  $(FILESYSTEM_DIR)/userfs/bin/
+	-cp -rf $(APP_VOIP_BIN_DIR)/tcVoIPApiServer  $(FILESYSTEM_DIR)/userfs/bin/
+endif
+
+	echo "Installing CountrySetting..."
+	cp -rf $(APP_PRIVATE_DIR)/voip/CountrySetting $(FILESYSTEM_DIR)/userfs/
+	-cp -rf $(APP_VOIP_EVA_DIR)/bin/evcom  $(FILESYSTEM_DIR)/userfs/bin/
+	-cp -rf $(APP_VOIP_EVA_DIR)/bin/voip_loader $(FILESYSTEM_DIR)/userfs/bin/
+#	-cp -rf $(APP_API_CMD_VOIP_DIR)/voipmgr $(FILESYSTEM_DIR)/userfs/bin/
+voip_app_clean:
+#	$(MAKE) -C $(APP_VOIP_EVA_DIR) PLATFORM=tc3182 DSP=mtk clean
+endif
+endif
+else
+voip_app:	
+voip_app_clean:
+endif
+
+#Build rp-pppoe-3.10
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_PPPOEPROXY)
+ifneq ($(strip $(TCSUPPORT_CT_PPPOEPROXY)),)
+pppoe_svr:
+	echo "Build PPPOE_SVR!"
+	$(MAKE) -C $(APP_PPPOE_SVR_DIR)/src
+	if test -e $(APP_PPPOE_SVR_DIR)/src/pppoe-server; \
+	then echo "Compile pppoe-server success"; \
+	else echo "Compile pppoe-server error!"; exit 1; \
+	fi
+	if test -e $(APP_PPPOE_SVR_DIR)/src/pppoe; \
+	then echo "Compile pppoe success"; \
+	else echo "Compile pppoe error!"; exit 1; \
+	fi
+	if test -e $(APP_PPPOE_SVR_DIR)/src/pppoe-sniff; \
+	then echo "Compile pppoe-sniff success"; \
+	else echo "Compile pppoe-sniff error!"; exit 1; \
+	fi
+	cp  $(APP_PPPOE_SVR_DIR)/src/pppoe-server  $(FILESYSTEM_DIR)/usr/bin/
+	cp  $(APP_PPPOE_SVR_DIR)/src/pppoe  $(FILESYSTEM_DIR)/usr/bin/
+	cp  $(APP_PPPOE_SVR_DIR)/src/pppoe-sniff  $(FILESYSTEM_DIR)/usr/bin/
+
+pppoe_svr_clean:
+	echo "Clean PPPOE_SVR!"
+	$(MAKE) -C $(APP_PPPOE_SVR_DIR)/src clean	
+else
+#endif/*TCSUPPORT_COMPILE*/
+pppoe_svr:
+pppoe_svr_clean:
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_PPPOEPROXY)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+pppoe-relay:
+	echo "Build pppoe-relay"
+	$(MAKE) -C $(APP_PPPOERELAY_DIR)
+	if test -e $(APP_PPPOERELAY_DIR)/pppoe-relay; \
+	then echo "Compile pppoe-relay success"; \
+	else echo "Compile pppoe-relay error!"; exit 1; \
+	fi
+	cp $(APP_PPPOERELAY_DIR)/pppoe-relay  $(FILESYSTEM_DIR)/userfs/bin/
+	
+pppoe-relay_clean:
+	echo "Clean pppoe-relay"
+	$(MAKE) -C $(APP_PPPOERELAY_DIR) clean
+	
+ifneq ($(strip $(TCSUPPORT_IPV6)),)
+#Build flex for radvd
+flex:
+	echo "Build flex"
+	cd $(APP_FLEX_DIR) && ./configure --host=mips-linux
+	$(MAKE) -C $(APP_FLEX_DIR)
+	if test -e $(APP_FLEX_DIR)/libfl.a; \
+	then echo "Compile flex success"; \
+	else echo "Compile flex error!"; exit 1; \
+	fi
+	cp $(APP_FLEX_DIR)/libfl.a  $(PUBLIC_LIB_DIR)
+	cp $(APP_FLEX_DIR)/libfl.a  $(LIB_DIR)
+	
+flex_clean:
+	echo "Clean flex"
+	cd $(APP_FLEX_DIR) && ./configure --host=mips-linux
+	$(MAKE) -C $(APP_FLEX_DIR) clean
+
+#Build radvd for IPv6
+radvd:  flex
+	echo "Build radvd"
+	$(MAKE) -C $(APP_RADVD_DIR)
+	if test -e $(APP_RADVD_DIR)/radvd; \
+	then echo "Compile radvd success"; \
+	else echo "Compile radvd error!"; exit 1; \
+	fi
+	$(STRIP) $(APP_RADVD_DIR)/radvd
+	cp $(APP_RADVD_DIR)/radvd  $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_RADVD_DIR)/radvd.conf  $(FILESYSTEM_DIR)/usr/etc/
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/wan_start_ipv6.sh $(FILESYSTEM_DIR)/usr/script/wan_start.sh
+endif
+
+radvd_clean: flex_clean
+	echo "Clean radvd"
+	$(MAKE) -C $(APP_RADVD_DIR) clean
+
+#Build dhcpv6 for IPv6
+dhcpv6:  flex
+	echo "Build dhcpv6"
+	$(MAKE) -C $(APP_DHCPV6_DIR)
+	if test -e $(APP_DHCPV6_DIR)/dhcp6c; \
+	then echo "Compile dhcpv6 client success"; \
+	else echo "Compile dhcpv6 client error!"; exit 1; \
+	fi
+	if test -e $(APP_DHCPV6_DIR)/dhcp6s; \
+	then echo "Compile dhcpv6 server success"; \
+	else echo "Compile dhcpv6 server error!"; exit 1; \
+	fi
+	$(STRIP) $(APP_DHCPV6_DIR)/dhcp6c
+	$(STRIP) $(APP_DHCPV6_DIR)/dhcp6s
+	cp $(APP_DHCPV6_DIR)/dhcp6c  $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_DHCPV6_DIR)/dhcp6s  $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_DHCPV6_DIR)/dhcp6c.conf  $(FILESYSTEM_DIR)/usr/etc/
+	cp $(APP_DHCPV6_DIR)/dhcp6s.conf  $(FILESYSTEM_DIR)/usr/etc/
+	cp $(APP_DHCPV6_DIR)/dhcp6c_script  $(FILESYSTEM_DIR)/usr/script/
+	
+dhcpv6_clean: flex_clean
+	echo "Clean dhcpv6"
+	$(MAKE) -C $(APP_DHCPV6_DIR) clean
+
+#Build iproute
+iproute:
+#	echo "Build iproute"
+#	$(MAKE) -C $(APP_IPROUTE_DIR)
+#	if test -e $(APP_IPROUTE_DIR)/ip/ip; \
+#	then echo "Compile ip success"; \
+#	else echo "Compile ip error!"; exit 1; \
+#	fi
+#	cp $(APP_IPROUTE_DIR)/ip/ip  $(FILESYSTEM_DIR)/userfs/bin/
+#	
+iproute_clean:
+#	echo "Clean iproute"
+#	$(MAKE) -C $(APP_IPROUTE_DIR) clean
+#Build MLD proxy application
+ifneq ($(strip $(TCSUPPORT_MLD_PROXY)),)
+ecmh:
+	@echo "Build MLD proxy"
+	$(MAKE) -C $(APP_MLDPROXY_DIR)
+	@if test -e $(APP_MLDPROXY_DIR)/src/ecmh; \
+	then echo "Compile MLD proxy success"; \
+	else echo "Compile MLD proxy error!"; exit 1; \
+	fi
+	$(STRIP) $(APP_MLDPROXY_DIR)/src/ecmh
+	cp $(APP_MLDPROXY_DIR)/src/ecmh  $(FILESYSTEM_DIR)/userfs/bin/
+
+ecmh_clean:
+	$(MAKE) -C $(APP_MLDPROXY_DIR) clean
+else
+ecmh:
+ecmh_clean:
+endif
+
+else
+radvd:
+radvd_clean:
+dhcpv6:
+dhcpv6_clean:
+	rm -f $(FILESYSTEM_DIR)/usr/etc/dhcp6c.conf
+	rm -f $(FILESYSTEM_DIR)/usr/etc/dhcp6s.conf
+	rm -f $(FILESYSTEM_DIR)/usr/script/dhcp6c_script
+iproute:
+iproute_clean:
+ecmh:
+ecmh_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_USB_NTFS)),)
+ntfs:
+ifneq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux-gnu)
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cd $(APP_NTFS_DIR) && ./configure --host=mips-linux --disable-library CFLAGS="-g -O2 -Wall -mips1 -DTCSUPPORT_CT"
+else
+#endif/*TCSUPPORT_COMPILE*/
+	cd $(APP_NTFS_DIR) && ./configure --host=mips-linux --disable-library CFLAGS="-g -O2 -Wall -mips1"
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+else
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cd $(APP_NTFS_DIR) && ./configure --host=mips-linux-gnu --disable-library CFLAGS="-g -O2 -Wall -mips32r2 -muclibc -DTCSUPPORT_CT"
+else
+#endif/*TCSUPPORT_COMPILE*/
+	cd $(APP_NTFS_DIR) && ./configure --host=mips-linux-gnu --disable-library CFLAGS="-g -O2 -Wall -mips32r2 -muclibc"
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+endif
+	$(MAKE) -C $(APP_NTFS_DIR)
+	$(STRIP) $(APP_NTFS_DIR)/src/ntfs-3g
+	cp $(APP_NTFS_DIR)/src/ntfs-3g $(FILESYSTEM_DIR)/userfs/bin/
+ntfs_clean:
+ifneq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux-gnu)
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cd $(APP_NTFS_DIR) && ./configure --host=mips-linux --disable-library CFLAGS="-g -O2 -Wall -mips1 -DTCSUPPORT_CT"
+else
+#endif/*TCSUPPORT_COMPILE*/
+	cd $(APP_NTFS_DIR) && ./configure --host=mips-linux --disable-library CFLAGS="-g -O2 -Wall -mips1"
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+else
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cd $(APP_NTFS_DIR) && ./configure --host=mips-linux-gnu --disable-library CFLAGS="-g -O2 -Wall -mips32r2 -muclibc -DTCSUPPORT_CT"
+else
+#endif/*TCSUPPORT_COMPILE*/
+	cd $(APP_NTFS_DIR) && ./configure --host=mips-linux-gnu --disable-library CFLAGS="-g -O2 -Wall -mips32r2 -muclibc"
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT)
+endif
+#endif/*TCSUPPORT_COMPILE*/
+endif
+	$(MAKE) -C $(APP_NTFS_DIR) clean  
+else
+ntfs:
+ntfs_clean:
+endif	
+
+
+#AutoMount
+ifneq ($(strip $(TCSUPPORT_USB_AUTOMOUNT)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+automount:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/usb_auto_mount $(FILESYSTEM_DIR)/userfs/bin/
+automount_clean:
+else
+automount:
+	$(MAKE) -C $(APP_AUTOMOUNT_DIR)
+	$(STRIP) $(APP_AUTOMOUNT_DIR)/usb_auto_mount
+	cp $(APP_AUTOMOUNT_DIR)/usb_auto_mount $(FILESYSTEM_DIR)/userfs/bin/
+automount_clean:
+	$(MAKE) -C $(APP_AUTOMOUNT_DIR) clean
+endif
+
+else
+automount:
+automount_clean:
+endif
+
+
+#UsbMonitor
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+usbmonitor:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/usb_monitor $(FILESYSTEM_DIR)/userfs/bin/
+usbmonitor_clean:
+else
+usbmonitor:
+	$(MAKE) -C $(USB_MONITOR_DIR)
+	$(STRIP) $(USB_MONITOR_DIR)/usb_monitor
+	cp $(USB_MONITOR_DIR)/usb_monitor $(FILESYSTEM_DIR)/userfs/bin/
+usbmonitor_clean:
+	$(MAKE) -C $(USB_MONITOR_DIR) clean
+endif
+else
+usbmonitor:
+usbmonitor_clean:
+endif
+
+
+
+
+
+#Epon Dummy Detect
+ifneq ($(strip $(TCSUPPORT_EPON_DUMMY)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+epon_dummy_detect:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/epon_dummy_detect $(FILESYSTEM_DIR)/userfs/bin/
+epon_dummy_detect_clean:
+else
+epon_dummy_detect:
+	$(MAKE) -C $(APP_EPON_DUMMY_DETECT_DIR)
+	$(STRIP) $(APP_EPON_DUMMY_DETECT_DIR)/epon_dummy_detect
+	cp $(APP_EPON_DUMMY_DETECT_DIR)/epon_dummy_detect $(FILESYSTEM_DIR)/userfs/bin/
+epon_dummy_detect_clean:
+	$(MAKE) -C $(APP_EPON_DUMMY_DETECT_DIR) clean
+endif
+
+else
+epon_dummy_detect:
+epon_dummy_detect_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_USB_3G_DONGLE)),)
+usb_3g_dongle:
+#	the same deamon with pppd
+#	$(MAKE) -C $(APP_USB_3G_PPP_DIR)
+	$(STRIP) --strip-unneeded $(APP_USB_3G_PPP_DIR)/chat/chat
+#	$(STRIP) --strip-unneeded $(APP_USB_3G_PPP_DIR)/pppd/pppd
+	cp $(APP_USB_3G_PPP_DIR)/chat/chat $(FILESYSTEM_DIR)/userfs/bin/
+#	cp $(APP_USB_3G_PPP_DIR)/pppd/pppd $(FILESYSTEM_DIR)/userfs/bin/pppd_3g
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/ppp/peers/
+	mkdir $(FILESYSTEM_DIR)/usr/etc/ppp/peers
+	cp $(APP_USB_3G_PPP_DIR)/wcdma $(FILESYSTEM_DIR)/usr/etc/ppp/peers/
+	cp $(APP_USB_3G_PPP_DIR)/ppp_connect $(FILESYSTEM_DIR)/usr/etc/ppp/peers/
+
+#ifneq ($(strip $(TCSUPPORT_USB_MODESWITCH)),)
+libusb:
+	echo "Building usb library"
+ifneq ($(strip $(TCSUPPORT_NEWTOOLCHAIN)),)
+	cd $(APP_PUBLIC_DIR)/libusb-1.0.8 && autoreconf -i && ./configure --build=i686-linux --host=mips-linux --prefix=$(APP_PUBLIC_DIR)/libusb-1.0.8/install
+else
+	cd $(APP_PUBLIC_DIR)/libusb-1.0.8 && ./configure --build=i686-linux --host=mips-linux --prefix=$(APP_PUBLIC_DIR)/libusb-1.0.8/install
+endif	
+	$(MAKE) -C $(APP_PUBLIC_DIR)/libusb-1.0.8 install
+libusb_clean:
+	if test -e $(APP_PUBLIC_DIR)/libusb-1.0.8/Makefile; \
+	then $(MAKE) -C $(APP_PUBLIC_DIR)/libusb-1.0.8 clean; \
+	fi
+
+export PKG_CONFIG_PATH=$(APP_PUBLIC_DIR)/libusb-1.0.8/install/lib/pkgconfig
+libcompat:
+	echo "Building usb compat"
+	cd $(APP_PUBLIC_DIR)/libusb-compat-0.1.3 && ./configure --build=i686-linux --host=mips-linux --prefix=$(APP_PUBLIC_DIR)/libusb-compat-0.1.3/install
+	$(MAKE) -C $(APP_PUBLIC_DIR)/libusb-compat-0.1.3 install
+libcompat_clean:
+	if test -e $(APP_PUBLIC_DIR)/libusb-compat-0.1.3/Makefile; \
+	then $(MAKE) -C $(APP_PUBLIC_DIR)/libusb-compat-0.1.3 clean; \
+	fi
+
+usb_modeswitch: libusb libcompat
+	echo "Building usb_modeswicth"
+	cp $(APP_PUBLIC_DIR)/libusb-1.0.8/install/lib/libusb-1.0.so* $(APP_PUBLIC_DIR)/lib/
+	cp  $(APP_PUBLIC_DIR)/libusb-compat-0.1.3/install/lib/libusb-0.1.so.4*  $(APP_PUBLIC_DIR)/lib/
+	cp  $(APP_PUBLIC_DIR)/libusb-compat-0.1.3/install/lib/libusb.so  $(APP_PUBLIC_DIR)/lib/
+	$(MAKE) -C $(APP_PUBLIC_DIR)/usb-modeswitch-1.2.3 install
+	mv $(APP_PUBLIC_DIR)/libusb-1.0.8/install/lib/libusb-1.0.so* $(FILESYSTEM_DIR)/lib/
+	mv $(APP_PUBLIC_DIR)/libusb-compat-0.1.3/install/lib/libusb-0.1.so.4*  $(FILESYSTEM_DIR)/lib/
+	mv $(APP_PUBLIC_DIR)/libusb-compat-0.1.3/install/lib/libusb.so  $(FILESYSTEM_DIR)/lib/
+
+	cp $(APP_USB_3G_PPP_DIR)/dongle_dial_on.sh $(FILESYSTEM_DIR)/usr/script/  
+	cp $(APP_USB_3G_PPP_DIR)/dongle_dial_off.sh $(FILESYSTEM_DIR)/usr/script/  
+	cp $(APP_USB_3G_PPP_DIR)/ppp_on_dialer.sh $(FILESYSTEM_DIR)/usr/etc/ppp/peers/ 
+
+
+usb_modeswitch_clean: libusb_clean libcompat_clean
+	$(MAKE) -C $(APP_PUBLIC_DIR)/usb-modeswitch-1.2.3 uninstall
+	$(MAKE) -C $(APP_PUBLIC_DIR)/usb-modeswitch-1.2.3 clean
+	rm -rf $(FILESYSTEM_DIR)/lib/libusb-1.0.so*
+	rm -rf $(FILESYSTEM_DIR)/lib/libusb-0.1.so.4*
+	rm -rf $(FILESYSTEM_DIR)/lib/libusb.so
+
+usb_switch_data:
+	#$(MAKE) -C $(APP_PUBLIC_DIR)/usb-modeswitch-data-20120120 install
+	$(MAKE) -C $(APP_PUBLIC_DIR)/usb-modeswitch-data-20120531 install
+
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+auto_mount_dongle:
+	echo "TC_BUILD_RELEASECODE: auto_mount_dongle!"	
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/auto_mount_dongle $(FILESYSTEM_DIR)/userfs/bin/
+auto_mount_dongle_clean:
+	echo "TC_BUILD_RELEASECODE: auto_mount_dongle_clean!"
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/auto_mount_dongle
+
+else
+
+auto_mount_dongle:
+	echo "compile auto_mount_dongle"
+	$(MAKE) -C $(APP_PRIVATE_DIR)/auto_mount_dongle
+	cp $(APP_PRIVATE_DIR)/auto_mount_dongle/auto_mount_dongle $(FILESYSTEM_DIR)/userfs/bin/
+auto_mount_dongle_clean:
+	echo "clean auto_mount_dongle"
+	$(MAKE) -C $(APP_PRIVATE_DIR)/auto_mount_dongle clean
+
+endif
+
+usb_3g_dongle_clean:
+	$(MAKE) -C $(APP_USB_3G_PPP_DIR) clean
+
+else
+usb_3g_dongle:
+usb_3g_dongle_clean:
+usb_modeswitch:
+usb_modeswitch_clean:
+auto_mount_dongle:
+auto_mount_dongle_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_USB_PRINTER_SERVER)),)
+usb_printer:
+	$(MAKE) -C $(APP_USB_PRINTER_DIR)
+	if test -e $(APP_USB_PRINTER_DIR)/p910nd; \
+	then echo "Compile usb printer server daemon success"; \
+	else echo "Compile usb printer server daemon error!"; exit 1; \
+	fi
+	$(STRIP) --strip-unneeded $(APP_USB_PRINTER_DIR)/p910nd
+	cp $(APP_USB_PRINTER_DIR)/p910nd $(FILESYSTEM_DIR)/userfs/bin/
+
+usb_printer_clean:
+	$(MAKE) -C $(APP_USB_PRINTER_DIR) clean
+else
+usb_printer:
+usb_printer_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_USB_CAMERA)),)
+usb_camera:
+	$(MAKE) -C $(APP_MJPEG_LIB_DIR) 
+	$(STRIP) --strip-unneeded $(APP_MJPEG_LIB_DIR)/.libs/libjpeg.so.62.0.0
+	cp $(APP_MJPEG_LIB_DIR)/.libs/libjpeg.so.62.0.0 $(FILESYSTEM_DIR)/lib
+	cp $(APP_MJPEG_LIB_DIR)/.libs/libjpeg.so.62 $(FILESYSTEM_DIR)/lib
+	cp $(APP_MJPEG_LIB_DIR)/.libs/libjpeg.so $(FILESYSTEM_DIR)/lib
+	$(MAKE) -C $(APP_USB_MJPEG_STREAM_SERVER_DIR)
+	$(STRIP) --strip-unneeded $(APP_USB_MJPEG_STREAM_SERVER_DIR)/*.so
+	$(STRIP) --strip-unneeded $(APP_USB_MJPEG_STREAM_SERVER_DIR)/mjpg_streamer
+	cp $(APP_USB_MJPEG_STREAM_SERVER_DIR)/mjpg_streamer $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_USB_MJPEG_STREAM_SERVER_DIR)/output_http.so $(FILESYSTEM_DIR)/lib
+	cp $(APP_USB_MJPEG_STREAM_SERVER_DIR)/input_uvc.so $(FILESYSTEM_DIR)/lib
+usb_camera_clean:
+	$(MAKE) -C $(APP_MJPEG_LIB_DIR) clean 
+	$(MAKE) -C $(APP_USB_MJPEG_STREAM_SERVER_DIR) clean
+else
+usb_camera:
+usb_camera_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_VPN)),)
+vpn_tools:
+	echo "Build openssl"
+	$(MAKE) -C $(APP_OPENSSL_VPN_DIR)
+	if test -d $(APP_OPENSSL_VPN_DIR)/lib; \
+	then rm -rf $(APP_OPENSSL_VPN_DIR)/lib; \
+	fi
+	cd $(APP_OPENSSL_VPN_DIR) && mkdir lib && cp libcrypto.a libssl.a lib
+	echo "Build flex"
+ifneq ($(strip $(TCSUPPORT_NEWTOOLCHAIN)),)
+	cd $(APP_FLEX_DIR) && ./configure --host=mips-linux
+else
+	cd $(APP_FLEX_DIR) && ./configure --host=mips-linux-uclibc CC="mips-linux-uclibc-gcc -mips32r2 -msoft-float"
+endif	
+	$(MAKE) -C $(APP_FLEX_DIR) clean
+	$(MAKE) -C $(APP_FLEX_DIR)
+	echo "Build ipsec-tools"
+	rm -f $(APP_IPSEC_TOOLS)/src/include-glibc/linux
+	touch -m $(APP_IPSEC_TOOLS)/*
+ifneq ($(strip $(TCSUPPORT_NEWTOOLCHAIN)),)
+	cd $(APP_IPSEC_TOOLS) && ./configure --host=mips-unknown-linux-uclibc --with-kernel-headers=$(KERNEL_DIR)/include --prefix=$(FILESYSTEM_DIR)/usr/ipsec_tools --with-openssl=$(APP_OPENSSL_VPN_DIR) --disable-security-context --enable-frag --enable-dpd --enable-natt --with-flexlib=$(APP_FLEX_DIR)/libfl.a --disable-dependency-tracking
+else
+	cd $(APP_IPSEC_TOOLS) && ./configure --host=mips-linux-uclibc CC="mips-linux-uclibc-gcc -mips32r2 -msoft-float" --with-kernel-headers=$(KERNEL_DIR)/include --prefix=$(FILESYSTEM_DIR)/usr/ipsec_tools --with-openssl=$(APP_OPENSSL_VPN_DIR) --disable-security-context --enable-frag --enable-dpd --enable-natt --with-flexlib=$(APP_FLEX_DIR)/libfl.a --disable-dependency-tracking
+endif
+	$(MAKE) -C $(APP_IPSEC_TOOLS)
+	if test -d $(FILESYSTEM_DIR)/usr/ipsec_tools; \
+	then rm -rf $(FILESYSTEM_DIR)/usr/ipsec_tools; \
+	fi
+	mkdir $(FILESYSTEM_DIR)/usr/ipsec_tools
+	mkdir $(FILESYSTEM_DIR)/usr/ipsec_tools/sbin
+	$(STRIP) --strip-unneeded $(APP_IPSEC_TOOLS)/src/racoon/racoon
+	$(STRIP) --strip-unneeded $(APP_IPSEC_TOOLS)/src/setkey/setkey
+	cp $(APP_IPSEC_TOOLS)/src/racoon/racoon $(FILESYSTEM_DIR)/usr/bin
+	cp $(APP_IPSEC_TOOLS)/src/setkey/setkey $(FILESYSTEM_DIR)/usr/bin
+
+vpn_tools_clean:
+	echo "Clean ipsec-tools"
+	rm -f $(APP_IPSEC_TOOLS)/src/include-glibc/linux
+	touch -m $(APP_IPSEC_TOOLS)/*
+ifneq ($(strip $(TCSUPPORT_NEWTOOLCHAIN)),)
+	cd $(APP_IPSEC_TOOLS) && ./configure --host=mips-unknown-linux-uclibc --with-kernel-headers=$(KERNEL_DIR)/include --prefix=$(FILESYSTEM_DIR)/usr/ipsec_tools --with-openssl=$(APP_OPENSSL_VPN_DIR) --disable-security-context --enable-frag --enable-dpd --enable-natt --with-flexlib=$(APP_FLEX_DIR)/libfl.a --disable-dependency-tracking
+else
+	cd $(APP_IPSEC_TOOLS) && ./configure --host=mips-linux-uclibc CC="mips-linux-uclibc-gcc -mips32r2 -msoft-float" --with-kernel-headers=$(KERNEL_DIR)/include --prefix=$(FILESYSTEM_DIR)/usr/ipsec_tools --with-openssl=$(APP_OPENSSL_VPN_DIR) --disable-security-context --enable-frag --enable-dpd --enable-natt --with-flexlib=$(APP_FLEX_DIR)/libfl.a --disable-dependency-tracking
+endif		
+	$(MAKE) -C $(APP_IPSEC_TOOLS) clean
+	rm -rf $(FILESYSTEM_DIR)/usr/ipsec_tools
+	echo "Clean flex"
+ifneq ($(strip $(TCSUPPORT_NEWTOOLCHAIN)),)
+	cd $(APP_FLEX_DIR) && ./configure --host=mips-linux
+else
+	cd $(APP_FLEX_DIR) && ./configure --host=mips-linux-uclibc CC="mips-linux-uclibc-gcc -mips32r2 -msoft-float"
+endif	
+	$(MAKE) -C $(APP_FLEX_DIR) clean
+	echo "Clean openssl"
+	touch $(APP_OPENSSL_VPN_DIR)/Makefile
+	$(MAKE) -C $(APP_OPENSSL_VPN_DIR) clean
+	rm -rf $(APP_OPENSSL_VPN_DIR)/lib
+
+else
+vpn_tools:
+vpn_tools_clean:
+endif
+
+
+ifneq ($(strip $(TCSUPPORT_EIP93_VERIFY)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+eip93_apps:
+	$(MAKE) -C $(APP_EIP93_APPS)/SLAD_TestTool/build clean
+	$(MAKE) -C $(APP_EIP93_APPS)/SLAD_TestTool/build KERNEL_DIR=$(KERNEL_DIR) ARCH=mips
+	cd $(APP_EIP93_APPS)/SLAD_TestTool/scripts && export ARCH=mips && chmod 777 ./* && ./archive_93.sh && cp $(APP_EIP93_APPS)/builds_93_mips.tar.gz $(FILESYSTEM_DIR)/userfs/ && rm -f $(APP_EIP93_APPS)/builds_93_mips.tar.gz  && cd $(FILESYSTEM_DIR)/userfs && tar zxvf builds_93_mips.tar.gz  && rm -f builds_93_mips.tar.gz
+	cd $(APP_EIP93_APPS)/Regress_93 && export KERNEL_DIR=$(KERNEL_DIR) ARCH=mips && chmod 777 ./*.sh && ./build_93.sh ALL eip93ies && cp $(APP_EIP93_APPS)/Regress_93/regress93_mips.tar.gz $(FILESYSTEM_DIR)/userfs/ && cd $(FILESYSTEM_DIR)/userfs && mkdir Regression && mv regress93_mips.tar.gz Regression && cd Regression && tar zxvf regress93_mips.tar.gz && rm -f regress93_mips.tar.gz
+eip93_apps_clean:
+	$(MAKE) -C $(APP_EIP93_APPS)/SLAD_TestTool/build clean
+	rm -rf $(FILESYSTEM_DIR)/userfs/SLAD_TestTool
+	rm -rf $(FILESYSTEM_DIR)/userfs/Regression
+	cd $(APP_EIP93_APPS)/Regress_93 && rm -rf Builds Logs regress93_mips.tar.gz
+endif
+
+else
+eip93_apps:
+eip93_apps_clean:
+endif
+
+
+#Build ssh
+ifneq ($(strip $(TCSUPPORT_SSH)),)
+#ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+#ssh:
+#	cp $(APP_SSH_DIR)/dropbear $(FILESYSTEM_DIR)/userfs/bin
+#ssh_clean:
+#	echo "TC_BUILD_RELEASECODE: Build ssh, do nothing!"
+#else
+ssh:
+	echo "Build ssh"
+#	cd $(APP_SSH_DIR) && ./configure --host=mips-linux --disable-zlib
+	cd $(APP_SSH_DIR)
+	$(MAKE) -C $(APP_SSH_DIR)
+	if test -e $(APP_SSH_DIR)/dropbear; \
+	then echo "Compile SSH success"; \
+	else echo "Compile SSH error!"; exit 1; \
+	fi
+	cp $(APP_SSH_DIR)/dropbear $(FILESYSTEM_DIR)/userfs/bin/
+ssh_clean:
+	echo "Clean ssh"
+	$(MAKE) -C $(APP_SSH_DIR) clean
+#endif
+else
+ssh:
+ssh_clean:
+endif
+
+
+#Build ethcmd
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+ethcmd:
+	rm -f $(FILESYSTEM_DIR)/usr/script/wanether.sh
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/ethcmd $(FILESYSTEM_DIR)/userfs/bin/ethphxcmd
+ifneq ($(strip $(TCSUPPORT_CPU_RT63365)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/etherd
+	ln -s ethphxcmd $(FILESYSTEM_DIR)/userfs/bin/etherd
+endif	
+ifneq ($(strip $(TCSUPPORT_CPU_RT63368)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/etherd
+	ln -s ethphxcmd $(FILESYSTEM_DIR)/userfs/bin/etherd
+endif	
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/etherd
+	ln -s ethphxcmd $(FILESYSTEM_DIR)/userfs/bin/etherd
+endif	
+ifneq ($(strip $(TCSUPPORT_CPU_MT7505)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/etherd
+	ln -s ethphxcmd $(FILESYSTEM_DIR)/userfs/bin/etherd
+endif	
+ifneq ($(strip $(TCSUPPORT_CPU_MT7520)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/etherd
+	ln -s ethphxcmd $(FILESYSTEM_DIR)/userfs/bin/etherd
+ifeq ($(MT7520_WAN_ETHER),1)
+	cp  $(APP_ETC_SCRIPT_DIR)/wanether.sh $(FILESYSTEM_DIR)/usr/script/
+endif
+endif
+ethcmd_clean:
+	echo "CUSTOMER_BUILD_RELEASECODE: Build ethcmd, do nothing!"
+else
+ethcmd:
+	echo "Build ethcmd"
+	$(MAKE) -C $(APP_ETHCMD_DIR)
+	if test -e $(APP_ETHCMD_DIR)/ethcmd; \
+	then echo "Compile ethcmd success"; \
+	else echo "Compile ethcmd error!"; exit 1; \
+	fi
+	rm -f $(FILESYSTEM_DIR)/usr/script/wanether.sh
+	cp $(APP_ETHCMD_DIR)/ethcmd  $(FILESYSTEM_DIR)/userfs/bin/ethphxcmd
+ifneq ($(strip $(TCSUPPORT_CPU_RT63365)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/etherd
+	ln -s ethphxcmd $(FILESYSTEM_DIR)/userfs/bin/etherd
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_RT63368)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/etherd
+	ln -s ethphxcmd $(FILESYSTEM_DIR)/userfs/bin/etherd
+endif	
+ifneq ($(strip $(TCSUPPORT_CPU_MT7510)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/etherd
+	ln -s ethphxcmd $(FILESYSTEM_DIR)/userfs/bin/etherd
+endif	
+ifneq ($(strip $(TCSUPPORT_CPU_MT7505)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/etherd
+	ln -s ethphxcmd $(FILESYSTEM_DIR)/userfs/bin/etherd
+endif
+ifneq ($(strip $(TCSUPPORT_CPU_MT7520)),)
+	rm -f $(FILESYSTEM_DIR)/userfs/bin/etherd
+	ln -s ethphxcmd $(FILESYSTEM_DIR)/userfs/bin/etherd
+ifeq ($(MT7520_WAN_ETHER),1)
+	cp  $(APP_ETC_SCRIPT_DIR)/wanether.sh $(FILESYSTEM_DIR)/usr/script/
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_MT7530_SWITCH_API)),)
+	$(MAKE) -C $(APP_ETHCMD_DIR) install
+#	-cp $(APP_ETHCMD_DIR)/libmtkswitch.so $(FILESYSTEM_DIR)/lib/
+#	-cp $(APP_ETHCMD_DIR)/libmtkswitch.so.* $(FILESYSTEM_DIR)/lib/
+#	-cp $(APP_ETHCMD_DIR)/libmtkswitch.so $(LIB_DIR)/
+#	-cp $(APP_ETHCMD_DIR)/libmtkswitch.so.* $(LIB_DIR)/
+#	-cp $(APP_ETHCMD_DIR)/libmtkswitch.so $(PUBLIC_LIB_DIR)/
+#	-cp $(APP_ETHCMD_DIR)/libmtkswitch.so.* $(PUBLIC_LIB_DIR)/ 
+endif	
+	
+ethcmd_clean:
+	echo "Clean ethcmd"
+	$(MAKE) -C $(APP_ETHCMD_DIR) clean
+ifneq ($(strip $(TCSUPPORT_MT7530_SWITCH_API)),)
+	$(MAKE) -C $(APP_ETHCMD_DIR) lib_clean
+endif	
+
+endif
+	
+#Build eponcmd
+ifneq ($(strip $(TCSUPPORT_EPONCMD)),)
+eponcmd:
+	echo "Build eponcmd"
+	$(MAKE) -C $(APP_EPONCMD_DIR)
+	if test -e $(APP_EPONCMD_DIR)/eponcmd; \
+	then echo "Compile eponcmd success"; \
+	else echo "Compile eponcmd error!"; exit 1; \
+	fi
+	cp $(APP_EPONCMD_DIR)/eponcmd  $(FILESYSTEM_DIR)/userfs/bin/eponcmd
+eponcmd_clean:
+	echo "Clean eponcmd"
+	$(MAKE) -C $(APP_EPONCMD_DIR) clean
+else
+eponcmd:
+eponcmd_clean:
+endif
+
+#Build pwctlcmd
+ifneq ($(strip $(TCSUPPORT_CPU_RT65168)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+pwctlcmd:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/pwctlcmd $(FILESYSTEM_DIR)/userfs/bin/
+pwctlcmd_clean:
+	echo "CUSTOMER_BUILD_RELEASECODE: Build pwctlcmd, do nothing!"
+else
+pwctlcmd:
+	echo "Build pwctlcmd"
+	$(MAKE) -C $(APP_PWCTLCMD_DIR)
+	if test -e $(APP_PWCTLCMD_DIR)/pwctlcmd; \
+	then echo "Compile pwctlcmd success"; \
+	else echo "Compile pwctlcmd error!"; exit 1; \
+	fi
+	cp $(APP_PWCTLCMD_DIR)/pwctlcmd  $(FILESYSTEM_DIR)/userfs/bin/
+	
+pwctlcmd_clean:
+	echo "Clean pwctlcmd"
+	$(MAKE) -C $(APP_PWCTLCMD_DIR) clean
+endif
+else
+pwctlcmd:
+pwctlcmd_clean:
+endif
+	
+#Build 8021X
+ifneq ($(strip $(TCSUPPORT_WLAN_8021X)),)
+#ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+#8021X:
+	#cp $(APP_BINARY_DIR)/rtdot1xd $(FILESYSTEM_DIR)/userfs/bin/
+#8021X_clean:
+	#echo "TC_BUILD_RELEASECODE: Build 8021X, do nothing!"
+#else
+8021X:
+	echo "Build 8021X"
+	$(MAKE) -C $(APP_8021X_DIR)
+	if test -e $(APP_8021X_DIR)/rtdot1xd; \
+	then echo "Compile 8021X success"; \
+	else echo "Compile 8021X error!"; exit 1; \
+	fi
+	cp $(APP_8021X_DIR)/rtdot1xd  $(FILESYSTEM_DIR)/userfs/bin/
+	ln -sf rtdot1xd  $(FILESYSTEM_DIR)/userfs/bin/rtdot1xd_AC
+8021X_clean:
+	echo "Clean 8021X"
+	$(MAKE) -C $(APP_8021X_DIR) clean
+#endif
+else
+8021X:
+8021X_clean:
+endif
+
+#Build the ATED for QA tool
+ifneq ($(strip $(TCSUPPORT_WLAN_QATOOL)),)
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+ated:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/ated $(FILESYSTEM_DIR)/userfs/bin
+ated_clean:
+	echo "CUSTOMER_BUILD_RELEASECODE: Build ated , do nothing!"	
+else	
+ated:
+	echo "Build ated"
+#	ATED_DIR=$(APP_PRIVATE_DIR)/ATED
+	$(MAKE) -C $(APP_PRIVATE_DIR)/ATED
+	if test -e $(APP_PRIVATE_DIR)/ATED/ated;  \
+	then echo "Compile ATED success";   \
+	else echo "Compile ATED error!"; exit 1;  \
+	fi
+	cp $(APP_PRIVATE_DIR)/ATED/ated $(FILESYSTEM_DIR)/userfs/bin
+ated_clean:
+	echo "Clean ated"
+	$(MAKE) -C $(APP_PRIVATE_DIR)/ATED clean
+endif
+else
+ated:
+ated_clean:
+endif
+
+#Build the wscd & copy xml
+ifneq ($(strip $(TCSUPPORT_WLAN_WPS)),)
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+wscd:
+		cp $(APP_BINARY_DIR)/$(TCPLATFORM)/wscd $(FILESYSTEM_DIR)/usr/bin/
+wscd_clean:
+	echo "CUSTOMER_BUILD_RELEASECODE: Build wscd, do nothing!"
+else
+wscd:
+	echo "Build wscd"
+#WSCD_DIR="$TOP_DIR/modules/wifi/2009_1106_RT3390_LinuxAP_V2.3.2.0_DPA/WSC_UPNP"
+#cd $WSCD_DIR
+	rm -f $(APP_PRIVATE_DIR)/WSC_UPNP/libupnp-1.3.1/Makefile	
+	touch -m $(APP_PRIVATE_DIR)/WSC_UPNP/libupnp-1.3.1/*
+ifneq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux-gnu)
+	cd $(APP_PRIVATE_DIR)/WSC_UPNP/libupnp-1.3.1 && ./configure --host=mips-linux CFLAGS="-g -O2 -Wall -mips1" 
+else
+	cd $(APP_PRIVATE_DIR)/WSC_UPNP/libupnp-1.3.1 && ./configure --host=mips-linux-gnu CFLAGS="-g -O2 -Wall -mips32r2 -muclibc"
+endif
+	$(MAKE) -C $(APP_PRIVATE_DIR)/WSC_UPNP/libupnp-1.3.1
+	$(MAKE) -C $(APP_PRIVATE_DIR)/WSC_UPNP
+	if test -e $(APP_PRIVATE_DIR)/WSC_UPNP/wscd;  \
+	then echo "Compile wscd success";   \
+	else echo "Compile wscd error!"; exit 1;  \
+	fi
+	cp $(APP_PRIVATE_DIR)/WSC_UPNP/wscd $(FILESYSTEM_DIR)/usr/bin
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/xml		
+	mkdir $(FILESYSTEM_DIR)/usr/etc/xml
+	cp $(APP_PRIVATE_DIR)/WSC_UPNP/xml/WFADeviceDesc.xml $(FILESYSTEM_DIR)/usr/etc/xml/
+	cp $(APP_PRIVATE_DIR)/WSC_UPNP/xml/WFAWLANConfigSCPD.xml $(FILESYSTEM_DIR)/usr/etc/xml/	
+wscd_clean:
+	echo "Clean wscd"
+	rm -f $(APP_PRIVATE_DIR)/WSC_UPNP/libupnp-1.3.1/Makefile	
+	touch -m $(APP_PRIVATE_DIR)/WSC_UPNP/libupnp-1.3.1/*
+ifneq ($(strip $(COMPILE_TOOLCHAIN)),mips-linux-gnu)
+	cd $(APP_PRIVATE_DIR)/WSC_UPNP/libupnp-1.3.1 && ./configure --host=mips-linux CFLAGS="-g -O2 -Wall -mips1" 
+else
+	cd $(APP_PRIVATE_DIR)/WSC_UPNP/libupnp-1.3.1 && ./configure --host=mips-linux-gnu CFLAGS="-g -O2 -Wall -mips32r2 -muclibc"
+endif
+	$(MAKE) -C $(APP_PRIVATE_DIR)/WSC_UPNP/libupnp-1.3.1 clean
+	$(MAKE) -C $(APP_PRIVATE_DIR)/WSC_UPNP clean
+endif	
+else
+wscd:
+wscd_clean:
+	rm -rvf $(FILESYSTEM_DIR)/usr/etc/xml
+endif
+
+#Build dnsmasq
+dnsmasq:
+	echo "Build dnsmasq"
+	$(MAKE) -C $(APP_DNSMASQ_DIR)
+	if test -e $(APP_DNSMASQ_DIR)/src/dnsmasq; \
+	then echo "Compile dnsmasq success"; \
+	else echo "Compile dnsmasq error!"; exit 1; \
+	fi
+	cp $(APP_DNSMASQ_DIR)/src/dnsmasq  $(FILESYSTEM_DIR)/userfs/bin/
+	
+dnsmasq_clean:
+	echo "Clean dnsmasq"
+	$(MAKE) -C $(APP_DNSMASQ_DIR) clean
+
+
+#Build vconfig
+vconfig:
+	echo "Build vconfig"
+	$(MAKE) -C $(APP_VCONFIG_DIR)
+	if test -e $(APP_VCONFIG_DIR)/vconfig; \
+	then echo "Compile vconfig success"; \
+	else echo "Compile vconfig error!"; exit 1; \
+	fi
+	cp $(APP_VCONFIG_DIR)/vconfig  $(FILESYSTEM_DIR)/userfs/bin/
+	
+vconfig_clean:
+	echo "Clean vconfig"
+	$(MAKE) -C $(APP_VCONFIG_DIR) clean
+	
+ifneq ($(strip $(TCSUPPORT_AUTO_IP)),)
+#Build avahi-autoipd
+autoip:
+	echo "Build libdaemon"
+	cd $(APP_LIBDAEMON_DIR) && echo "ac_cv_func_setpgrp_void=yes" > config.cache
+	cd $(APP_LIBDAEMON_DIR) && ./configure --host=mips-linux --config-cache --prefix=$(APP_PUBLIC_DIR)
+	$(MAKE) -C $(APP_LIBDAEMON_DIR)
+	$(MAKE) -C $(APP_LIBDAEMON_DIR) install
+	$(STRIP) $(PUBLIC_LIB_DIR)/libdaemon.so.0.5.0
+	#cp $(PUBLIC_LIB_DIR)/libdaemon.so* $(FILESYSTEM_DIR)/lib/
+
+	cd $(APP_AUTOIP_DIR) && ./configure --host=mips-linux --with-distro=none --enable-qt4=no --enable-gtk=no --enable-gtk3=no --enable-dbus=no --enable-dbm=no --enable-gdbm=no --enable-libdaemon=yes --enable-python=no --with-xml=none PKG_CONFIG_PATH=$(PUBLIC_LIB_DIR)/pkgconfig/
+	$(MAKE) -C $(APP_AUTOIP_DIR)/avahi-autoipd
+	$(STRIP) $(APP_AUTOIP_DIR)/avahi-autoipd/avahi-autoipd
+	cp $(APP_AUTOIP_DIR)/avahi-autoipd/avahi-autoipd $(FILESYSTEM_DIR)/userfs/bin/
+	mv $(PUBLIC_LIB_DIR)/libdaemon.so* $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_AUTOIP_DIR)/avahi-autoipd/avahi-autoipd.action $(FILESYSTEM_DIR)/usr/script/
+	cp  $(APP_AUTOIP_DIR)/avahi-autoipd/udhcpc_autoip.sh $(FILESYSTEM_DIR)/usr/script/
+	
+autoip_clean:
+	if test -e $(APP_AUTOIP_DIR)/avahi-autoipd/Makefile; \
+	then $(MAKE) -C $(APP_AUTOIP_DIR)/avahi-autoipd clean; \
+	fi
+	if test -e $(APP_LIBDAEMON_DIR)/Makefile; \
+	then $(MAKE) -C $(APP_LIBDAEMON_DIR) clean; \
+	fi
+
+else
+autoip:
+autoip_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_DMS)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+dms:
+	rm -rf $(FILESYSTEM_DIR)/userfs/dlna
+	cp -R $(APP_BINARY_DIR)/$(TCPLATFORM)/dlna $(FILESYSTEM_DIR)/userfs/dlna
+dms_clean:
+	echo "TC_BUILD_RELEASECODE: Build dms, do nothing!"
+else
+dms:
+ifneq ($(strip $(TCSUPPORT_NEWTOOLCHAIN)),)
+	cd $(APP_DMS_DIR)/thirdp_src/libupnp-1.6.6/ && autoreconf -i && ./configure --host=mips-linux --prefix=$(APP_DMS_DIR)/install/Thirdp
+else
+	cd $(APP_DMS_DIR)/thirdp_src/libupnp-1.6.6/ && ./configure --host=mips-linux --prefix=$(APP_DMS_DIR)/install/Thirdp
+endif
+	$(MAKE) -C $(APP_DMS_DIR)/thirdp_src/libupnp-1.6.6
+	$(MAKE) -C $(APP_DMS_DIR)/thirdp_src/libupnp-1.6.6/ install
+
+	cd $(APP_DMS_DIR)/src && ./premake.sh
+	cd $(APP_DMS_DIR)/src && ./set.sh
+ifneq ($(strip $(DMS_CFLAGS)),)
+	cd $(APP_DMS_DIR)/src && ./configure --host=mips-linux --prefix=$(APP_DMS_DIR)/install CFLAGS="$(DMS_CFLAGS)"
+else
+	cd $(APP_DMS_DIR)/src && ./configure --host=mips-linux --prefix=$(APP_DMS_DIR)/install
+endif
+	$(MAKE) -C $(APP_DMS_DIR)/src
+	$(MAKE) -C $(APP_DMS_DIR)/src install
+
+	$(MAKE) -C $(APP_DMS_DIR)/src/dms/UnitTest
+	$(MAKE) -C $(APP_DMS_DIR)/src/dms/UnitTest install
+
+	if test -d $(APP_DMS_DIR)/dlna_output; \
+	then rm -rf $(APP_DMS_DIR)/dlna_output; \
+	fi	
+	mkdir $(APP_DMS_DIR)/dlna_output
+	mkdir $(APP_DMS_DIR)/dlna_output/bin
+	mkdir $(APP_DMS_DIR)/dlna_output/lib
+	mkdir $(APP_DMS_DIR)/dlna_output/Thirdp
+	mkdir $(APP_DMS_DIR)/dlna_output/Thirdp/lib
+
+	$(STRIP) $(APP_DMS_DIR)/install/bin/dlna_dmsTcApp
+	cp $(APP_DMS_DIR)/install/bin/dlna_dmsTcApp $(APP_DMS_DIR)/dlna_output/bin/
+	cp $(APP_DMS_DIR)/install/share/*.* $(APP_DMS_DIR)/dlna_output/bin/
+	$(STRIP) $(APP_DMS_DIR)/install/lib/libdlna_dms.so.0.0.0
+	mv $(APP_DMS_DIR)/install/lib/libdlna_dms.so* $(APP_DMS_DIR)/dlna_output/lib/
+	$(STRIP) $(APP_DMS_DIR)/install/Thirdp/lib/libixml.so.2.0.4
+	$(STRIP) $(APP_DMS_DIR)/install/Thirdp/lib/libthreadutil.so.2.2.3
+	$(STRIP) $(APP_DMS_DIR)/install/Thirdp/lib/libupnp.so.3.0.5
+
+	mv $(APP_DMS_DIR)/install/Thirdp/lib/libixml.so* $(APP_DMS_DIR)/dlna_output/Thirdp/lib/
+	mv $(APP_DMS_DIR)/install/Thirdp/lib/libthreadutil.so* $(APP_DMS_DIR)/dlna_output/Thirdp/lib/
+	mv $(APP_DMS_DIR)/install/Thirdp/lib/libupnp.so* $(APP_DMS_DIR)/dlna_output/Thirdp/lib/
+	mkdir $(APP_DMS_DIR)/dlna_output/media
+	if test -d $(FILESYSTEM_DIR)/userfs/dlna; \
+	then rm -rf $(FILESYSTEM_DIR)/userfs/dlna; \
+	fi
+	cp -R $(APP_DMS_DIR)/dlna_output $(FILESYSTEM_DIR)/userfs/dlna
+	cp  $(APP_ETC_SCRIPT_DIR)/dms_start.sh $(FILESYSTEM_DIR)/usr/script/
+	
+dms_clean:
+	if test -e $(APP_DMS_DIR)/thirdp_src/libupnp-1.6.6/Makefile; \
+	then $(MAKE) -C $(APP_DMS_DIR)/thirdp_src/libupnp-1.6.6/ clean; \
+	fi
+	if test -e $(APP_DMS_DIR)/src/Makefile; \
+	then $(MAKE) -C $(APP_DMS_DIR)/src clean; \
+	fi
+	if test -d $(APP_DMS_DIR)/dlna_output; \
+	then rm -rf $(APP_DMS_DIR)/dlna_output; \
+	fi
+	if test -d $(FILESYSTEM_DIR)/userfs/dlna; \
+	then rm -rf $(FILESYSTEM_DIR)/userfs/dlna; \
+	fi
+	
+endif
+else
+dms:
+dms_clean:
+	rm -f $(FILESYSTEM_DIR)/usr/script/dms_start.sh
+endif
+
+ifneq ($(strip $(TCSUPPORT_TR143_CURL_UPLOAD)),)
+curl:
+	cd $(APP_CURL_DIR) && ./configure --prefix=$(APP_CURL_DIR)/curl --target=mips-linux-uclibc --host=mips-linux-uclibc CC=mips-linux-uclibc-gcc --enable-static CFLAGS="$(TC_CFLAGS)"
+	$(MAKE) -C $(APP_CURL_DIR)
+	$(MAKE) -C $(APP_CURL_DIR)/ install
+	cp $(APP_CURL_DIR)/curl/bin/curl $(FILESYSTEM_DIR)/userfs/bin/
+	cp $(APP_CURL_DIR)/curl/lib/libcurl.so.4 $(FILESYSTEM_DIR)/lib/
+curl_clean:
+	if test -e $(APP_CURL_DIR)/Makefile; \
+	then $(MAKE) -C $(APP_CURL_DIR)/ clean; \
+	fi
+	if test -e $(FILESYSTEM_DIR)/userfs/bin/curl; \
+	then rm -rf $(FILESYSTEM_DIR)/userfs/bin/curl; \
+	fi
+	if test -e $(FILESYSTEM_DIR)/lib/libcurl.so.4; \
+	then rm -rf $(FILESYSTEM_DIR)/lib/libcurl.so.4; \
+	fi
+else
+curl:
+curl_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_FON)),)
+fon: getrandom fonsmcd coova fon_api
+fon_clean: getrandom_clean fonsmcd_clean coova_clean  fon_api_clean
+else
+fon:
+	echo "Not support fon"
+fon_clean:
+	echo "Not support fon"
+endif
+
+ifneq ($(strip $(TCSUPPORT_FON)),)
+getrandom:
+	echo "Build  GetRandom"
+	$(MAKE) -C $(APP_FONSMCD_DIR)/src/getrandom
+	if test -e $(APP_FONSMCD_DIR)/src/getrandom; \
+	then echo "Compile getrandom success"; \
+	else echo "Compile getrandom error!"; exit 1; \
+	fi
+	cp  $(APP_FONSMCD_DIR)/src/getrandom/getrandom  $(FILESYSTEM_DIR)/usr/sbin/
+
+getrandom_clean:
+	echo "Clean cpu"
+	$(MAKE) -C $(APP_FONSMCD_DIR)/src/getrandom/ clean
+	rm -f $(FILESYSTEM_DIR)/usr/sbin/getrandom
+
+fonsmcd:
+	echo "Build libdaemon"
+	cd $(APP_LIBDAEMON_DIR) && echo "ac_cv_func_setpgrp_void=yes" > config.cache
+	cd $(APP_LIBDAEMON_DIR) && ./configure --host=mips-linux --config-cache --localstatedir=/var --prefix=$(APP_PUBLIC_DIR) CFLAGS="-Os -Wall -mips1" 
+	$(MAKE) -C $(APP_LIBDAEMON_DIR)
+	$(MAKE) -C $(APP_LIBDAEMON_DIR) install
+	$(STRIP) $(PUBLIC_LIB_DIR)/libdaemon.so.0.5.0
+#	rm $(PUBLIC_LIB_DIR)/libdaemon.a
+	if test -e $(APP_LIBDAEMON_DIR)/Makefile; \
+	then \
+	cp -f $(PUBLIC_LIB_DIR)/libdaemon.so* $(FILESYSTEM_DIR)/lib/; \
+	fi
+
+	echo "Build fonsmcd"
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(APP_FONSMCD_DIR)/src/fonsmcd
+	if test -e $(APP_FONSMCD_DIR)/src/fonsmcd/fonsmcd; \
+	then \
+	$(STRIP) --strip-unneeded -R .comment $(APP_FONSMCD_DIR)/src/fonsmcd/fonsmcd; \
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fonsmcd $(FILESYSTEM_DIR)/usr/sbin/; \
+	fi
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fon_keyword $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fon_mac $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fon_regurl $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fonsmcd.conf $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/public_sm_rsa_key.pem $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fon_device $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fon_revision $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fon_version $(FILESYSTEM_DIR)/usr/etc/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/fon
+	mkdir  $(FILESYSTEM_DIR)/usr/etc/fon
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fon_down.sh $(FILESYSTEM_DIR)/usr/etc/fon/
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fon_up.sh $(FILESYSTEM_DIR)/usr/etc/fon/
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fon_watch.sh $(FILESYSTEM_DIR)/usr/etc/fon/
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/hb_down.sh $(FILESYSTEM_DIR)/usr/etc/fon/
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/hb_up.sh $(FILESYSTEM_DIR)/usr/etc/fon/
+#for C1 FON
+ifneq ($(strip $(TCSUPPORT_C1_OBM)),)
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fon_device_C1 $(FILESYSTEM_DIR)/usr/etc/fon_device
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fon_revision_C1 $(FILESYSTEM_DIR)/usr/etc/fon_revision
+	cp -rf $(APP_FONSMCD_DIR)/src/fonsmcd/fon_conf/fon_version_C1 $(FILESYSTEM_DIR)/usr/etc/fon_version
+endif	##($(strip $(TCSUPPORT_C1_OBM)),)
+else
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/$(TCPLATFORM)/fonsmcd $(FILESYSTEM_DIR)/usr/sbin/
+	
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fon_keyword $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fon_mac $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fon_regurl $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fonsmcd.conf $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/public_sm_rsa_key.pem $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fon_device $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fon_revision $(FILESYSTEM_DIR)/usr/etc/
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fon_version $(FILESYSTEM_DIR)/usr/etc/
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/fon
+	mkdir  $(FILESYSTEM_DIR)/usr/etc/fon
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fon_down.sh $(FILESYSTEM_DIR)/usr/etc/fon/
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fon_up.sh $(FILESYSTEM_DIR)/usr/etc/fon/
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fon_watch.sh $(FILESYSTEM_DIR)/usr/etc/fon/
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/hb_down.sh $(FILESYSTEM_DIR)/usr/etc/fon/
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/hb_up.sh $(FILESYSTEM_DIR)/usr/etc/fon/
+	#for C1 FON
+ifneq ($(strip $(TCSUPPORT_C1_OBM)),)
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fon_device_C1 $(FILESYSTEM_DIR)/usr/etc/fon_device
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fon_revision_C1 $(FILESYSTEM_DIR)/usr/etc/fon_revision
+	cp -rf $(APP_FONSMCD_DIR)/libs/fonsmcd/fon_conf/fon_version_C1 $(FILESYSTEM_DIR)/usr/etc/fon_version
+endif 	##($(strip $(TCSUPPORT_C1_OBM)),)
+endif
+
+
+fonsmcd_clean:
+	echo "Clean fonsmcd"
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(MAKE) -C $(APP_FONSMCD_DIR)/src/fonsmcd/ clean
+endif
+	rm -rf $(FILESYSTEM_DIR)/usr/sbin/fonsmcd
+	echo "Clean libdaemon"
+	if test -e $(APP_LIBDAEMON_DIR)/Makefile; \
+	then $(MAKE) -C $(APP_LIBDAEMON_DIR) clean; \
+	fi
+
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/fon_device
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/fon_keyword
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/fon_mac
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/fon_revision
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/fon_version
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/fon_regurl
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/fonsmcd.conf
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/public_sm_rsa_key.pem
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/fon
+
+coova:
+	echo "Build coova"
+	
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+ifneq ($(strip $(TCSUPPORT_FON_MODEL_B)),)
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/model_b/chilli $(FILESYSTEM_DIR)/usr/sbin/chilli_main
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/model_b/chilli_opt $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/model_b/chilli_query $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/model_b/chilli_radconfig $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/model_b/chilli_response $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/model_b/libchilli.so* $(FILESYSTEM_DIR)/lib
+else
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/model_a/chilli $(FILESYSTEM_DIR)/usr/sbin/chilli_main
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/model_a/chilli_opt $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/model_a/chilli_query $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/model_a/chilli_radconfig $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/model_a/chilli_response $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/model_a/libchilli.so* $(FILESYSTEM_DIR)/lib
+endif
+	cp $(APP_FONSMCD_DIR)/libs/coova/$(TCPLATFORM)/libbstring.so* $(FILESYSTEM_DIR)/lib
+	cp  $(APP_FONSMCD_DIR)/libs/coova/files_fon/localusers $(FILESYSTEM_DIR)/usr/etc/fon/
+else
+	cd $(APP_FONSMCD_DIR)/src/coova && ./bootstrap && chmod 777 configure
+ifneq ($(strip $(TCSUPPORT_FON_MODEL_B)),)
+	cd $(APP_FONSMCD_DIR)/src/coova && ./configure --host=mips-linux --prefix=/usr --sysconfdir=/etc --localstatedir=/var --enable-ipwhitelist --enable-uamdomainfile --enable-redirdnsreq --enable-binstatusfile --disable-accounting-onoff CFLAGS="$(FON_CFLAGS)" LDFLAGS="-lrt $(TRUNK_DIR)/apps/private/lib/libtcapi.so"	
+else
+	cd $(APP_FONSMCD_DIR)/src/coova && ./configure --host=mips-linux --prefix=/usr --sysconfdir=/etc --localstatedir=/var --enable-ipwhitelist --enable-uamdomainfile --enable-redirdnsreq --enable-binstatusfile --disable-accounting-onoff CFLAGS="-Os -Wall -mips1"
+endif
+	touch $(APP_FONSMCD_DIR)/src/coova/src/cmdline.h
+	touch $(APP_FONSMCD_DIR)/src/coova/src/cmdline.c
+	$(MAKE) -C $(APP_FONSMCD_DIR)/src/coova
+	$(STRIP) --strip-unneeded -R .comment $(APP_FONSMCD_DIR)/src/coova/src/.libs/chilli
+	$(STRIP) --strip-unneeded -R .comment $(APP_FONSMCD_DIR)/src/coova/src/.libs/chilli_opt
+	$(STRIP) --strip-unneeded -R .comment $(APP_FONSMCD_DIR)/src/coova/src/.libs/chilli_query
+	$(STRIP) --strip-unneeded -R .comment $(APP_FONSMCD_DIR)/src/coova/src/.libs/chilli_radconfig
+	$(STRIP) --strip-unneeded -R .comment $(APP_FONSMCD_DIR)/src/coova/src/.libs/chilli_response
+	$(STRIP) --strip-unneeded -R .comment $(APP_FONSMCD_DIR)/src/coova/src/.libs/libchilli.so*
+	$(STRIP) --strip-unneeded -R .comment $(APP_FONSMCD_DIR)/src/coova/bstring/.libs/libbstring.so*
+	cp $(APP_FONSMCD_DIR)/src/coova/src/.libs/chilli $(FILESYSTEM_DIR)/usr/sbin/chilli_main
+	cp $(APP_FONSMCD_DIR)/src/coova/src/.libs/chilli_opt $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/src/coova/src/.libs/chilli_query $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/src/coova/src/.libs/chilli_radconfig $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/src/coova/src/.libs/chilli_response $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/src/coova/src/.libs/libchilli.so* $(FILESYSTEM_DIR)/lib
+	cp $(APP_FONSMCD_DIR)/src/coova/bstring/.libs/libbstring.so* $(FILESYSTEM_DIR)/lib
+	cp  $(APP_FONSMCD_DIR)/src/coova/files_fon/localusers $(FILESYSTEM_DIR)/usr/etc/fon/
+endif	
+
+coova_clean:
+	echo "Clean coova"
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	if test -e $(APP_FONSMCD_DIR)/src/coova/Makefile; \
+	then $(MAKE) -C $(APP_FONSMCD_DIR)/src/coova clean; \
+	fi 
+endif
+	rm -rf $(FILESYSTEM_DIR)/usr/sbin/chilli_main
+	rm -rf $(FILESYSTEM_DIR)/usr/sbin/chilli_opt
+	rm -rf $(FILESYSTEM_DIR)/usr/sbin/chilli_response
+	rm -rf $(FILESYSTEM_DIR)/usr/sbin/chilli_query
+	rm -rf $(FILESYSTEM_DIR)/usr/sbin/chilli_radconfig
+	rm -rf $(FILESYSTEM_DIR)/lib/libchilli.so*
+	rm -rf $(FILESYSTEM_DIR)/lib/libbstring.so*
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/fon/localusers
+
+fon_api:
+	echo "Build fon_api"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+ifneq ($(strip $(TCSUPPORT_FON_MODEL_B)),)
+	cp $(APP_FONSMCD_DIR)/libs/fon-api/$(TCPLATFORM)/model_b/fonctl $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/libs/fon-api/$(TCPLATFORM)/model_b/fon-api.so $(FILESYSTEM_DIR)/lib/
+else
+	cp $(APP_FONSMCD_DIR)/libs/fon-api/$(TCPLATFORM)/model_a/fonctl $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/libs/fon-api/$(TCPLATFORM)/model_a/fon-api.so $(FILESYSTEM_DIR)/lib/
+endif
+else
+	cd $(APP_FONSMCD_DIR)/src/fon-api && ./bootstrap && chmod 777 configure
+ifneq ($(strip $(TCSUPPORT_FON_MODEL_B)),)
+	cd $(APP_FONSMCD_DIR)/src/fon-api && ./configure --host=mips-linux CFLAGS="$(FON_CFLAGS)" LDFLAGS="-lrt $(TRUNK_DIR)/apps/private/lib/libtcapi.so" 
+else
+	cd $(APP_FONSMCD_DIR)/src/fon-api && ./configure --host=mips-linux CFLAGS="-Os -Wall -mips1"
+endif
+	$(MAKE) -C $(APP_FONSMCD_DIR)/src/fon-api
+	$(STRIP) --strip-unneeded -R .comment $(APP_FONSMCD_DIR)/src/fon-api/.libs/fonctl
+	$(STRIP) --strip-unneeded -R .comment $(APP_FONSMCD_DIR)/src/fon-api/.libs/fon-api.so
+	cp $(APP_FONSMCD_DIR)/src/fon-api/.libs/fonctl $(FILESYSTEM_DIR)/usr/sbin/
+	cp $(APP_FONSMCD_DIR)/src/fon-api/.libs/fon-api.so $(FILESYSTEM_DIR)/lib/
+endif
+
+fon_api_clean:
+	echo "Clean fon_api"
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	if test -e $(APP_FONSMCD_DIR)/src/fon-api/Makefile; \
+	then $(MAKE) -C $(APP_FONSMCD_DIR)/src/fon-api clean; \
+	fi 
+endif
+	rm -rf $(FILESYSTEM_DIR)/usr/sbin/fonctl
+	rm -rf $(FILESYSTEM_DIR)/lib/fon-api.so
+endif
+
+ifneq ($(strip $(TCSUPPORT_FON_V2)),)
+fonV2: pcre hotspotd
+fonV2_clean: pcre_clean hotspotd_clean
+else
+fonV2:
+	echo "Not support fonV2"
+fonV2_clean:
+	echo "Not support fonV2"
+endif
+
+ifneq ($(strip $(TCSUPPORT_FON_V2)),)
+pcre:
+	echo "Build pcre to support uamdomain"
+	cd $(APP_PCRE_DIR)/ && ./configure --host=mips-linux --prefix=/usr --sysconfdir=/etc --localstatedir=/var --enable-ipwhitelist --enable-uamdomainfile --enable-redirdnsreq --enable-binstatusfile --disable-accounting-onoff
+	$(MAKE) -C $(APP_PCRE_DIR)
+	$(STRIP) --strip-unneeded -R .comment $(APP_PCRE_DIR)/.libs/libpcre.so*
+	cp $(APP_PCRE_DIR)/.libs/libpcre.so* $(FILESYSTEM_DIR)/lib/
+pcre_clean:
+	if test -e $(APP_PCRE_DIR)/Makefile; \
+	then \
+		$(MAKE) -C $(APP_PCRE_DIR) clean; \
+	fi
+	rm -rf $(FILESYSTEM_DIR)/lib/libpcre.so*
+
+hotspotd:
+	echo "Build hotspotd"
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	$(STRIP) --strip-unneeded -R .comment $(APP_PUBLIC_DIR)/hotspot/$(TCPLATFORM)/hotspotd
+	cp -rf $(APP_PUBLIC_DIR)/hotspot/$(TCPLATFORM)/hotspotd $(FILESYSTEM_DIR)/usr/sbin/
+		
+	cp -rf $(APP_PUBLIC_DIR)/hotspot/conf/fon_keyword $(FILESYSTEM_DIR)/usr/etc/.fon_keyword
+	cp -rf $(APP_PUBLIC_DIR)/hotspot/conf/fon_mac $(FILESYSTEM_DIR)/usr/etc/.fon_mac
+	cp -rf $(APP_PUBLIC_DIR)/hotspot/conf/fon_device $(FILESYSTEM_DIR)/usr/etc/.fon_device
+	cp -rf $(APP_PUBLIC_DIR)/hotspot/conf/fon_revision $(FILESYSTEM_DIR)/usr/etc/.fon_revision
+	cp -rf $(APP_PUBLIC_DIR)/hotspot/conf/fon_version $(FILESYSTEM_DIR)/usr/etc/.fon_version
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon
+	mkdir  $(FILESYSTEM_DIR)/usr/etc/.fon
+	cp -rf $(APP_PUBLIC_DIR)/hotspot/conf/fon_down.sh $(FILESYSTEM_DIR)/usr/etc/.fon/
+	cp -rf $(APP_PUBLIC_DIR)/hotspot/conf/fon_up.sh $(FILESYSTEM_DIR)/usr/etc/.fon/
+	cp -rf $(APP_PUBLIC_DIR)/hotspot/conf/hb_down.sh $(FILESYSTEM_DIR)/usr/etc/.fon/
+	cp -rf $(APP_PUBLIC_DIR)/hotspot/conf/hb_up.sh $(FILESYSTEM_DIR)/usr/etc/.fon/
+	cp -rf $(APP_PUBLIC_DIR)/hotspot/conf/radconf_store.sh $(FILESYSTEM_DIR)/usr/etc/.fon/
+else
+	$(MAKE) -C $(APP_FON_HOTSPOT_DIR) MODULES="fonsmc fonapi radius radconf fonctl tunnel" LDFLAGS="-lrt $(TRUNK_DIR)/apps/private/lib/libtcapi.so -lrt $(TRUNK_DIR)/apps/public/pcre-8.32/.libs/libpcre.so" 
+	if test -e $(APP_FON_HOTSPOT_DIR)/hotspotd; \
+	then \
+		$(STRIP) --strip-unneeded -R .comment $(APP_FON_HOTSPOT_DIR)/hotspotd; \
+		cp -rf $(APP_FON_HOTSPOT_DIR)/hotspotd $(FILESYSTEM_DIR)/usr/sbin/; \
+	fi
+
+	cp -rf $(APP_FON_HOTSPOT_DIR)/conf/fon_keyword $(FILESYSTEM_DIR)/usr/etc/.fon_keyword
+	cp -rf $(APP_FON_HOTSPOT_DIR)/conf/fon_mac $(FILESYSTEM_DIR)/usr/etc/.fon_mac
+	cp -rf $(APP_FON_HOTSPOT_DIR)/conf/fon_device $(FILESYSTEM_DIR)/usr/etc/.fon_device
+	cp -rf $(APP_FON_HOTSPOT_DIR)/conf/fon_revision $(FILESYSTEM_DIR)/usr/etc/.fon_revision
+	cp -rf $(APP_FON_HOTSPOT_DIR)/conf/fon_version $(FILESYSTEM_DIR)/usr/etc/.fon_version
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon
+	mkdir  $(FILESYSTEM_DIR)/usr/etc/.fon
+	cp -rf $(APP_FON_HOTSPOT_DIR)/conf/fon_down.sh $(FILESYSTEM_DIR)/usr/etc/.fon/
+	cp -rf $(APP_FON_HOTSPOT_DIR)/conf/fon_up.sh $(FILESYSTEM_DIR)/usr/etc/.fon/
+	cp -rf $(APP_FON_HOTSPOT_DIR)/conf/hb_down.sh $(FILESYSTEM_DIR)/usr/etc/.fon/
+	cp -rf $(APP_FON_HOTSPOT_DIR)/conf/hb_up.sh $(FILESYSTEM_DIR)/usr/etc/.fon/
+	cp -rf $(APP_FON_HOTSPOT_DIR)/conf/radconf_store.sh $(FILESYSTEM_DIR)/usr/etc/.fon/
+endif
+
+hotspotd_clean:
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+	rm -rf $(FILESYSTEM_DIR)/usr/sbin/hotspotd
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon_device
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon_keyword
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon_mac
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon_revision
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon_version
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon/
+else
+	$(MAKE) -C $(APP_FON_HOTSPOT_DIR) clean
+
+	rm -rf $(FILESYSTEM_DIR)/usr/sbin/hotspotd
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon_device
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon_keyword
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon_mac
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon_revision
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon_version
+	rm -rf $(FILESYSTEM_DIR)/usr/etc/.fon/
+endif
+endif
+
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+ifneq ($(strip $(CUSTOMER_BUILD_RELEASECODE)),)
+cmd_ci:
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/atmcmdd $(FILESYSTEM_DIR)/usr/bin
+endif
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/atmcmd $(FILESYSTEM_DIR)/usr/bin/atmphxcmd
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/adslcmd $(FILESYSTEM_DIR)/usr/bin/adslphxcmd
+
+endif
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/algcmd $(FILESYSTEM_DIR)/usr/bin/
+ifneq ($(strip $(TCSUPPORT_WLAN)),)
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/wlancmd $(FILESYSTEM_DIR)/usr/bin/wlanphxcmd
+endif
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/firewallcmd $(FILESYSTEM_DIR)/usr/bin/
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/qoscmd $(FILESYSTEM_DIR)/usr/bin
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/portbindcmd $(FILESYSTEM_DIR)/usr/bin
+ifneq ($(strip $(TCSUPPORT_CT_ACCESSLIMIT)),)	
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/accesslimitcmd $(FILESYSTEM_DIR)/usr/bin	
+endif
+ifneq ($(strip $(TCSUPPORT_PRODUCTIONLINE)),)
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/prolinecmd $(FILESYSTEM_DIR)/usr/bin	
+endif
+cmd_ci_clean:
+	echo "TC_BUILD_RELEASECODE: Build cmdci, do nothing!"
+else
+cmd_ci:
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	echo "Build cmd_ci"
+	$(MAKE) -C $(APP_CMDCI_DIR)
+	if test -e $(APP_CMDCI_DIR)/atmcmd; \
+	then echo "Compile atmcmd success"; \
+	else echo "Compile atmcmd error!"; exit 1; \
+	fi
+endif
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/atmcmdd $(FILESYSTEM_DIR)/usr/bin
+endif
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	cp $(APP_CMDCI_DIR)/atmcmd  $(FILESYSTEM_DIR)/usr/bin/atmphxcmd
+	cp $(APP_CMDCI_DIR)/adslcmd  $(FILESYSTEM_DIR)/usr/bin/adslphxcmd
+
+ifneq ($(strip $(TCSUPPORT_WLAN)),)
+	cp $(APP_CMDCI_DIR)/wlancmd $(FILESYSTEM_DIR)/usr/bin/wlanphxcmd
+endif
+endif
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/algcmd $(FILESYSTEM_DIR)/usr/bin/
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/firewallcmd $(FILESYSTEM_DIR)/usr/bin/
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/qoscmd $(FILESYSTEM_DIR)/usr/bin
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/portbindcmd $(FILESYSTEM_DIR)/usr/bin
+ifneq ($(strip $(TCSUPPORT_CT_ACCESSLIMIT)),)	
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/accesslimitcmd $(FILESYSTEM_DIR)/usr/bin	
+endif
+ifneq ($(strip $(TCSUPPORT_PRODUCTIONLINE)),)
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/prolinecmd $(FILESYSTEM_DIR)/usr/bin	
+endif
+cmd_ci_clean:
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	echo "TC_BUILD_RELEASECODE: Build atmcmd adslcmd wlancmd!"
+	$(MAKE) -C $(APP_CMDCI_DIR) clean
+
+endif
+endif
+else
+cmd_ci:
+	echo "Build cmd_ci"
+	$(MAKE) -C $(APP_CMDCI_DIR)
+	if test -e $(APP_CMDCI_DIR)/atmcmd; \
+	then echo "Compile atmcmd success"; \
+	else echo "Compile atmcmd error!"; exit 1; \
+	fi
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(APP_CMDCI_DIR)/atmcmdd $(FILESYSTEM_DIR)/usr/bin
+endif
+ifeq ($(strip $(TCSUPPORT_CT)),)
+	cp -f $(APP_CMDCI_DIR)/atmcmd  $(FILESYSTEM_DIR)/usr/bin/atmphxcmd
+	cp -f $(APP_CMDCI_DIR)/adslcmd  $(FILESYSTEM_DIR)/usr/bin/adslphxcmd
+endif
+
+ifneq ($(strip $(TCSUPPORT_WLAN)),)
+	cp -f $(APP_CMDCI_DIR)/wlancmd  $(FILESYSTEM_DIR)/usr/bin/wlanphxcmd
+endif
+	cp $(APP_CMDCI_DIR)/algcmd  $(FILESYSTEM_DIR)/usr/bin/
+	cp $(APP_CMDCI_DIR)/firewallcmd  $(FILESYSTEM_DIR)/usr/bin/
+	cp $(APP_CMDCI_DIR)/qoscmd $(FILESYSTEM_DIR)/usr/bin
+	cp $(APP_CMDCI_DIR)/portbindcmd $(FILESYSTEM_DIR)/usr/bin
+ifneq ($(strip $(TCSUPPORT_CT_ACCESSLIMIT)),)	
+	cp $(APP_CMDCI_DIR)/accesslimitcmd $(FILESYSTEM_DIR)/usr/bin	
+endif
+ifneq ($(strip $(TCSUPPORT_PRODUCTIONLINE)),)
+	cp $(APP_CMDCI_DIR)/prolinecmd $(FILESYSTEM_DIR)/usr/bin	
+endif
+	
+cmd_ci_clean:
+	echo "Clean cmd_ci"
+	$(MAKE) -C $(APP_CMDCI_DIR) clean
+
+endif
+
+ifneq ($(strip $(TCSUPPORT_RA_MENU)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+ra_menu:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/ra_menu $(FILESYSTEM_DIR)/userfs/bin/
+ra_menu_clean:
+	echo "TC_BUILD_RELEASECODE: Build ra_menu, do nothing!"
+else
+ra_menu:
+	echo "ra_menu building"
+	$(MAKE) -C $(APP_RA_MENU_DIR)
+	if test -e $(APP_RA_MENU_DIR)/ra_menu; \
+	then echo "Compile ra_menu success"; \
+	else echo "Compile ra_menu error!"; exit 1; \
+	fi
+	cp $(APP_RA_MENU_DIR)/ra_menu  $(FILESYSTEM_DIR)/userfs/bin/
+ra_menu_clean:
+	echo "ra_menu clean"
+	$(MAKE) -C $(APP_RA_MENU_DIR) clean
+endif
+else
+ra_menu:
+	echo "Not support ra_menu"
+ra_menu_clean:
+	echo "Not support ra_menu"
+endif
+
+ifneq ($(strip $(TCSUPPORT_NEW_SHELL)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+new_shell:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/new_shell $(FILESYSTEM_DIR)/userfs/bin/
+new_shell_clean:
+	echo "TC_BUILD_RELEASECODE: Build new_shell, do nothing!"
+else
+new_shell:
+	echo "new_shell building"
+	$(MAKE) -C $(APP_NEW_SHELL_DIR)
+	if test -e $(APP_NEW_SHELL_DIR)/new_shell; \
+	then echo "Compile new_shell success"; \
+	else echo "Compile new_shell error!"; exit 1; \
+	fi
+	cp $(APP_NEW_SHELL_DIR)/new_shell  $(FILESYSTEM_DIR)/userfs/bin/
+new_shell_clean:
+	echo "new_shell clean"
+	$(MAKE) -C $(APP_NEW_SHELL_DIR) clean
+endif
+else
+new_shell:
+	echo "Not support new_shell"
+new_shell_clean:
+	echo "Not support new_shell"
+endif
+
+ifneq ($(strip $(TCSUPPORT_SIPROXD)),)
+#Build siproxd-0.8.0
+siproxd:
+	echo "Build libosip2-2.0.4"
+	cd $(APP_LIBOSIP_DIR) && touch aclocal.m4
+	chmod 777 $(APP_LIBOSIP_DIR)/configure
+	cd $(APP_LIBOSIP_DIR) && ./configure --host=mips-linux --with-pic --prefix=$(APP_LIBOSIP_DIR)/installDir CFLAGS="$(CFG_CFLAGS)"
+	$(MAKE) -C $(APP_LIBOSIP_DIR)
+	$(MAKE) -C $(APP_LIBOSIP_DIR) install
+	if test -e $(APP_LIBOSIP_DIR)/installDir/lib/libosip2.2.0.4; \
+	then echo "Compile libosip success"; \
+	else echo "Compile libosip error!"; exit 1; \
+	fi
+	
+	echo "Build siproxd-0.5.12"
+	cd $(APP_SIPROXD_DIR) && touch configure.in
+	chmod 777 $(APP_SIPROXD_DIR)/configure
+	cd $(APP_SIPROXD_DIR) && ./configure --host=mips-linux --prefix=$(APP_SIPROXD_DIR)/installDir --with-libosip-prefix=$(APP_LIBOSIP_DIR)/installDir CFLAGS="$(CFG_CFLAGS)"
+	$(MAKE) -C $(APP_SIPROXD_DIR)
+	$(MAKE) -C $(APP_SIPROXD_DIR) install
+	if test -e $(APP_SIPROXD_DIR)/installDir/sbin/siproxd; \
+	then echo "Compile siporxd success"; \
+	else echo "Compile siproxd error!"; exit 1; \
+	fi
+	$(STRIP) --strip-unneeded $(APP_SIPROXD_DIR)/installDir/sbin/siproxd
+	cp $(APP_SIPROXD_DIR)/installDir/sbin/siproxd  $(FILESYSTEM_DIR)/userfs/bin/
+	
+siproxd_clean:
+	echo "Clean siproxd-0.5.12"
+	if test -e $(APP_LIBOSIP_DIR)/installDir/lib/libosip2.a; \
+	then cd $(APP_SIPROXD_DIR) && touch configure.in; \
+	chmod 777 $(APP_SIPROXD_DIR)/configure; \
+	cd $(APP_SIPROXD_DIR) && ./configure --host=mips-linux --prefix=$(APP_SIPROXD_DIR)/installDir --with-libosip-prefix=$(APP_LIBOSIP_DIR)/installDir; \
+	else cd $(APP_SIPROXD_DIR); \
+	fi
+	if test -e $(APP_SIPROXD_DIR)/Makefile; \
+	then $(MAKE) -C $(APP_SIPROXD_DIR) clean; \
+	else echo "Makefile not exist"; \
+	fi
+	
+	echo "Clean libosip2-2.0.4"
+	if test -e $(APP_LIBOSIP_DIR)/installDir/lib/libosip2.a; \
+	then cd $(APP_LIBOSIP_DIR) && touch aclocal.m4; \
+	chmod 777 $(APP_LIBOSIP_DIR)/configure; \
+	cd $(APP_LIBOSIP_DIR) && ./configure --host=mips-linux --with-pic --prefix=$(APP_LIBOSIP_DIR)/installDir; \
+	else cd $(APP_LIBOSIP_DIR); \
+	fi
+	if test -e $(APP_LIBOSIP_DIR)/Makefile; \
+	then $(MAKE) -C $(APP_LIBOSIP_DIR) clean; \
+	else echo "Makefile not exist"; \
+	fi
+else
+siproxd:
+	echo "Not support siproxd"
+siproxd_clean:
+	echo "Not support siproxd"
+endif
+
+#USB Backup and  Restore
+ifneq ($(strip $(TCSUPPORT_CT_USB_BACKUPRESTORE)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+backuprestore:
+	echo "Build backuprestore"
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/backuprestorecmd $(FILESYSTEM_DIR)/usr/bin/
+backuprestore_clean:
+	echo "TC_BUILD_RELEASECODE: Build backuprestore, do nothing!"
+else
+backuprestore:
+	echo "Build backuprestore"
+	$(MAKE) -C $(APP_BACKUPRESTORE_DIR)
+	cp $(APP_BACKUPRESTORE_DIR)/backuprestorecmd $(FILESYSTEM_DIR)/usr/bin/
+	
+backuprestore_clean:
+	echo "Clean backuprestore"
+	$(MAKE) -C $(APP_BACKUPRESTORE_DIR) clean
+endif
+else
+backuprestore:
+backuprestore_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_RESTORE_LINOS_INFO)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+restore_linos_info:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/restore_linos_info $(FILESYSTEM_DIR)/userfs/bin/
+restore_linos_info_clean:
+else
+restore_linos_info:
+	echo "Build restore linos info!"
+	$(MAKE) -C $(APP_RESTORE_LINOS_INFO_DIR)
+	if test -e $(APP_RESTORE_LINOS_INFO_DIR)/restore_linos_info; \
+	then echo "Compile restore_linos_info success"; \
+	else echo "Compile restore_linos_info error!"; exit 1; \
+	fi
+	cp  $(APP_RESTORE_LINOS_INFO_DIR)/restore_linos_info  $(FILESYSTEM_DIR)/userfs/bin/
+
+restore_linos_info_clean:
+	echo "Clean restore_linos_info!"
+	$(MAKE) -C $(APP_RESTORE_LINOS_INFO_DIR) clean
+endif
+else
+restore_linos_info:
+restore_linos_info_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_SAMBA)),)
+#Build samba-3.0.2
+samba:
+	echo "Build Samba-3.0.2"
+	cd $(APP_SAMBA_DIR)/source
+	$(MAKE) -C $(APP_SAMBA_DIR)/source
+	if (test -e $(APP_SAMBA_DIR)/source/bin/nmbd)&&(test -e $(APP_SAMBA_DIR)/source/bin/smbd); \
+	then echo "Compile samba success"; \
+	else echo "Compile samba error!"; exit 1; \
+	fi
+	
+	if test -d  $(FILESYSTEM_DIR)/usr/etc/samba; \
+	then rm -rf $(FILESYSTEM_DIR)/usr/etc/samba; \
+	fi
+	
+	mkdir $(FILESYSTEM_DIR)/usr/etc/samba
+
+#ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/samba.sh $(FILESYSTEM_DIR)/usr/script/
+	cp $(APP_PRIVATE_DIR)/etc_script/samba_add_dir.sh $(FILESYSTEM_DIR)/usr/script/
+#endif
+
+	$(STRIP) --strip-unneeded $(APP_SAMBA_DIR)/source/bin/nmbd
+	cp -f $(APP_SAMBA_DIR)/source/bin/nmbd  $(FILESYSTEM_DIR)/userfs/bin/
+	$(STRIP) --strip-unneeded $(APP_SAMBA_DIR)/source/bin/smbd
+	cp -f $(APP_SAMBA_DIR)/source/bin/smbd  $(FILESYSTEM_DIR)/userfs/bin/
+	$(STRIP) --strip-unneeded $(APP_SAMBA_DIR)/source/bin/smbpasswd
+	cp -f $(APP_SAMBA_DIR)/source/bin/smbpasswd  $(FILESYSTEM_DIR)/userfs/bin/
+	$(STRIP) --strip-unneeded $(APP_SAMBA_DIR)/source/bin/libbigballofmud.so
+	cp -f $(APP_SAMBA_DIR)/source/bin/libbigballofmud.so  $(FILESYSTEM_DIR)/lib/
+	cd $(FILESYSTEM_DIR)/lib
+	ln -snf libbigballofmud.so  $(FILESYSTEM_DIR)/lib/libbigballofmud.so.0
+
+	
+samba_clean:
+	echo "Clean Samba-3.0.2"
+	cd $(APP_SAMBA_DIR)/source
+	if test -e $(APP_SAMBA_DIR)/source/Makefile; \
+	then $(MAKE) -C $(APP_SAMBA_DIR)/source clean; \
+	else echo "Makefile not exist"; \
+	fi
+	rm -rf $(FILESYSTEM_DIR)/usr/script/samba.sh
+	rm -rf $(FILESYSTEM_DIR)/usr/script/samba_add_dir.sh
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/smbd
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/smbpasswd
+	rm -rf $(FILESYSTEM_DIR)/lib/libbigballofmud.so
+	rm -rf $(FILESYSTEM_DIR)/lib/libbigballofmud.so.0
+
+else
+samba:
+samba_clean:	
+endif
+
+ifneq ($(strip $(TCSUPPORT_SAMBA_IPv6)),)
+#Build samba-3.2.5
+samba_ipv6:
+	echo "Build Samba-3.2.5"
+	cd $(APP_SAMBA_IPv6_DIR)/source
+	$(MAKE) -C $(APP_SAMBA_IPv6_DIR)/source
+	if (test -e $(APP_SAMBA_IPv6_DIR)/source/bin/nmbd)&&(test -e $(APP_SAMBA_IPv6_DIR)/source/bin/smbd); \
+	then echo "Compile samba_ipv6 success"; \
+	else echo "Compile samba_ipv6 error!"; exit 1; \
+	fi
+	
+	if test -d  $(FILESYSTEM_DIR)/usr/etc/samba; \
+	then rm -rf $(FILESYSTEM_DIR)/usr/etc/samba; \
+	fi
+	
+	mkdir $(FILESYSTEM_DIR)/usr/etc/samba
+
+#ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	cp $(APP_PRIVATE_DIR)/etc_script/samba.sh $(FILESYSTEM_DIR)/usr/script/
+	cp $(APP_PRIVATE_DIR)/etc_script/samba_add_dir.sh $(FILESYSTEM_DIR)/usr/script/
+#endif
+
+	$(STRIP) --strip-unneeded $(APP_SAMBA_IPv6_DIR)/source/bin/nmbd
+	cp -f $(APP_SAMBA_IPv6_DIR)/source/bin/nmbd  $(FILESYSTEM_DIR)/userfs/bin/
+	$(STRIP) --strip-unneeded $(APP_SAMBA_IPv6_DIR)/source/bin/smbd
+	cp -f $(APP_SAMBA_IPv6_DIR)/source/bin/smbd  $(FILESYSTEM_DIR)/userfs/bin/
+	$(STRIP) --strip-unneeded $(APP_SAMBA_IPv6_DIR)/source/bin/smbpasswd
+	cp -f $(APP_SAMBA_IPv6_DIR)/source/bin/smbpasswd  $(FILESYSTEM_DIR)/userfs/bin/
+	$(STRIP) --strip-unneeded $(APP_SAMBA_IPv6_DIR)/source/bin/libtalloc.so.1
+	cp -f $(APP_SAMBA_IPv6_DIR)/source/bin/libtalloc.so.1  $(FILESYSTEM_DIR)/lib/
+	cd $(FILESYSTEM_DIR)/lib
+	ln -snf libtalloc.so.1  $(FILESYSTEM_DIR)/lib/libtalloc.so
+
+	$(STRIP) --strip-unneeded $(APP_SAMBA_IPv6_DIR)/source/bin/libtdb.so.1
+	cp -f $(APP_SAMBA_IPv6_DIR)/source/bin/libtdb.so.1  $(FILESYSTEM_DIR)/lib/
+	cd $(FILESYSTEM_DIR)/lib
+	ln -snf libtdb.so.1  $(FILESYSTEM_DIR)/lib/libtdb.so
+
+	$(STRIP) --strip-unneeded $(APP_SAMBA_IPv6_DIR)/source/bin/libwbclient.so.0
+	cp -f $(APP_SAMBA_IPv6_DIR)/source/bin/libwbclient.so.0  $(FILESYSTEM_DIR)/lib/
+	cd $(FILESYSTEM_DIR)/lib
+	ln -snf libwbclient.so.0  $(FILESYSTEM_DIR)/lib/libwbclient.so
+	
+samba_ipv6_clean:
+	echo "Clean Samba-3.2.5"
+	cd $(APP_SAMBA_IPv6_DIR)
+	if test -e $(APP_SAMBA_IPv6_DIR)/source/Makefile; \
+	then $(MAKE) -C $(APP_SAMBA_IPv6_DIR)/source clean; \
+	else echo "Makefile not exist"; \
+	fi
+	
+	rm -rf $(FILESYSTEM_DIR)/usr/script/samba.sh
+	rm -rf $(FILESYSTEM_DIR)/usr/script/samba_add_dir.sh
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/smbd
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/nmbd
+	rm -rf $(FILESYSTEM_DIR)/userfs/bin/smbpasswd
+	rm -rf $(FILESYSTEM_DIR)/lib/libtalloc.so.1
+	rm -rf $(FILESYSTEM_DIR)/lib/libtalloc.so
+	rm -rf $(FILESYSTEM_DIR)/lib/libtdb.so.1
+	rm -rf $(FILESYSTEM_DIR)/lib/libtdb.so
+	rm -rf $(FILESYSTEM_DIR)/lib/libwbclient.so.0 
+	rm -rf $(FILESYSTEM_DIR)/lib/libwbclient.so
+else
+samba_ipv6:
+samba_ipv6_clean:	
+endif
+
+api_lib:
+#Build API library
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	#Build debug library
+	echo "Build debug library."
+	$(MAKE) -C $(APP_API_LIB_DBG_DIR)
+	echo "Build API library."
+	$(MAKE) -C $(APP_API_LIB_DIR)
+endif
+ifneq ($(strip $(TCSUPPORT_DRIVER_API)),)
+#Build fe library
+	echo "Build fe library."
+	$(MAKE) -C $(APP_API_LIB_FE_DIR)
+#Build atmmgr library
+ifneq ($(strip $(TCSUPPORT_WAN_ATM)),)
+	echo "Build atmmgr library."
+	$(MAKE) -C $(APP_API_LIB_ATM_DIR)
+endif
+#Build vdslmgr library.
+ifneq ($(strip $(TCSUPPORT_WAN_PTM)),)
+	echo "Build vdslmgr library."
+	$(MAKE) -C $(APP_API_LIB_VDSL_DIR)
+endif
+#Build gponmgr library.
+ifeq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_WAN_GPON)),)
+	echo "Build gponmgr library."
+	$(MAKE) -C $(APP_API_LIB_GPON_DIR)
+endif
+endif
+#Build eponmgr library.
+ifneq ($(strip $(TCSUPPORT_WAN_EPON)),)
+	echo "Build eponmgr library."
+	$(MAKE) -C $(APP_API_LIB_EPON_DIR)
+endif
+#Build qdmamgr library
+ifneq ($(strip $(TCSUPPORT_QDMA_BUFMGR)),)
+	cp $(KERNEL_DIR)/include/ecnt_hook/ecnt_hook_qdma_type.h $(APP_API_LIB_QDMA_DIR)/qdma_type.h
+	echo "Build qdmamgr_wan library."	
+	cp $(APP_API_LIB_QDMA_DIR)/Makefile_wan $(APP_API_LIB_QDMA_DIR)/Makefile
+	$(MAKE) -C $(APP_API_LIB_QDMA_DIR) clean
+	$(MAKE) -C $(APP_API_LIB_QDMA_DIR)
+
+	echo "Build qdmamgr_lan library."
+	cp $(APP_API_LIB_QDMA_DIR)/Makefile_lan $(APP_API_LIB_QDMA_DIR)/Makefile
+	$(MAKE) -C $(APP_API_LIB_QDMA_DIR) clean
+	$(MAKE) -C $(APP_API_LIB_QDMA_DIR)
+	rm -rf $(APP_API_LIB_QDMA_DIR)/qdma_type.h
+endif
+#Build pcie library.
+ifneq ($(strip $(TCSUPPORT_WLAN)),)
+	echo "Build pcie library."
+	$(MAKE) -C $(APP_API_LIB_PCIE_DIR)
+endif
+#Build switch library.
+ifneq ($(strip $(TCSUPPORT_MT7530_SWITCH_API)),)
+	echo "Build swtich library."
+	$(MAKE) -C $(APP_API_LIB_SWITCH_DIR)
+endif
+endif
+
+#Build ppe library.
+ifneq ($(strip $(TCSUPPORT_RA_HWNAT)),)
+ifneq ($(strip $(TCSUPPORT_MT7510_FE)),)
+	echo "Build ppe library."
+	$(MAKE) -C $(APP_API_LIB_PPE_DIR)
+endif
+endif
+
+#Build ecnt qos library.
+ifneq ($(strip $(TCSUPPORT_FWC_TRAFFIC_CLASSIFY)),)
+	echo "Build ecnt qos library."
+	$(MAKE) -C $(LIBAPI_ACL_DIR)
+endif
+
+#Build ecnt igmp library.
+ifneq ($(strip $(TCSUPPORT_FWC_MCST)),)
+	echo "Build ecnt igmp library."
+	$(MAKE) -C $(APP_API_LIB_ECNT_IGMP_DIR)
+endif
+
+#Build voipmgr library.
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_VOIP)),)
+	echo "Build voip library."
+	$(MAKE) -C $(APP_API_LIB_VOIP_DIR)
+endif
+endif
+
+#Build brtable library.
+ifneq ($(strip $(TCSUPPORT_FWC_FDB_VLAN)),)
+	echo "Build brtable library."
+	$(MAKE) -C $(BRIDGE_VLAN_DIR)
+endif
+
+api_lib_clean:
+#Clean API library
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	echo "clean debug library."
+	$(MAKE) -C $(APP_API_LIB_DBG_DIR) clean
+	echo "Clean API library."
+	$(MAKE) -C $(APP_API_LIB_DIR)
+endif
+ifneq ($(strip $(TCSUPPORT_DRIVER_API)),)
+#clean fe library
+	echo "Clean fe library."
+	$(MAKE) -C $(APP_API_LIB_FE_DIR) clean
+#Clean atmmgr library
+ifneq ($(strip $(TCSUPPORT_WAN_ATM)),)
+	echo "Clean atmmgr library." 
+	$(MAKE) -C $(APP_API_LIB_ATM_DIR) clean
+endif
+#Clean vdslmgr library
+ifneq ($(strip $(TCSUPPORT_WAN_PTM)),)
+	echo "Clean vdslmgr library."
+	$(MAKE) -C $(APP_API_LIB_VDSL_DIR) clean
+endif	
+#Clean gponmgr library
+ifneq ($(strip $(TCSUPPORT_WAN_GPON)),)
+	echo "Clean gponmgr library."
+	$(MAKE) -C $(APP_API_LIB_GPON_DIR) clean
+endif
+#Clean eponmgr library
+ifneq ($(strip $(TCSUPPORT_WAN_EPON)),)
+	echo "Clean eponmgr library."
+	$(MAKE) -C $(APP_API_LIB_EPON_DIR) clean
+endif
+#Clean qdmamgr library
+ifneq ($(strip $(TCSUPPORT_QDMA_BUFMGR)),)
+	echo "Clean qdmamgr_wan library." 
+	cp $(APP_API_LIB_QDMA_DIR)/Makefile_wan $(APP_API_LIB_QDMA_DIR)/Makefile
+	$(MAKE) -C $(APP_API_LIB_QDMA_DIR) clean
+
+	echo "Clean qdmamgr_lan library." 
+	cp $(APP_API_LIB_QDMA_DIR)/Makefile_lan $(APP_API_LIB_QDMA_DIR)/Makefile
+	$(MAKE) -C $(APP_API_LIB_QDMA_DIR) clean
+endif
+#Clean pcie library
+ifneq ($(strip $(TCSUPPORT_WLAN)),)
+	echo "Clean pcie library."
+	$(MAKE) -C $(APP_API_LIB_PCIE_DIR) clean
+endif
+#Clean switch library
+ifneq ($(strip $(TCSUPPORT_MT7530_SWITCH_API)),)
+	echo "Clean switch library."
+	$(MAKE) -C $(APP_API_LIB_SWITCH_DIR) clean
+endif
+endif
+
+#Clean ppe library
+ifneq ($(strip $(TCSUPPORT_RA_HWNAT)),)
+ifneq ($(strip $(TCSUPPORT_MT7510_FE)),)
+	echo "Clean ppe library."
+	$(MAKE) -C $(APP_API_LIB_PPE_DIR) clean
+endif
+endif
+#Clean ecnt qos library.
+ifneq ($(strip $(TCSUPPORT_FWC_TRAFFIC_CLASSIFY)),)
+	echo "Build ecnt qos library."
+	$(MAKE) -C $(LIBAPI_ACL_DIR) clean
+endif
+
+#Clean ecnt igmp library
+ifneq ($(strip $(TCSUPPORT_FWC_MCST)),)
+	echo "Clean ecnt igmp library."
+	$(MAKE) -C $(APP_API_LIB_ECNT_IGMP_DIR) clean
+endif
+
+#Clean voipmgr library.
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_VOIP)),)
+	echo "Clean voip library."
+	$(MAKE) -C $(APP_API_LIB_VOIP_DIR) clean
+endif
+endif
+
+#Clean brtable library.
+ifneq ($(strip $(TCSUPPORT_FWC_FDB_VLAN)),)
+	echo "Build clean brtable library."
+	$(MAKE) -C $(BRIDGE_VLAN_DIR) clean
+endif
+
+dbgmgr:
+#Build debug cmd
+ifeq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_DRIVER_API)),)	
+	echo "Build debug cmd."
+	$(MAKE) -C $(APP_API_DBG_DIR) 
+	if test -e $(APP_API_DBG_DIR)/dbgmgr;\
+	then echo "Compile dbgmgr cmd success";\
+	else echo "Compile dbgmgr cmd error";  exit 1;\
+	fi
+	cp  $(APP_API_DBG_DIR)/dbgmgr  $(FILESYSTEM_DIR)/usr/bin/
+endif	
+endif
+dbgmgr_clean:
+#Clean debug cmd
+ifneq ($(strip $(TCSUPPORT_DRIVER_API)),)	
+	echo "Clean debug cmd." 
+	if test -e $(APP_API_DBG_DIR)/Makefile;\
+	then $(MAKE) -C $(APP_API_DBG_DIR) clean;\
+	else echo "Makefile not exist";\
+	fi
+endif	
+
+api_cmd:
+ifneq ($(strip $(TCSUPPORT_DRIVER_API)),)
+	echo "Build API cmd."
+#Build gponmgr cmd
+ifeq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_WAN_GPON)),)
+	echo "Build gponmgr cmd."
+	$(MAKE) -C $(APP_API_CMD_GPON_DIR)
+	if test -e $(APP_API_CMD_GPON_DIR)/gponmgr ; \
+	then echo "Compile gponmgr cmd success"; \
+	else echo "Compile gponmgr cmd error!"; exit 1; \
+	fi
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_QDMA_BUFMGR)),)
+#Build qdmamg_wan cmd
+	echo "Build qdmamgr_wan cmd."
+	cp $(APP_API_CMD_QDMA_DIR)/Makefile_wan $(APP_API_CMD_QDMA_DIR)/Makefile
+	$(MAKE) -C $(APP_API_CMD_QDMA_DIR) clean
+	$(MAKE) -C $(APP_API_CMD_QDMA_DIR)
+	if test -e $(APP_API_CMD_QDMA_DIR)/qdmamgr_wan ; \
+	then echo "Compile qdmamgr_wan cmd success"; \
+	else echo "Compile qdmamgr_wan cmd error!"; exit 1; \
+	fi
+	
+#Build qdmamg_lan cmd
+	echo "Build qdmamgr_lan cmd."
+	cp $(APP_API_CMD_QDMA_DIR)/Makefile_lan $(APP_API_CMD_QDMA_DIR)/Makefile
+	$(MAKE) -C $(APP_API_CMD_QDMA_DIR) clean
+	$(MAKE) -C $(APP_API_CMD_QDMA_DIR)
+	if test -e $(APP_API_CMD_QDMA_DIR)/qdmamgr_lan ; \
+	then echo "Compile qdmamgr_lan cmd success"; \
+	else echo "Compile qdmamgr_lan cmd error!"; exit 1; \
+	fi
+endif
+#Build pcie cmd
+ifneq ($(strip $(TCSUPPORT_WLAN)),)
+	echo "Build pcie cmd."
+	$(MAKE) -C $(APP_API_CMD_PCIE_DIR)
+	if test -e $(APP_API_CMD_PCIE_DIR)/pcie ; \
+	then echo "Compile pcie cmd success"; \
+	else echo "Compile pcie cmd error!"; exit 1; \
+	fi
+endif
+#Build fe cmd
+	echo "Build fe cmd."
+	$(MAKE) -C $(APP_API_CMD_FE_DIR)
+	if test -e $(APP_API_CMD_FE_DIR)/fe ; \
+	then echo "Compile fe cmd success"; \
+	else echo "Compile fe cmd error!"; exit 1; \
+	fi
+	
+#Build switch cmd
+ifneq ($(strip $(TCSUPPORT_MT7530_SWITCH_API)),)
+	echo "Build switch cmd."
+	$(MAKE) -C $(APP_API_CMD_SWITCH_DIR)
+	if test -e $(APP_API_CMD_SWITCH_DIR)/switchmgr ; \
+	then echo "Compile switch cmd success"; \
+	else echo "Compile switch cmd error!"; exit 1; \
+	fi	
+endif
+endif
+
+#Build ppe cmd
+ifneq ($(strip $(TCSUPPORT_RA_HWNAT)),)
+ifneq ($(strip $(TCSUPPORT_MT7510_FE)),)
+	echo "Build ppe cmd."
+	$(MAKE) -C $(APP_API_CMD_PPE_DIR)
+	if test -e $(APP_API_CMD_PPE_DIR)/ppe ; \
+	then echo "Compile ppe cmd success"; \
+	else echo "Compile ppe cmd error!"; exit 1; \
+	fi
+endif
+endif
+
+#Build ecnt qos cmd.
+ifneq ($(strip $(TCSUPPORT_FWC_TRAFFIC_CLASSIFY)),)
+	echo "Build qos cmd."
+	$(MAKE) -C $(ACL_CMD_DIR)
+	if test -e $(ACL_CMD_DIR)/acl ; \
+	then echo "Compile acl cmd success"; \
+	else echo "Compile acl cmd error!"; exit 1; \
+	fi
+endif
+
+#Build voip cmd
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_VOIP)),)
+	echo "Build voip cmd."
+	$(MAKE) -C $(APP_API_CMD_VOIP_DIR)
+	if test -e $(APP_API_CMD_VOIP_DIR)/voipmgr ; \
+	then echo "Compile voip cmd success"; \
+	else echo "Compile voip cmd error!"; exit 1; \
+	fi
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_FWC_FDB_VLAN)),)
+	$(MAKE) -C $(BRIDGE_CMD_DIR)
+	if test -e $(BRIDGE_CMD_DIR)/brtable; \
+	then echo "Compile brtable success"; \
+	else echo "Compile brtable error!"; exit 1; \
+	fi
+endif
+
+ifneq ($(strip $(TCSUPPORT_FWC_MCST)),)
+	echo "Build ecnt_igmp_cmd cmd."
+	$(MAKE) -C $(APP_PRIVATE_DIR)/API/cmd/ecnt_igmp_cmd clean
+	$(MAKE) -C $(APP_PRIVATE_DIR)/API/cmd/ecnt_igmp_cmd
+	if test -e $(APP_PRIVATE_DIR)/API/cmd/ecnt_igmp_cmd ; \
+	then echo "Compile ecnt_igmp_cmd cmd success"; \
+	else echo "Compile ecnt_igmp_cmd cmd error!"; exit 1; \
+	fi
+endif
+
+
+api_cmd_clean:
+ifneq ($(strip $(TCSUPPORT_DRIVER_API)),)
+	echo "Clean API cmd."
+#Clean gponmgr cmd
+ifneq ($(strip $(TCSUPPORT_WAN_GPON)),)
+	echo "Clean gponmgr cmd."
+	if test -e $(APP_API_CMD_GPON_DIR)/Makefile; \
+	then $(MAKE) -C $(APP_API_CMD_GPON_DIR) clean; \
+	else echo "Makefile not exist"; \
+	fi
+endif
+
+ifneq ($(strip $(TCSUPPORT_QDMA_BUFMGR)),)
+#Clean qdmamgr_wan cmd
+	echo "Clean qdmamgr_wan cmd."
+	cp $(APP_API_CMD_QDMA_DIR)/Makefile_wan $(APP_API_CMD_QDMA_DIR)/Makefile
+	if test -e $(APP_API_CMD_QDMA_DIR)/Makefile; \
+	then $(MAKE) -C $(APP_API_CMD_QDMA_DIR) clean; \
+	else echo "Makefile not exist"; \
+	fi
+	
+#Clean qdmamgr_lan cmd
+	echo "Clean qdmamgr_lan cmd."
+	cp $(APP_API_CMD_QDMA_DIR)/Makefile_lan $(APP_API_CMD_QDMA_DIR)/Makefile
+	if test -e $(APP_API_CMD_QDMA_DIR)/Makefile; \
+	then $(MAKE) -C $(APP_API_CMD_QDMA_DIR) clean; \
+	else echo "Makefile not exist"; \
+	fi	
+endif
+#Clean pcie cmd
+ifneq ($(strip $(TCSUPPORT_WLAN)),)
+	echo "Clean pcie cmd."
+	if test -e $(APP_API_CMD_PCIE_DIR)/Makefile; \
+	then $(MAKE) -C $(APP_API_CMD_PCIE_DIR) clean; \
+	else echo "Makefile not exist"; \
+	fi
+endif
+#Clean fe cmd
+	echo "Clean fe cmd."
+	$(MAKE) -C $(APP_API_CMD_FE_DIR) clean;
+	
+#Clean switch cmd
+ifneq ($(strip $(TCSUPPORT_MT7530_SWITCH_API)),)
+	echo "Clean switch cmd."
+	$(MAKE) -C $(APP_API_CMD_SWITCH_DIR) clean;
+endif
+endif
+
+#Clean ppe cmd
+ifneq ($(strip $(TCSUPPORT_RA_HWNAT)),)
+ifneq ($(strip $(TCSUPPORT_MT7510_FE)),)
+	echo "Clean ppe cmd."
+	$(MAKE) -C $(APP_API_CMD_PPE_DIR) clean;
+endif
+endif	
+
+#Clean ecnt qos cmd.
+ifneq ($(strip $(TCSUPPORT_FWC_TRAFFIC_CLASSIFY)),)
+	echo "Clean qos cmd."
+	$(MAKE) -C $(ACL_CMD_DIR) clean
+endif
+
+#Clean voip cmd
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_VOIP)),)
+	echo "Clean voip cmd."
+	$(MAKE) -C $(APP_API_CMD_VOIP_DIR) clean
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_FWC_FDB_VLAN)),)
+	echo "Clean brtable cmd."
+	$(MAKE) -C $(BRIDGE_CMD_DIR) clean
+endif
+
+ifneq ($(strip $(TCSUPPORT_FWC_MCST)),)
+	echo "clean ecnt_igmp_cmd cmd."
+	$(MAKE) -C $(APP_PRIVATE_DIR)/API/cmd/ecnt_igmp_cmd clean
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+app_store:
+	if test -e $(FILESYSTEM_DIR)/lib/libcrypto.so; \
+	then echo "already have openssl"; \
+	else touch $(APP_OPENSSL_DIR_V1)/Makefile; \
+	$(MAKE) -C $(APP_OPENSSL_DIR_V1); \
+	$(MAKE) install -C $(APP_OPENSSL_DIR_V1); \
+	if test -e $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libcrypto.so; \
+	then echo "Compile openssl success"; \
+	cp $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libcrypto.so* $(FILESYSTEM_DIR)/lib -avd; \
+	cp $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libssl.so*    $(FILESYSTEM_DIR)/lib -avd; \
+	else echo "Compile openssl error!"; exit 1; \
+	fi; \
+	fi
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/app_store $(FILESYSTEM_DIR)/userfs/bin
+app_store_clean:
+	echo "TC_BUILD_RELEASECODE: app_store, do nothing!"
+else
+app_store:
+	echo "Build OPENSSL"
+	if test -e $(FILESYSTEM_DIR)/lib/libcrypto.so; \
+	then echo "already have openssl"; \
+	else touch $(APP_OPENSSL_DIR_V1)/Makefile; \
+	$(MAKE) -C $(APP_OPENSSL_DIR_V1); \
+	$(MAKE) install -C $(APP_OPENSSL_DIR_V1); \
+	if test -e $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libcrypto.so; \
+	then echo "Compile openssl success"; \
+	cp $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libcrypto.so* $(FILESYSTEM_DIR)/lib -avd; \
+	cp $(APP_OPENSSL_DIR_V1)/OPSSL/lib/libssl.so*    $(FILESYSTEM_DIR)/lib -avd; \
+	else echo "Compile openssl error!"; exit 1; \
+	fi; \
+	fi
+	$(MAKE) -C $(APP_STORE_DIR) 
+	if test -e $(APP_STORE_DIR)/app_store; \
+	then echo "Compile app_store success"; \
+	else echo "Compile app_store error!"; exit 1; \
+	fi
+	cp $(APP_STORE_DIR)/app_store  $(FILESYSTEM_DIR)/userfs/bin/
+	
+app_store_clean:
+	-$(MAKE) -C $(APP_OPENSSL_DIR_V1) clean
+	$(MAKE) -C $(APP_STORE_DIR) clean
+	-rm $(FILESYSTEM_DIR)/userfs/bin/app_store $(FILESYSTEM_DIR)/lib/libcrypto.so* $(FILESYSTEM_DIR)/lib/libssl.so*
+endif	
+else
+app_store:
+app_store_clean:
+endif	
+
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)	
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+bundle_cmd:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/bundle $(FILESYSTEM_DIR)/userfs/bin
+bundle_cmd_clean:
+	echo "TC_BUILD_RELEASECODE: bundle_cmd , do nothing!"
+else
+bundle_cmd:
+	$(MAKE) -C $(BUNDLE_CMD_DIR)
+	if test -e $(BUNDLE_CMD_DIR)/bundle; \
+	then echo "Compile bundle success"; \
+	else echo "Compile bundle error!"; exit 1; \
+	fi
+	cp $(BUNDLE_CMD_DIR)/bundle  $(FILESYSTEM_DIR)/userfs/bin/
+	
+bundle_cmd_clean:
+	$(MAKE) -C $(BUNDLE_CMD_DIR) clean
+	-rm $(FILESYSTEM_DIR)/userfs/bin/bundle
+endif	
+else
+bundle_cmd:
+bundle_cmd_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)	
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+bundle_monitor:
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/bundle_monitor $(FILESYSTEM_DIR)/userfs/bin
+bundle_monitor_clean:
+	echo "TC_BUILD_RELEASECODE: bundle_monitor , do nothing!"
+else
+bundle_monitor:
+	$(MAKE) -C $(BUNDLE_MONITOR_DIR)
+	if test -e $(BUNDLE_MONITOR_DIR)/bundle_monitor; \
+	then echo "Compile bundle success"; \
+	else echo "Compile bundle error!"; exit 1; \
+	fi
+	cp $(BUNDLE_MONITOR_DIR)/bundle_monitor  $(FILESYSTEM_DIR)/userfs/bin/
+	
+bundle_monitor_clean:
+	$(MAKE) -C $(BUNDLE_MONITOR_DIR) clean
+	-rm $(FILESYSTEM_DIR)/userfs/bin/bundle_monitor
+endif	
+else
+bundle_monitor:
+bundle_monitor_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)	
+fatfs:fatfs_clean
+	$(MAKE) -C $(APP_FAT_DIR)
+	if test -e $(APP_FAT_DIR)/mkdosfs/mkdosfs; \
+	then echo "Compile mkfs.vfat success"; \
+	else echo "Compile mkfs.vfat error!"; exit 1; \
+	fi
+	cp $(APP_FAT_DIR)/mkdosfs/mkdosfs $(FILESYSTEM_DIR)/userfs/bin/mkfs.vfat
+fatfs_clean:
+	$(MAKE) -C $(APP_FAT_DIR) clean
+	-rm $(FILESYSTEM_DIR)/userfs/bin/mkfs.vfat
+else
+fatfs:
+fatfs_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)		
+charset_change:charset_change_clean
+	$(MAKE) -C $(APP_CHARSET_DIR)
+	if test -e $(APP_CHARSET_DIR)/lib/.libs/libiconv.so.2.5.0; \
+	then echo "Compile charset success"; \
+	else echo "Compile charset error!"; exit 1; \
+	fi
+	cp $(APP_CHARSET_DIR)/lib/.libs/libiconv.so.2.5.0  $(FILESYSTEM_DIR)/lib
+	cp $(APP_CHARSET_DIR)/lib/.libs/libiconv.so.2.5.0  $(LIB_DIR)
+	cd $(LIB_DIR) && ln -s libiconv.so.2.5.0 libiconv.so
+	cd  $(FILESYSTEM_DIR)/lib && ln -s libiconv.so.2.5.0 libiconv.so.2
+	cp $(APP_CHARSET_DIR)/libcharset/lib/.libs/libcharset.so.1.0.0 $(FILESYSTEM_DIR)/lib
+	cp $(APP_CHARSET_DIR)/libcharset/lib/.libs/libcharset.so.1.0.0 $(LIB_DIR)
+	cd $(LIB_DIR) && ln -s libcharset.so.1.0.0  libcharset.so
+	cd $(FILESYSTEM_DIR)/lib && ln -s libcharset.so.1.0.0 libcharset.so.1	
+charset_change_clean:
+	$(MAKE) -C $(APP_CHARSET_DIR) clean
+	-rm $(FILESYSTEM_DIR)/lib/libiconv.so.2.5.0
+	-rm $(FILESYSTEM_DIR)/lib/libiconv.so.2
+	-rm $(FILESYSTEM_DIR)/lib/libcharset.so.1.0.0
+	-rm $(FILESYSTEM_DIR)/lib/libcharset.so.1
+	-rm $(LIB_DIR)/libiconv.so.2.5.0
+	-rm $(LIB_DIR)/libcharset.so.1.0.0
+	-rm $(LIB_DIR)/libiconv.so
+	-rm $(LIB_DIR)/libcharset.so
+else
+charset_change:
+charset_change_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT_JOYME)),)	
+ifneq ($(strip $(TC_BUILD_RELEASECODE)),)
+homenas:homenas_clean
+	cp $(APP_BINARY_DIR)/$(TCPLATFORM)/dirtest $(FILESYSTEM_DIR)/userfs/bin
+	#cp $(APP_BINARY_DIR)/$(TCPLATFORM)/dirtest $(APP_HOMENAS_DIR_DST)/../resource
+	#$(MAKE) -C $(APP_HOMENAS_DIR_DST)	
+homenas_clean:
+	echo "TC_BUILD_RELEASECODE: dirtest , do nothing!"
+else	
+homenas:homenas_clean
+	$(MAKE) -C $(APP_HOMENAS_DIR) 
+	if test -e $(APP_HOMENAS_DIR)/dirtest; \
+	then echo "Compile dirtest success"; \
+	else echo "Compile dirtest error!"; exit 1; \
+	fi
+	cp $(APP_HOMENAS_DIR)/dirtest $(FILESYSTEM_DIR)/userfs/bin
+	#cp $(APP_HOMENAS_DIR)/dirtest $(APP_HOMENAS_DIR_DST)/../resource
+	#$(MAKE) -C $(APP_HOMENAS_DIR_DST)
+homenas_clean:
+	$(MAKE) -C $(APP_HOMENAS_DIR)  clean
+	#$(MAKE) -C $(APP_HOMENAS_DIR_DST) clean
+	-rm -rf $(FILESYSTEM_DIR)/userfs/bin/dirtest
+endif
+else
+homenas:
+homenas_clean:
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT_L2TP_VPN)),)	
+xl2tpd:
+	$(MAKE) -C $(APP_XL2TPD_DIR)
+	if test -e $(APP_XL2TPD_DIR)/xl2tpd_install/sbin/xl2tpd; \
+	then echo "Compile xl2tpd success"; \
+	else echo "Compile xl2tpd error!"; exit 1; \
+	fi
+	cp $(APP_XL2TPD_DIR)/xl2tpd_install/sbin/xl2tpd  $(FILESYSTEM_DIR)/userfs/bin/
+	
+xl2tpd_clean:
+	$(MAKE) -C $(APP_XL2TPD_DIR) clean
+	-rm $(APP_XL2TPD_DIR)/xl2tpd_install/sbin/xl2tpd
+else
+xl2tpd:
+xl2tpd_clean:
+endif

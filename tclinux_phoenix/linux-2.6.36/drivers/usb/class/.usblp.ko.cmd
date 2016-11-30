@@ -1,0 +1,1 @@
+cmd_drivers/usb/class/usblp.ko := mips-buildroot-linux-gnu-ld -r  -m elf32btsmip -T /opt/tclinux_phoenix/linux-2.6.36/scripts/module-common.lds --build-id  -o drivers/usb/class/usblp.ko drivers/usb/class/usblp.o drivers/usb/class/usblp.mod.o

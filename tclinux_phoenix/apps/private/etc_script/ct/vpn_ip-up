@@ -1,0 +1,44 @@
+#!/bin/sh
+
+#		$1         $2  $3      $4         $5          $6    
+#/etc/ppp/ip-up interface tty speed local-IP local-IP-mask remote-IP
+
+# vpn node
+vpn_node=`expr $8 - 100`
+vpn_entry="VPN_Entry$vpn_node"
+route_table_node=`expr $8 - 100 + 300`
+interface=$1
+ip=$4
+mask=$5
+gateway=$6
+fw_mark=$7
+
+/bin/mkdir -p /var/run/xl2tpd/$vpn_node
+echo $ip > /var/run/xl2tpd/$vpn_node/ip
+echo $mask > /var/run/xl2tpd/$vpn_node/netmask
+echo $gateway > /var/run/xl2tpd/$vpn_node/gateway
+
+if [ -n "$DNS1" ] ; then
+	echo "$DNS1" > /var/run/xl2tpd/$vpn_node/dns
+fi
+if [ -n "$DNS2" ] ; then
+	echo "$DNS2" >> /var/run/xl2tpd/$vpn_node/dns
+fi
+
+echo "up" > /var/run/xl2tpd/$vpn_node/status
+
+/usr/bin/ip rule add from $ip/32 table $route_table_node
+/usr/bin/ip rule add fwmark 0x$fw_mark/0x7f0000 table $route_table_node
+/usr/bin/ip route add default via $gateway dev $interface table $route_table_node
+/usr/bin/ip route del $gateway/32 dev $interface table main
+/usr/bin/iptables -t mangle -D OUTPUT -o $interface -j MARK --set-mark 0x$fw_mark/0x7f0000
+/usr/bin/iptables -t mangle -A OUTPUT -o $interface -j MARK --set-mark 0x$fw_mark/0x7f0000
+/sbin/route del -net $ip netmask $mask dev $interface
+/usr/bin/ip route flush cache 2>/dev/null
+
+/userfs/bin/tcapi set $vpn_entry ip "$ip"
+/userfs/bin/tcapi set $vpn_entry netmask $mask
+/userfs/bin/tcapi set $vpn_entry gateway $gateway
+/userfs/bin/tcapi set $vpn_entry status up
+/userfs/bin/tcapi set $vpn_entry vpnstatus 0
+

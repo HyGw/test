@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<!-- SECTION: Man Pages -->
+<head>
+	<style type='text/css'><!--
+	h1, h2, h3, p { font-family: sans-serif; text-align: justify; }
+	tt, pre a:link, pre a:visited, tt a:link, tt a:visited { font-weight: bold; color: #7f0000; }
+	pre { font-weight: bold; color: #7f0000; margin-left: 2em; }
+	h1.title, h2.title, h3.title { border-bottom: solid 2px #000000; }
+	--></style>
+	<title>lpmove(8)</title>
+</head>
+<body>
+<h2><a name='NAME'>Name</a></h2>
+lpmove - move a job or all jobs to a new destination
+<h2><a name='SYNOPSIS'>Synopsis</a></h2>
+<b>lpmove
+</b>[ -E ] [ -h
+<i>server[:port]
+</i>] [ -U
+<i>username
+</i>]
+<i>job destination
+</i><br>
+<b>lpmove
+</b>[ -E ] [ -h
+<i>server[:port]
+</i>] [ -U
+<i>username
+</i>]
+<i>source destination
+</i><h2><a name='DESCRIPTION'>Description</a></h2>
+<b>lpmove</b> moves the specified <i>job</i> or all jobs from
+<i>source</i> to <i>destination</i>. <i>job</i> can be the job ID
+number or the old destination and job ID:
+<br>
+<pre>
+
+     lpmove 123 newprinter
+     lpmove oldprinter-123 newprinter
+</pre>
+<h2><a name='OPTIONS'>Options</a></h2>
+The <i>lpmove</i> command supports the following options:
+<dl>
+<dt>-E
+</dt>
+<dd>Forces encryption when connecting to the server.
+</dd>
+<dt>-U username
+</dt>
+<dd>Specifies an alternate username.
+</dd>
+<dt>-h server[:port]
+</dt>
+<dd>Specifies an alternate server.
+</dd>
+</dl>
+<h2><a name='SEE_ALSO'>See Also</a></h2>
+<a href='man-cancel.html?TOPIC=Man+Pages'>cancel(1)</a>, <a href='man-lp.html?TOPIC=Man+Pages'>lp(1)</a>,
+<br>
+<a href='http://localhost:631/help'>http://localhost:631/help</a>
+<h2><a name='COPYRIGHT'>Copyright</a></h2>
+Copyright 2007 by Apple Inc.
+
+</body>
+</html>

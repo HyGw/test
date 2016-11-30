@@ -1,0 +1,5 @@
+- The analog module of the DVB-C should be detected automatically.
+
+- If you are using a Technotrend/Hauppauge DVB-C card *without* analog module,
+  you might have to use module parameter adac=-1 (dvb-ttpci.o).
+

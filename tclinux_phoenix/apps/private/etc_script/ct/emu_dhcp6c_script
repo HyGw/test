@@ -1,0 +1,27 @@
+#!/bin/sh
+
+STATE=$1
+DEVICE=$interface
+
+if [ "$STATE" != "release" ] ; then
+	if [ -n "$iana_0" ] ; then
+		echo $iana_0 > /var/run/$DEVICE/ip6
+		echo "64" > /var/run/$DEVICE/prefix6
+	fi
+
+	if [ -f /var/run/$DEVICE/dns6 ]; then
+		rm /var/run/$DEVICE/dns6
+	fi
+
+	if [ -n "$dslite_address" ] ; then
+		echo $dslite_address > /var/run/$DEVICE/dsliteaddr
+	fi
+	if [ -n "$dslite_name" ] ; then
+		echo $dslite_name > /var/run/$DEVICE/dslitename
+	fi
+
+	for nameserver in $new_domain_name_servers; do
+		echo $nameserver >> /var/run/$DEVICE/dns6 
+	done
+fi
+

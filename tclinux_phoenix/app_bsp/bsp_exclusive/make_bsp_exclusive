@@ -1,0 +1,42 @@
+ifneq ($(strip $(BSP)),)
+bsp_exclusive: busybox_bsp
+bsp_exclusive_clean: busybox_bsp_clean
+else
+bsp_exclusive:
+	echo "bsp_exclusive nothing to do in SDK version"
+bsp_exclusive_clean:
+	echo "bsp_exclusive nothing to do in SDK version"
+endif
+
+#Build busybox-1.00 for bsp
+busybox_bsp:
+	echo "Building Busybox-1.00 for BSP"
+
+	#copy mow kernel config as busybox_config to support release BSP
+	cp $(APP_BUSYBOX_BSP_DIR)/busybox_config $(APP_BUSYBOX_BSP_DIR)/.config
+	echo "" > $(APP_BUSYBOX_BSP_DIR)/.depend
+	
+	#$(MAKE) -C $(APP_BUSYBOX_BSP_DIR) clean
+	$(MAKE) -C $(APP_BUSYBOX_BSP_DIR)
+	if test -e $(APP_BUSYBOX_BSP_DIR)/busybox; \
+	then echo "Compile BusyBox success"; \
+	else echo "Compile BusyBox error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_BUSYBOX_BSP_DIR) install
+	
+ifneq ($(TCSUPPORT_TRACEROUTE),)
+	rm -f $(FILESYSTEM_DIR)/usr/bin/traceroute
+	ln -fs ../../bin/busybox $(FILESYSTEM_DIR)/usr/bin/traceroute
+endif
+
+busybox_bsp_menuconfig:
+	echo "busybox menuconfig"
+	echo "Building Busybox menuconfig"
+
+	$(MAKE) -C $(APP_BUSYBOX_BSP_DIR) menuconfig
+	
+busybox_bsp_clean:
+	echo "Clean Busybox-1.00"
+	$(MAKE) -C $(APP_BUSYBOX_BSP_DIR) clean
+	
+###########################################################################################

@@ -1,0 +1,356 @@
+diff -Naur valgrind-1.9.4.orig/coregrind/vg_syscalls.c valgrind-1.9.4/coregrind/vg_syscalls.c
+--- valgrind-1.9.4.orig/coregrind/vg_syscalls.c	2003-02-24 22:58:01.000000000 +0100
++++ valgrind-1.9.4/coregrind/vg_syscalls.c	2003-03-03 07:25:43.000000000 +0100
+@@ -2365,6 +2365,335 @@
+		KERNEL_DO_SYSCALL(tid,res);
+		break;
+
++            /* DVB (Digital Video Broadcasting) related stuff
++             * http://www.linuxtv.org
++             */
++	    case AUDIO_STOP:
++	    case AUDIO_PLAY:
++	    case AUDIO_PAUSE:
++	    case AUDIO_CONTINUE:
++	    case AUDIO_SELECT_SOURCE:
++	    case AUDIO_SET_MUTE:
++	    case AUDIO_SET_AV_SYNC:
++	    case AUDIO_SET_BYPASS_MODE:
++	    case AUDIO_CHANNEL_SELECT:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case AUDIO_GET_STATUS:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(AUDIO_GET_STATUS)", arg3,
++                         sizeof(audio_status_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(audio_status_t));
++                 break;
++	    case AUDIO_GET_CAPABILITIES:
++		 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(AUDIO_GET_CAPABILITIES)", arg3,
++                         sizeof(unsigned int));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(unsigned int));
++                 break;
++	    case AUDIO_CLEAR_BUFFER:
++	    case AUDIO_SET_ID:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case AUDIO_SET_MIXER:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(AUDIO_SET_MIXER)", arg3,
++                         sizeof(audio_mixer_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case AUDIO_SET_STREAMTYPE:
++	    case AUDIO_SET_EXT_ID:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case AUDIO_SET_ATTRIBUTES:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(AUDIO_SET_ATTRIBUTES)", arg3,
++                         sizeof(audio_attributes_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case AUDIO_SET_KARAOKE:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(AUDIO_SET_KARAOKE)", arg3,
++                         sizeof(audio_karaoke_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case CA_RESET:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case CA_GET_CAP:
++		 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(CA_GET_CAP)", arg3,
++                         sizeof(ca_caps_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(ca_caps_t));
++                 break;
++	    case CA_GET_SLOT_INFO:
++		 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(CA_GET_SLOT_INFO)", arg3,
++                         sizeof(ca_slot_info_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(ca_slot_info_t));
++                 break;
++	    case CA_GET_DESCR_INFO:
++		 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(CA_GET_DESCR_INFO)", arg3,
++                         sizeof(ca_descr_info_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(ca_descr_info_t));
++                 break;
++	    case CA_GET_MSG:
++		 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(CA_GET_MSG)", arg3,
++                         sizeof(ca_msg_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(ca_msg_t));
++                 break;
++	    case CA_SEND_MSG:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(CA_SEND_MSG)", arg3,
++                         sizeof(ca_msg_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case CA_SET_DESCR:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(CA_SET_DESCR)", arg3,
++                         sizeof(ca_descr_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case CA_SET_PID:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(CA_SET_PID)", arg3,
++                         sizeof(ca_pid_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++            case DMX_START:
++            case DMX_STOP:
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case DMX_SET_FILTER:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(DMX_SET_FILTER)", arg3,
++                         sizeof(struct dmx_sct_filter_params));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case DMX_SET_PES_FILTER:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(DMX_SET_PES_FILTER)", arg3,
++                         sizeof(struct dmx_pes_filter_params));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case DMX_SET_BUFFER_SIZE:
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case DMX_GET_EVENT:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(DMX_GET_EVENT)", arg3,
++                         sizeof(struct dmx_event));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(struct dmx_event));
++                 break;
++            case DMX_GET_PES_PIDS:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(DMX_GET_PES_PIDS)", arg3,
++                         5*sizeof(uint16_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, 5*sizeof(uint16_t));
++                 break;
++            case DMX_GET_CAPS:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(DMX_GET_CAPS)", arg3,
++                         sizeof(dmx_caps_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(dmx_caps_t));
++                 break;
++            case DMX_SET_SOURCE:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(DMX_SET_SOURCE)", arg3,
++                         sizeof(dmx_source_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case FE_GET_INFO:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(FE_GET_INFO)", arg3,
++                         sizeof(struct dvb_frontend_info));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(struct dvb_frontend_info));
++                 break;
++            case FE_DISEQC_RESET_OVERLOAD:
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case FE_DISEQC_SEND_MASTER_CMD:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(FE_DISEQC_SEND_MASTER_CMD)", arg3,
++                         sizeof(struct dvb_diseqc_master_cmd));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case FE_DISEQC_RECV_SLAVE_REPLY:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(FE_DISEQC_RECV_SLAVE_REPLY)", arg3,
++                         sizeof(struct dvb_diseqc_slave_reply));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(struct dvb_diseqc_slave_reply));
++                 break;
++            case FE_DISEQC_SEND_BURST:
++            case FE_SET_TONE:
++            case FE_SET_VOLTAGE:
++            case FE_ENABLE_HIGH_LNB_VOLTAGE:
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case FE_READ_STATUS:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(FE_READ_STATUS)", arg3,
++                         sizeof(fe_status_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(fe_status_t));
++                 break;
++            case FE_READ_BER:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(FE_READ_BER)", arg3,
++                         sizeof(uint32_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(uint32_t));
++                 break;
++            case FE_READ_SIGNAL_STRENGTH:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(FE_READ_SIGNAL_STRENGTH)", arg3,
++                         sizeof(uint16_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(uint16_t));
++                 break;
++            case FE_READ_SNR:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(FE_READ_SNR)", arg3,
++                         sizeof(uint16_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(uint16_t));
++                 break;
++            case FE_READ_UNCORRECTED_BLOCKS:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(FE_READ_UNCORRECTED_BLOCKS)", arg3,
++                         sizeof(uint32_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(uint32_t));
++                 break;
++            case FE_SET_FRONTEND:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(FE_SET_FRONTEND)", arg3,
++                         sizeof(struct dvb_frontend_parameters));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case FE_GET_FRONTEND:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(FE_GET_FRONTEND)", arg3,
++                         sizeof(struct dvb_frontend_parameters));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(struct dvb_frontend_parameters));
++                 break;
++            case FE_GET_EVENT:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(FE_GET_EVENT)", arg3,
++                         sizeof(struct dvb_frontend_event));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(struct dvb_frontend_event));
++                 break;
++	    case NET_ADD_IF:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(NET_ADD_IF (pid, uint16_t))",
++			 (int) &(((struct dvb_net_if *) arg3)->pid),
++                         sizeof(((struct dvb_net_if *) arg3)->pid));
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(NET_ADD_IF (if_num, uint16_t))",
++			 (int) &(((struct dvb_net_if *) arg3)->if_num),
++                         sizeof(((struct dvb_net_if *) arg3)->if_num));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(struct dvb_net_if));
++                 break;
++	    case NET_REMOVE_IF:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case NET_GET_IF:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(NET_GET_IF (if_num, uint16_t))",
++			 (int) &(((struct dvb_net_if *) arg3)->if_num),
++			 sizeof(((struct dvb_net_if *) arg3)->if_num));
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(NET_GET_IF (pid, uint16_t))",
++			 (int) &(((struct dvb_net_if *) arg3)->pid),
++                         sizeof(((struct dvb_net_if *) arg3)->pid));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(struct dvb_net_if));
++                 break;
++	    case OSD_SEND_CMD:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(OSD_SEND_CMD)", arg3,
++                         sizeof(osd_cmd_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++	    case VIDEO_STOP:
++	    case VIDEO_PLAY:
++	    case VIDEO_FREEZE:
++	    case VIDEO_CONTINUE:
++	    case VIDEO_SELECT_SOURCE:
++	    case VIDEO_SET_BLANK:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case VIDEO_GET_STATUS:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(VIDEO_GET_STATUS)", arg3,
++                         sizeof(struct video_status));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(struct video_status));
++                 break;
++	    case VIDEO_GET_EVENT:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(VIDEO_GET_EVENT)", arg3,
++                         sizeof(struct video_event));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(struct video_event));
++                 break;
++	    case VIDEO_SET_DISPLAY_FORMAT:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case VIDEO_STILLPICTURE:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(VIDEO_STILLPICTURE)", arg3,
++                         sizeof(struct video_still_picture));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++	    case VIDEO_FAST_FORWARD:
++	    case VIDEO_SLOWMOTION:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case VIDEO_GET_CAPABILITIES:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(VIDEO_GET_CAPABILITIES)", arg3,
++                         sizeof(unsigned int));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(unsigned int));
++                 break;
++	    case VIDEO_CLEAR_BUFFER:
++	    case VIDEO_SET_ID:
++	    case VIDEO_SET_STREAMTYPE:
++	    case VIDEO_SET_FORMAT:
++	    case VIDEO_SET_SYSTEM:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case VIDEO_SET_HIGHLIGHT:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(VIDEO_SET_HIGHLIGHT)", arg3,
++                         sizeof(video_highlight_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++	    case VIDEO_SET_SPU:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(VIDEO_SET_SPU)", arg3,
++                         sizeof(video_spu_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++	    case VIDEO_SET_SPU_PALETTE:
++                 SYSCALL_TRACK( pre_mem_read,tst, "ioctl(VIDEO_SET_SPU_PALETTE)", arg3,
++                         sizeof(video_spu_palette_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++	    case VIDEO_GET_NAVI:
++                 SYSCALL_TRACK( pre_mem_write,tst, "ioctl(VIDEO_GET_NAVI)", arg3,
++                         sizeof(video_navi_pack_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    VG_TRACK( post_mem_write,arg3, sizeof(video_navi_pack_t));
++                 break;
++#if 0
++	    /* FIXME: conflicts with NET_REMOVE_IF - both are _IO('o', 53) */
++	    case VIDEO_SET_ATTRIBUTES:
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++#endif
++
+	     /* We don't have any specific information on it, so
+		try to do something reasonable based on direction and
+		size bits.  The encoding scheme is described in
+diff -Naur valgrind-1.9.4.orig/coregrind/vg_unsafe.h valgrind-1.9.4/coregrind/vg_unsafe.h
+--- valgrind-1.9.4.orig/coregrind/vg_unsafe.h	2002-10-05 17:18:27.000000000 +0200
++++ valgrind-1.9.4/coregrind/vg_unsafe.h	2003-03-03 07:00:37.000000000 +0100
+@@ -86,6 +86,13 @@
+
+ #include <sys/poll.h>
+
++#include <linux/dvb/audio.h>
++#include <linux/dvb/ca.h>
++#include <linux/dvb/dmx.h>
++#include <linux/dvb/frontend.h>
++#include <linux/dvb/net.h>
++#include <linux/dvb/osd.h>
++#include <linux/dvb/video.h>
+
+ /*--------------------------------------------------------------------*/
+ /*--- end                                              vg_unsafe.h ---*/

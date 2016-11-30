@@ -1,0 +1,11 @@
+prefix=/proj/mtk11340/Code1/newkernel_0420/BBN_Linux/DEV/main/tclinux_phoenix/apps/public/mtd-utils/install_e2fs
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: blkid
+Description: Block device id library
+Version: 1.42.13
+Requires.private: uuid
+Cflags: -I${includedir}/blkid -I${includedir}
+Libs: -L${libdir} -lblkid

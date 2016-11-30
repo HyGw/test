@@ -1,0 +1,1000 @@
+  109  pwd
+  110  ls
+  111  pwd
+  112  cd main
+  113  ls
+  114  cd DEV/main/tclinux_phoenix/
+  115  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT  pppd
+  116  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT bundle_monitor
+  117  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT bundle_monitor_clean
+  118  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT bundle_monitor
+  119  cd ..
+  120  cd tclinux_phoenix/
+  121  pwd
+  122  pwd
+  123  cd 
+  124  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_20150916/tclinux_phoenix/apps/public/OSGi/felix-framework-5.0.0/
+  125  ls
+  126  cp ~/yume1/BBN_Linux/Branch/Branch_for_CTC_JOYME_20150610/tclinux_phoenix/apps/public/OSGi/felix-framework-5.0.0/conf/ ./ -rf
+  127  ls
+  128  pwd
+  129  ls
+  130  cd conf/
+  131  ls
+  132  cd Perforce/joyme_project_v1/BBN_Linux/Branch/Branch_for_CTC_JOYME_20150610/
+  133  cd tclinux_phoenix/
+  134  history
+  135   osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager
+  136  cd apps/private/mobile-manager/
+  137  ls
+  138  mtkbuild -s -x mobile-manager -o .
+  139  p4v &
+  140  p4v &
+  141  cd ..
+  142  cd ...
+  143  cd 
+  144  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_20150916/tclinux_phoenix/
+  145   osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT bundle_monitor
+  146   osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT bundle_monitor_clean
+  147   osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT bundle_monitor_clean
+  148   osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT bundle_monitor_clean
+  149  pwd
+  150  pwd
+  151  cd 
+  152  cd Perforce/joyme_project_v1/BBN_Linux/Branch/Branch_for_CTC_JOYME_20150610/tclinux_phoenix/
+  153   osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager
+  154   osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager
+  155  cd apps/private/mobile-manager/
+  156  mtkbuild -s -x mobile-manager -o .
+  157  pwd
+  158  ethtool
+  159  cd yume1/BBN_Linux/Branch/Branch_for_CTC_JOYME_20150610/tclinux_phoenix/
+  160  history
+  161  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT 
+  162  man strtoll
+  163  pwd
+  164  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT apps_clean apps
+  165  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_20150916/tclinux_phoenix/
+  166  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT 
+  167  pwd
+  168  mtkbuild -s -x tclinux.bin -o Project/images/
+  169  pwd
+  170  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT 
+  171  pwd
+  172  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager
+  173  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT cfg_manager
+  174  cd apps/private/cfg_manager_ct/
+  175  ls
+  176  mtkbuild -s -x cfg_manager -o .
+  177  cd ../..
+  178  cd ..
+  179  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT cfg_manager
+  180  mtkbuild -s -x cfg_manager -o apps/private/cfg_manager_ct/
+  181  pwd
+  182  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT drivers
+  183  cd modules/private/raeth/
+  184  ls
+  185  mtkbuild -s -x raeth.ko -o ./
+  186  cd ..
+  187  cd ..
+  188  cd ..
+  189  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  190  pwd
+  191  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT voip_apps drivers
+  192  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT apps_voip drivers
+  193  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT voip_app drivers
+  194  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  195  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT voip_app drivers
+  196  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  197  p4v &
+  198  pwd
+  199  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  200  pwd
+  201  p4v &
+  202  p4v 
+  203  ps
+  204  killall p4v.bin
+  205  ps
+  206  p4v &
+  207  ps
+  208  pwd
+  209  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile_manager 
+  210  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager 
+  211  mtkbuild -s -x mobile-manager -o apps/private/mobile-manager/
+  212  p4v &
+  213  cd yume1/BBN_Linux/Branch/Branch_for_CTC_JOYME_20150610/tclinux_phoenix/
+  214  mtkbuild -s -x tclinux.bin -o Project/images/
+  215  pwd
+  216  mtkbuild -s -x tclinux.bin -o Project/images/
+  217  pwd
+  218  histroy
+  219  pwd
+  220  cd ../../
+  221  cd ..
+  222  ls
+  223  cd DEV/main/tclinux_phoenix/
+  224  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT 
+  225  pwd
+  226  p4v &
+  227  p4v &
+  228  pwd
+  229  cd ..
+  230  cd ..
+  231  ls
+  232  cd main/
+  233  ls
+  234  chmod 777 voip_framework/ -R
+  235  cd voip_framework/
+  236  ls
+  237   osbnq fakeroot make mtk_sip_clean mtk_dsp_clean && osbnq fakeroot make PROTO=SIP && osbnq fakeroot make release
+  238  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_VOIP_20150916/
+  239  ls
+  240  cd voip_framework/
+  241  ls
+  242  osbnq fakeroot make release
+  243   osbnq fakeroot make mtk_sip_clean mtk_dsp_clean && osbnq fakeroot make PROTO=SIP && osbnq fakeroot make release
+  244  cd ../..
+  245  ls
+  246  cd..
+  247  cd ..
+  248  cd DEV/
+  249  ls
+  250  cd main/
+  251  ls
+  252  cd tclinux_phoenix/
+  253  history
+  254   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT
+  255   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT voip_app drivers buildimage
+  256  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_20150916/tclinux_phoenix/
+  257  p4v &
+  258  pwd
+  259  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT clean
+  260  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT 
+  261  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT apps
+  262  pwd
+  263  chmod 777 ./ -R
+  264  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT apps
+  265  pwd
+  266  mtkbuild -s -x tclinux.bin -o Project/images/
+  267  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT buildimage
+  268  pwd
+  269  mtkbuild -s -x tclinux.bin -o Project/images/
+  270  pwd
+  271  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT 
+  272  pwd
+  273  pwd
+  274  mtkbuild -s -x tclinux.bin -o Project/images/
+  275  pwd
+  276  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT clean
+  277  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT 
+  278  pwd
+  279  p4v &
+  280  pwd
+  281  pwd
+  282  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT menuconfig 
+  283  grep "PINGPONG" Project/profile/CT/CT_4P7592_IMSSIP_NAND_MT7570_JOYME/ -R
+  284  grep "PINGPONG" Project/profile/CT/CT_4P7592_IMSSIP_NAND_MT7570_JOYME/ -R
+  285  grep "PINGPONG" Project/profile/CT/CT_4P7592_IMSSIP_NAND_MT7570_JOYME/ -R
+  286  pwd
+  287  pwd
+  288  pwd
+  289  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT voip_app drivers buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  290  pwd
+  291  pwd
+  292  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager
+  293  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager
+  294  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager
+  295  mtkbuild -s -x mobile-manager -o apps/private/mobile-manager/
+  296  pwd
+  297  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager
+  298  mtkbuild -s -x mobile-manager -o apps/private/mobile-manager/
+  299  pwd
+  300  cd ..
+  301  cd ..
+  302  cd ..
+  303  cd DEV/
+  304  cd main/voip_framework/
+  305  ls
+  306   osbnq fakeroot make mtk_sip_clean mtk_dsp_clean && osbnq fakeroot make PROTO=SIP && osbnq fakeroot make release
+  307   osbnq fakeroot make mtk_sip_clean mtk_dsp_clean && osbnq fakeroot make PROTO=SIP && osbnq fakeroot make release
+  308  cd 
+  309  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_VOIP_20150916/voip_framework/
+  310  osbnq fakeroot make release
+  311  cd ..
+  312  cd
+  313  cd yume1/BBN_Linux/Branch/Branch_for_CTC_JOYME_20150610/
+  314  cd tclinux_phoenix/
+  315  history
+  316   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT apps
+  317  pwd
+  318  mtkbuild -s -x tclinux.bin -o Project/images/
+  319  cp filesystem/userfs/bin/tr69 -o ./filesystem/userfs/bin/
+  320  mtkbuild -s -x filesystem/userfs/bin/tr69 -o ./filesystem/userfs/bin/
+  321   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT cwmp
+  322  mtkbuild -s -x filesystem/userfs/bin/tr69 -o ./filesystem/userfs/bin/
+  323  ls filesystem/userfs/bin/
+  324  mtkbuild -s -x filesystem/userfs/bin/tr69 -o ./filesystem/userfs/bin/
+  325  cd filesystem/userfs/bin/
+  326  mtkbuild -s -x tr69  -o ./
+  327  cd ..
+  328  cd ..
+  329  cd ..
+  330  pwd
+  331   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  332   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT 
+  333  pwd
+  334  mtkbuild -s -x tclinux.bin -o Project/images/
+  335  pwd
+  336   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT clean
+  337   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT 
+  338  pwd
+  339  cd ..
+  340  cd 
+  341  cd yume1/BBN_Linux/DEV/main/tclinux_phoenix/
+  342  ls
+  343  pwd
+  344   osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT
+  345  pwd
+  346  mtkbuild -s -x tclinux.bin -o Project/images/
+  347  pwd
+  348   osbnq fakeroot make PROFILE= CUSTOM=CT
+  349   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT
+  350  pwd
+  351  mtkbuild -s -x tclinux.bin -o Project/images/
+  352  pwd
+  353   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT clean
+  354   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT
+  355  pwd
+  356  mtkbuild -s -x tclinux.bin -o Project/images/
+  357  pwd
+  358  pwd
+  359   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT
+  360  pwd
+  361  grep "cwmpSetCwmpUrl_CT" apps/public/ -R
+  362  grep "cwmpSetCwmpUrl_CT" apps/public/ -R
+  363  find ./ -name "unopen_ct.c"
+  364  pwd
+  365   osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT menuconfig
+  366  pwe
+  367  pwd
+  368  grep "PINGPONG" Project/profile/CT/CT_4P7592_IMSSIP_NAND_MT7570_JOYME/
+  369  grep "PINGPONG" Project/profile/CT/CT_4P7592_IMSSIP_NAND_MT7570_JOYME/ -R
+  370  grep "PINGPONG" Project/profile/CT/CT_4P7592_IMSSIP_NAND_MT7570_JOYME/ -R
+  371  pwd
+  372  pwd
+  373  cd ..
+  374  cd ..
+  375  cd ..
+  376  cd Branch/Branch_for_CTC_JOYME_20150610/tclinux_phoenix/
+  377   osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT menuconfig
+  378   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT clean
+  379  pwd
+  380  pwd
+  381   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT clean
+  382   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT && mtkbuild -s -x tclinux.bin -o Project/images/
+  383  pwd
+  384  p4v &
+  385  pwd
+  386  mtkbuild -s -x tclinux.bin -o Project/images/
+  387  pwd
+  388   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT busybox
+  389   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT buildimage
+  390  pwd
+  391  mtkbuild -s -x tclinux.bin -o Project/images/
+  392   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT mobile-manager
+  393  mtkbuild -s -x mobile-manager -o apps/private/mobile-manager/
+  394  pwd
+  395   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT voip_app drivers
+  396   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  397  pwd
+  398   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT && mtkbuild -s -x tclinux.bin -o Project/images/
+  399  pwd
+  400  cd Perforce/joyme_project_v1/BBN_Linux/Branch/Branch_for_CTC_JOYME_20150610/
+  401  cd tclinux_phoenix/
+  402  mtkbuild -s -x tclinux.bin -o Project/images/
+  403  pwd
+  404  history
+  405   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT cwmp
+  406  cd filesystem/userfs/bin/
+  407  mtkbuild -s -x tr69 -o ./
+  408  pwd
+  409  cd ../../..
+  410  mtkbuild -s -x tclinux.bin -o Project/images/
+  411   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  412  pwd
+  413   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT cwmp buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  414  pwd
+  415  pwd
+  416   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT cwmp buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  417   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT cwmp buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  418  pwd
+  419   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT cwmp buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  420   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT cwmp buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  421  PWD
+  422  pwd
+  423   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT cwmp buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  424  pwd
+  425   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT cwmp buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  426  pwd
+  427   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT menuconfig
+  428  cd Project/
+  429  grep "PINGPON" apps/private/etc_script/ -R
+  430   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT menuconfig
+  431  grep "PINGPON" Project/config/ -R
+  432   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT menuconfig
+  433   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT menuconfig
+  434  grep "CT_UPG_PINGPONG" Project/MakeFile_Main 
+  435  grep "CT_UPG_PINGPONG" Project/ -R
+  436  grep "CT_UPG_PINGPONG" ./ -R | grep "Makefile"
+  437  grep "CT_UPG_PINGPONG" ./ -R | grep "Makefile"
+  438  grep "CT_UPG_PINGPONG" ./ -R|grep "Makefile"
+  439  grep "CT_UPG_PINGPONG" ./ -R 
+  440   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT 
+  441  pwd
+  442  mtkbuild -s -x tclinux.bin -o Project/images/
+  443  pwd
+  444  mtkbuild -s -x tclinux.bin -o Project/images/
+  445  pwd
+  446  pwd
+  447  pwd
+  448  pwd
+  449  mtkbuild -s -x tclinux.bin -o Project/images/
+  450  mtkbuild -s -x tclinux.bin -o Project/images/
+  451  cd filesystem/userfs/bin/
+  452  echo zzz>zhoujian
+  453  cat zhoujian 
+  454  cd ../../
+  455  cd ..
+  456   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  457   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  458  pwd
+  459  mtkbuild -s -x tclinux.bin -o Project/images/
+  460  pwd
+  461  pwd
+  462   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT cfg_manager buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  463   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT cfg_manager buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  464  pwd
+  465  pwd
+  466  pwd
+  467  cd ../
+  468  cd ..
+  469  ls
+  470  cd ..
+  471  ls
+  472  cd DEV/main/tclinux_phoenix/
+  473  ls Project/images/ -l
+  474  pwd
+  475  cd 
+  476  cd yume1/BBN_Linux/DEV/main/tclinux_phoenix/
+  477  ls Project/images/ -l
+  478  pwd
+  479  mtkbuild -s -x tclinux.bin -o Project/images/
+  480  ls Project/images/ -l
+  481  pwx
+  482  pwd
+  483  cd 
+  484  cd Perforce/joyme_project_v1/BBN_Linux/Branch/Branch_for_CTC_JOYME_20150610/tclinux_phoenix/
+  485  mtkbuild -s -x tclinux.bin -o Project/images/
+  486  pwd
+  487  mtkbuild -s -x tclinux.bin -o Project/images/
+  488  pwd
+  489  cd 
+  490  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_VOIP_20150916/voip_framework/
+  491  osbnq fakeroot make mtk_sip_clean mtk_dsp_clean && osbnq fakeroot make PROTO=SIP && osbnq fakeroot make release
+  492  pwd
+  493  pwd
+  494  cd 
+  495  cd yume1/BBN_Linux/DEV/main/tclinux_phoenix/
+  496  ls
+  497   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_JOYME_CY CUSTOM=CT mobile_manager buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  498   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile_manager buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  499   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  500  pwd
+  501   mtkbuild -s -x tclinux.bin -o Project/images/
+  502  pwd
+  503  mtkbuild -s -x mobile-manager -o apps/private/mobile-manager/
+  504  pwd
+  505   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager 
+  506  mtkbuild -s -x mobile-manager -o apps/private/mobile-manager/
+  507   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager 
+  508  mtkbuild -s -x mobile-manager -o apps/private/mobile-manager/
+  509  p4v &
+  510  pwd
+  511   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT busybox
+  512   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT buildimage
+  513  pwd
+  514  mtkbuild -s -x tclinux.bin -o Project/images/
+  515  pwd
+  516   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT mobile-manager
+  517  mtkbuild -s -x mobile-manager -o apps/private/mobile-manager/
+  518  pwd
+  519  man pthread_con_init
+  520  man pthread_cont_init
+  521  man pthread_init_cond
+  522  man pthread_cond_init
+  523  man pthread_cond_wait
+  524  man 2 connect
+  525  cd 
+  526  cd yume1/
+  527  cd BBN_Linux/DEV/main/
+  528  ls
+  529  cd tclinux_phoenix/
+  530  mtkbuild -s -x tclinux.bin -o Project/images/
+  531  pwd
+  532  cd 
+  533  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_20150916/tclinux_phoenix/
+  534  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT clean
+  535  man pthread_cond_signal
+  536  cd apps/private/dirinfo/
+  537  make
+  538  cd src/
+  539  make
+  540  make
+  541  make
+  542  make
+  543  clean
+  544  clear
+  545  make
+  546  make
+  547  make
+  548  make
+  549  make
+  550  make
+  551  make
+  552  make
+  553  make
+  554  make
+  555  make
+  556  make
+  557  man pthread_mutex_init
+  558  man pthread_cond_init
+  559  make
+  560  make
+  561  make clean
+  562  make
+  563  ls
+  564  make clean
+  565  ls
+  566  ls -la
+  567  make
+  568  make
+  569  man assert
+  570  make
+  571  man stdargs.h
+  572  man stdarg.h
+  573  make
+  574  make
+  575  make
+  576  make
+  577  make
+  578  make
+  579  ls
+  580  mtkbuild -s -x dirtest -o ./
+  581  ls
+  582  mtkbuild -s -x socket_test -o ./
+  583  make
+  584  mtkbuild -s -x socket_test -o ./
+  585  make
+  586  mtkbuild -s -x dirtest
+  587  mtkbuild -s -x dirtest -o .
+  588  make
+  589  make
+  590  make
+  591  mtkbuild -s -x dirtest -o .
+  592  mtkbuild -s -x socket_test -o .
+  593  make
+  594  mktbuild -s -x dirtest -o ./
+  595  mtkbuild -s -x dirtest -o ./
+  596  make
+  597  mtkbuild -s -x dirtest -o ./
+  598  make
+  599  mtkbuild -s -x dirtest -o ./
+  600  make
+  601  mtkbuild -s -x dirtest -o ./
+  602  make
+  603  mtkbuild -s -x dirtest -o ./
+  604  make
+  605  mtkbuild -s -x dirtest -o ./
+  606  mtkbuild -s -x dirtest -o ./
+  607  make
+  608  mtkbuild -s -x dirtest -o ./
+  609  mtkbuild -s -x dirtest -o ./
+  610  make
+  611  mtkbuild -s -x dirtest -o ./
+  612  make
+  613  mtkbuild -s -x dirtest -o ./
+  614  make
+  615  mtkbuild -s -x dirtest -o ./
+  616  make
+  617  mtkbuild -s -x dirtest -o ./
+  618  make
+  619  mtkbuild -s -x dirtest -o ./
+  620  mtkbuild -s -x socket_test -o ./
+  621  mtkbuild -s -x socket_test -o ./
+  622  make
+  623  mtkbuild -s -x dirtest -o ./
+  624  make
+  625  mtkbuild -s -x dirtest -o ./
+  626  make
+  627  mtkbuild -s -x dirtest -o ./
+  628  make
+  629  mtkbuild -s -x dirtest -o ./
+  630  make
+  631  mtkbuild -s -x dirtest -o ./
+  632  make
+  633  mtkbuild -s -x dirtest -o ./
+  634  mtkbuild -s -x socket_test -o ./
+  635  make
+  636  mtkbuild -s -x socket_test -o ./
+  637  make
+  638  mtkbuild -s -x socket_test -o ./
+  639  make
+  640  mtkbuild -s -x socket_test -o ./
+  641  make
+  642  mtkbuild -s -x socket_test -o ./
+  643  mtkbuild -s -x dirtest -o ./
+  644  mtkbuild -s -x socket_test -o ./
+  645  make
+  646  mtkbuild -s -x dirtest -o ./
+  647  ls
+  648  cd 
+  649  cd TO_RD/
+  650  ls
+  651  cd v1
+  652  ls
+  653  cd com.chinatelecom.smartgateway.mangement/
+  654  ls
+  655  cd str
+  656  ls
+  657  cd src
+  658  ls
+  659  pwd
+  660  pwd
+  661  javac -classpath ../lib/felix.jar:../lib/org.apache.felix.configadmin-1.8.4.jar:../lib/json.jar com/chinatelecom/smartgateway/mangement/*.java
+  662  jar -cvfm com.chinatelecom.smartgateway.mangement.jar ../META-INF/MANIFEST.MF com/chinatelecom/smartgateway/mangement/*.class lib/json.jar
+  663  javac -classpath ../lib/felix.jar:../lib/org.apache.felix.configadmin-1.8.4.jar:../lib/json.jar com/chinatelecom/smartgateway/mangement/*.java
+  664  jar -cvfm com.chinatelecom.smartgateway.mangement.jar ../META-INF/MANIFEST.MF com/chinatelecom/smartgateway/mangement/*.class lib/json.jar
+  665  cd
+  666  cd yume1/BBN_Linux/DEV/main/tclinux_phoenix/
+  667  history
+  668  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  669  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_20150916/tclinux_phoenix/
+  670  ls
+  671  pwd
+  672  p4v &
+  673  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT 
+  674  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT samba_ipv6
+  675  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT 
+  676  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT samba_ipv6
+  677  osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT samba_ipv6
+  678  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_VOIP_20150916/voip_framework/
+  679  blkid 
+  680  blkid
+  681  fd
+  682  df
+  683  pwd
+  684   osbnq fakeroot make mtk_sip_clean mtk_dsp_clean && osbnq fakeroot make PROTO=SIP && osbnq fakeroot make release
+  685  df
+  686  mips-linux-uclibc-
+  687  cd 
+  688  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_20150916/tclinux_phoenix/apps/private/dirinfo/src/
+  689  ls
+  690  mips-linux-gcc readU.c -o readu
+  691  mips-linux-gcc readU.c -o readu
+  692  mtkbuild -s -x readu -o ./
+  693  mips-linux-gcc readU.c -o readu
+  694  mips-linux-gcc readU.c -o readu
+  695  mtkbuild -s -o readu -o ./
+  696  mtkbuild -s -x readu -o ./
+  697  mips-linux-gcc readU.c -o readu
+  698  mtkbuild -s -x readu -o ./
+  699  mips-linux-gcc readU.c -o readu
+  700  mtkbuild -s -x readu -o ./
+  701  mips-linux-gcc readU.c -o readu
+  702  mtkbuild -s -x readu -o ./
+  703  mips-linux-gcc readU.c -o readu
+  704  mtkbuild -s -x readu -o ./
+  705  mips-linux-gcc readU.c -o readu
+  706  mtkbuild -s -x readu -o ./
+  707  mips-linux-gcc readU.c -o readu
+  708  mtkbuild -s -x readu -o ./
+  709  mips-linux-gcc readU.c -o readu
+  710  mtkbuild -s -x readu -o ./
+  711  mips-linux-gcc readU.c -o readu
+  712  mtkbuild -s -x readu -o ./
+  713  mips-linux-gcc readU.c -o writeu
+  714  mtkbuild -s -x writeu -o ./
+  715  mips-linux-gcc readU.c -o writeu
+  716  mtkbuild -s -x writeu -o ./
+  717  mips-linux-gcc readU.c -o writeu
+  718  mtkbuild -s -x writeu -o ./
+  719  mips-linux-gcc readu_off.c -o readuo
+  720  mtkbuild -s -x readuo -o .
+  721  mips-linux-gcc readU.c -o writeu 
+  722  mtkbuild -s -x writeu -o .
+  723  mips-linux-gcc readU.c -o writeu 
+  724  mtkbuild -s -x writ
+  725  mips-linux-gcc readu_off.c -o readup
+  726  mips-linux-gcc readu_off.c -o readuo
+  727  mtkbuild -s -x readuo -o .
+  728  mips-linux-gcc readVol.c -o readv
+  729  mips-linux-gcc readVol.c -o readv
+  730  mips-linux-gcc readVol.c -o readv
+  731  mtkbuild -s -x readv -o .
+  732  mips-linux-gcc readVol.c -o readv
+  733  mtkbuild -s -x readv -o .
+  734  make
+  735  mtkbuild -s -x socket_test -o ./
+  736  make
+  737  mtkbuild -s -x dirtest -o ./
+  738  cd yume1/BBN_Linux/DEV/main/
+  739  ls
+  740  cd tclinux_phoenix/
+  741  ls
+  742  pwd
+  743  man strrstr
+  744  man strrchr
+  745  man strrstr
+  746  man access_ok
+  747  man access
+  748  man 2 access
+  749  man mv
+  750  man cp
+  751  man stat
+  752  man 2 stat
+  753  ls
+  754  xs 
+  755  cd
+  756  ls
+  757  rename a.txt b.txt
+  758  ls
+  759  rename b.txt a.txt
+  760  ls
+  761  rename b.txt a.txt
+  762  man rename
+  763  man access]
+  764  man access
+  765  man 2 access
+  766  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_20150916/tclinux_phoenix/
+  767  history
+  768  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT
+  769  pwd
+  770  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT
+  771  mtkbuild -s -x tclinux.bin -o Project/images/
+  772  mtkbuild -s -x osgi.yaffs -o Project/images/
+  773  mlabel
+  774  ntfslabel
+  775  mlabel
+  776  df
+  777  mlabel /dev/sda
+  778  mlabel /dev/sda1
+  779  mlabel /boot
+  780  fdisk
+  781  pwd
+  782  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT voip_app drivers buildimage && mtkbuild -s -x tclinux.bin -o Project/images/
+  783  ntfslabel
+  784  osbnq fakeroot make PROFILE=CT_4P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT busybox_menuconfig
+  785  pwd
+  786  cd apps/private/dirinfo/
+  787  ls
+  788  cd src/
+  789  ls
+  790  mips-linux-gcc readU.c -o readu
+  791  mtkbuild -s -x readu -o ./
+  792  mips-linux-gcc readU.c -o readu
+  793  mtkbuild -s -x readu -o ./
+  794  mips-linux-gcc readU.c -o readu
+  795  mtkbuild -s -x readu -o ./
+  796  mips-linux-gcc readU.c -o readu
+  797  mips-linux-gcc readU.c -o readu
+  798  mtkbuild -s -x readu -o ./
+  799  cd
+  800  cd TO_RD/
+  801  ls
+  802  ls
+  803  tar -xvzf mtools-3.9.8.tar.gz 
+  804  cd mtools-3.9.8
+  805  ls
+  806  ./configure --host=mips-linux-uclibc-
+  807  ./configure -help
+  808  ./configure --host=mips-linux --cross-prefix=mips-linux-uclibc-
+  809  ./configure --host=mips-linux
+  810  vi Makefile
+  811  make
+  812  ls
+  813  file mtools
+  814  make install
+  815  ls
+  816  file mlabel
+  817  ls -l mlabel
+  818  file mtools
+  819  vi Makefile
+  820  make
+  821  make clean
+  822  make
+  823  vi Makefile
+  824  make
+  825  man get_opt
+  826  man getopt
+  827  man 2 getopt
+  828  man 3 getopt
+  829  man seek
+  830  man 2 lseek
+  831  man 2 seek
+  832  man 3 seek
+  833  man  lseek
+  834  man strtol
+  835  cd 
+  836  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_20150916/tclinux_phoenix/apps/public/busybox-1.00/
+  837  find ./ -name "libbb.h" -R
+  838  find ./ -name "libbb.h" -r
+  839  find ./ -name "libbb.h" 
+  840  find ./ -name "mkfs" 
+  841  cd include/
+  842  mips-linux-gcc mkfs_vfat.c -o mkfs
+  843  cd 
+  844  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_20150916/tclinux_phoenix/apps/private/dirinfo/
+  845  ls
+  846  cd src/
+  847  make
+  848  make
+  849  man access
+  850  man 2 access
+  851  make
+  852  man strrchr
+  853  make
+  854  make
+  855  make
+  856  ls
+  857  mktbuild -s -x dirtest -o ./
+  858  mtkbuild -s -x dirtest -o ./
+  859  mtkbuild -s -x socket_test -o ./
+  860  make
+  861  make
+  862  make
+  863  mtkbuild -s -x socket_test -o ./
+  864  make
+  865  mtkbuild -s -x socket_test -o ./
+  866  make
+  867  make
+  868  mtkbuild -s -x socket_test -o ./
+  869  make
+  870  mtkbuild -s -x socket_test -o ./
+  871  make
+  872  mtkbuild -s -x socket_test -o ./
+  873  make
+  874  mtkbuild -s -x dirtest -o .
+  875  man stat
+  876  man 2 stat
+  877  make
+  878  mtkbuild -s -x dirtest -o ./
+  879  make
+  880  mtkbuild -s -x dirtest -o .
+  881  make
+  882  mtkbuild -s -x dirtest -o .
+  883  make
+  884  mtkbuild -s -x dirtest -o .
+  885  make
+  886  mtkbuild -s -x dirtest -o .
+  887  mtkbuild -s -x socket_test -o .
+  888  man cp
+  889  mtkbuild -s -x socket_test -o .
+  890  make
+  891  mtkbuild -s -x dirtest -o .
+  892  make
+  893  mtkbuild -s -x dirtest -o ./
+  894  ls
+  895  grep "open" ./ -R
+  896  grep "open" ./ -Rn
+  897  make
+  898  mtkbuild -s -x dirtest -o ./
+  899  man iconv_open
+  900  man iconv
+  901  man 2 iconv
+  902  man 3 iconv
+  903  gcc format.c -o format
+  904  ./format
+  905  ./format
+  906  ./format
+  907  man 3 iconv
+  908  ./format
+  909  gcc format.c -o format
+  910  ./format
+  911  gcc format.c -o format
+  912  man 3 iconv
+  913  gcc format.c -o format
+  914  ./format
+  915  man 3 iconv
+  916  gcc format.c -o format
+  917  gcc format.c -o format
+  918  ./format
+  919  gcc format.c -o format
+  920  ./format
+  921  gcc format.c -o format
+  922  ./format
+  923  man iconv_open
+  924  gcc format.c -o format
+  925  ./format
+  926  ./format
+  927  ./format
+  928  gcc format.c -o format
+  929  ./format
+  930  ./format
+  931  ./format
+  932  gcc format.c -o format
+  933  ./format
+  934  ./format
+  935  gcc format.c -o format
+  936  ./format
+  937  gcc format.c -o format
+  938  ./format
+  939  ./format
+  940  gcc format.c -o format
+  941  gcc format.c -o format
+  942  gcc format.c -o format
+  943  ./format
+  944  gcc format.c -o format
+  945  ./format
+  946  gcc format.c -o format
+  947  ./format
+  948  ./format
+  949  gcc format.c -o format
+  950  ./format
+  951  man 3 iconv
+  952  gcc format.c -o format
+  953  ./format
+  954  ./format
+  955  ./format
+  956  ./format
+  957  ./format
+  958  ./format
+  959  mips-linux-gcc format.c -o format
+  960  man iconv
+  961  ls
+  962  vi a.txt
+  963  vi b.txt
+  964  man iconv
+  965  iconv -f "ansi" -t "utf-8" b.txt
+  966  iconv -f "ascii" -t "utf-8" b.txt
+  967  iconv -f "ascii" -t "utf-8" b.txt
+  968  iconv -f "ascii" -t "utf-16" b.txt
+  969  iconv -f "ascii" -t "gb2312" b.txt
+  970  iconv -f "ascii" -t "gb2312" b.txt
+  971  gcc format.c -o format
+  972  ./format
+  973  gcc format.c -o format
+  974  ./format
+  975  gcc format.c -o format
+  976  ./format
+  977  gcc format.c -o format
+  978  gcc format.c -o format
+  979  ./format
+  980  gcc format.c -o format
+  981  ./format
+  982  gcc format.c -o format
+  983  ./format
+  984  gcc format.c -o format
+  985  ./format
+  986  gcc format.c -o format
+  987  ./format
+  988  gcc format.c -o format
+  989  ./format
+  990  gcc format.c -o format
+  991  gcc format.c -o format
+  992  ./format
+  993  gcc format.c -o format
+  994  ./format
+  995  gcc format.c -o format
+  996  ./format
+  997  gcc format.c -o format
+  998  ./format
+  999  mips-linux-uclibc-gcc format.c -o format
+ 1000  cd yume1/BBN_Linux/Branch/Branch_for_Rel_EN7512_SDK_20150916/tclinux_phoenix/
+ 1001  cd apps/public/
+ 1002  ls
+ 1003  cd busybox-1.00/
+ 1004  grep "mkfs" ./ -nR
+ 1005  grep "ntfs" ./ -nR
+ 1006  grep "ntfs" ./ -nR
+ 1007  grep "mkfs" ./ -nR
+ 1008  grep "ntfs" ./ -nR
+ 1009  cd ..
+ 1010  cd ..
+ 1011  cd ..
+ 1012  cd linux-2.6.36/
+ 1013  grep "->id_table" ./ -nR
+ 1014  grep "->id_table" ./ -nR
+ 1015  grep "->id_table" ./ -nr
+ 1016  grep "->id_table" 
+ 1017  grep "id_table"  ./ -nR
+ 1018  grep "->id_table"  ./ -nR
+ 1019  grep ">id_table"  ./ -nR
+ 1020  grep "match" ./ -nR | grep "pci"
+ 1021  grep ">match" ./ -nR | grep "pci"
+ 1022  grep "ntfslabel" ./ -nR
+ 1023   grep "ntfslabel" ./ -nR
+ 1024  pwd
+ 1025  cd ..
+ 1026  history
+ 1027   osbnq fakeroot make PROFILE=CT_2P7592_IMSSIP_NAND_MT7570_JOYME CUSTOM=CT buildimage
+ 1028  pwd
+ 1029  mtkbuild -s -x tclinux.bin -o Project/images/
+ 1030  mtkbuild -s -x tclinux.bin -o Project/images/
+ 1031  pwd
+ 1032  cd Project/images/
+ 1033  ls -l
+ 1034  cd ..
+ 1035  cd ..
+ 1036  ls
+ 1037  cd ..
+ 1038  cd ..
+ 1039  cd ..
+ 1040  ls
+ 1041  cd DEV/
+ 1042  ls
+ 1043  cd main/
+ 1044  ls
+ 1045  cd tclinux_phoenix/
+ 1046  mtkbuild -s -x tclinux.bin -o Project/images/
+ 1047  cd ..
+ 1048  cd ..
+ 1049  cd ..
+ 1050  cd Branch/Branch_for_Rel_EN7512_SDK_20150916/tclinux_phoenix/
+ 1051  mtkbuild -s -x tclinux.bin -o Project/images/
+ 1052  pwd
+ 1053  ls
+ 1054  cd 
+ 1055  cd yume1/BBN_Linux/
+ 1056  cd 
+ 1057  cd TO_RD/
+ 1058  ls
+ 1059  cd ntfs-3g_ntfsprogs-2014.2.15
+ 1060  ls
+ 1061  cd ntfsprogs/
+ 1062  ls -l
+ 1063  file mkntfs
+ 1064  cd ..
+ 1065  find ./ -name "mkntfs"
+ 1066  cd ntfsprogs/.libs/
+ 1067  ls -l
+ 1068  file mkntfs
+ 1069  file ntfslabel 
+ 1070  mktbuild -s -x mkntfs -o .
+ 1071  mtkbuild -s -x mkntfs -o .
+ 1072  mtkbuild -s -x ntfslabel -o ./
+ 1073  cd ..
+ 1074  cd ..
+ 1075  cd ..
+ 1076  ls
+ 1077  cd dosfstools-2.11/
+ 1078  ls
+ 1079  vi Makefile
+ 1080  make
+ 1081  make install
+ 1082  cdc output/
+ 1083  cd output/
+ 1084  ls
+ 1085  cd sbin/
+ 1086  ls
+ 1087  ls -l
+ 1088  cd ..
+ 1089  ls
+ 1090  cd usr/
+ 1091  ls
+ 1092  cd man/
+ 1093  ls
+ 1094  cd man8/
+ 1095  ls
+ 1096  vi mkfs.vfat.8 
+ 1097  cd ..
+ 1098  cd ..
+ 1099  cd ..
+ 1100  cd sbin/
+ 1101  ls
+ 1102  mtkbuild -s -x mkdosfs -o ./
+ 1103  ls -l
+ 1104  mtkbuild -s -x dosfsck -o .
+ 1105  man 2 system
+ 1106  man 3 system
+ 1107  history
+ 1108  history > a

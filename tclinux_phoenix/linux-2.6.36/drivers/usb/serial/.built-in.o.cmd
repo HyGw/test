@@ -1,0 +1,1 @@
+cmd_drivers/usb/serial/built-in.o :=  mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o drivers/usb/serial/built-in.o drivers/usb/serial/usbserial.o drivers/usb/serial/ch341.o drivers/usb/serial/cp210x.o drivers/usb/serial/cypress_m8.o drivers/usb/serial/ftdi_sio.o drivers/usb/serial/pl2303.o 

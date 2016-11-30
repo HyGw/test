@@ -1,0 +1,35 @@
+[V1.4.0]
+    1. Use memset() instead of bzero() if not defined.
+
+[V1.3.0]
+    1. Sanity check simplified.
+    2. Use memset instead of bzero if not defined.
+
+[V1.2.5]
+    1. Add RT3x7xQA.exe.
+    2. Updated Windows utilities.
+
+[V1.2.4]
+    1. Fix a bug about oops when closing QA GUI.
+    2. Add RT3883QA.exe.
+    3. Separate the package to Windows folder and Linux folder.
+
+[V1.2.3]
+    1. Modified for new RACFG_CMD.
+    2. Add RT3052QA.exe
+    3. Add RT3x9x_RT3x6x V1.5.2.1 AP.zip
+    4. Add RT2883QA.exe.
+
+[V1.2.2]
+	1. Allowed to have no bridge interface(please ref. to README).
+
+[V1.2.1]
+	1. Support RT2880 new QA GUI(please ref. to README).
+
+[V1.2.0]
+	1. Add "-d" option to increase debugging verbosity (-dd even more)
+	2. Add "-q" option to decrease debugging verbosity (-qq even less)
+
+[V1.1.9]
+	1. Big-endian ATE supported.
+	2. Add RT28xxQA_unicast.exe.

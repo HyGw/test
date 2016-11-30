@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<!-- SECTION: Man Pages -->
+<head>
+	<style type='text/css'><!--
+	h1, h2, h3, p { font-family: sans-serif; text-align: justify; }
+	tt, pre a:link, pre a:visited, tt a:link, tt a:visited { font-weight: bold; color: #7f0000; }
+	pre { font-weight: bold; color: #7f0000; margin-left: 2em; }
+	h1.title, h2.title, h3.title { border-bottom: solid 2px #000000; }
+	--></style>
+	<title>lppasswd(1)</title>
+</head>
+<body>
+<h2><a name='NAME'>Name</a></h2>
+lppasswd - add, change, or delete digest passwords.
+<h2><a name='SYNOPSIS'>Synopsis</a></h2>
+<b>lppasswd
+</b>[
+<i>username
+</i>]
+<br>
+<b>lppasswd
+</b>-a [ -g
+<i>groupname
+</i>]
+<i>username
+</i><br>
+<b>lppasswd
+</b>-x
+<i>username
+</i><h2><a name='DESCRIPTION'>Description</a></h2>
+<i>lppasswd</i> adds, changes, or deletes passwords in the CUPS
+digest password file, <i>passwd.md5</i>. When run by a normal
+user, <i>lppasswd</i> will prompt for the old and new passwords.
+When run by the super-user, <i>lppasswd</i> can add new accounts
+(<i>-a username</i>), change existing accounts (<i>username</i>),
+or delete accounts (<i>-x username</i>) in the digest password
+file. Digest usernames do not have to match local UNIX usernames.
+<h2><a name='OPTIONS'>Options</a></h2>
+<i>lppasswd</i> supports the following options:
+<dl>
+<dt>-g groupname
+</dt>
+<dd>Specifies a group other than the default system group.
+</dd>
+</dl>
+<h2><a name='SECURITY_ISSUES'>Security Issues</a></h2>
+The <i>lppasswd</i> command is installed setuid to root. While
+every attempt has been made to make it secure against exploits
+that could grant super-user privileges to unprivileged users,
+paranoid system administrators may wish to disable or change the
+ownership of the program to an unprivileged account.
+<h2><a name='SEE_ALSO'>See Also</a></h2>
+<a href='man-lp.html?TOPIC=Man+Pages'>lp(1)</a>, <a href='man-lpr.html?TOPIC=Man+Pages'>lpr(1)</a>,
+<br>
+<a href='http://localhost:631/help'>http://localhost:631/help</a>
+<h2><a name='COPYRIGHT'>Copyright</a></h2>
+Copyright 2007 by Apple Inc.
+
+</body>
+</html>

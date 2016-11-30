@@ -1,0 +1,1 @@
+cmd_/opt/tclinux_phoenix/modules/private/fe/en7512/fe_core.o := mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o /opt/tclinux_phoenix/modules/private/fe/en7512/fe_core.o /opt/tclinux_phoenix/modules/private/fe/en7512/fe.o /opt/tclinux_phoenix/modules/private/fe/en7512/fe_api.o 

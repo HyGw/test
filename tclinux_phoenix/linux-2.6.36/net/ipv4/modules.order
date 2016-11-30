@@ -1,0 +1,3 @@
+kernel/net/ipv4/netfilter/iptable_filter.ko
+kernel/net/ipv4/netfilter/ipt_REDIRECT.ko
+kernel/net/ipv4/netfilter/ipt_REJECT.ko

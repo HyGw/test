@@ -1,0 +1,22 @@
+#!/bin/sh
+
+#		$1         $2  $3      $4         $5          $6    
+#/etc/ppp/ip-down interface tty speed local-IP local-IP-mask remote-IP
+
+if [ -f /var/run/$1/ip ]; then
+rm /var/run/$1/ip
+fi
+if [ -f /var/run/$1/netmask ]; then
+rm /var/run/$1/netmask
+fi
+if [ -f /var/run/$1/gateway ]; then
+rm /var/run/$1/gateway
+fi
+if [ -f /var/run/$1/dns ]; then
+rm /var/run/$1/dns
+fi
+
+echo "down" > /var/run/$1/status
+#/userfs/bin/tcapi set WanInfo_Message Type Down
+#/userfs/bin/tcapi set WanInfo_Message Interface $1
+/userfs/bin/tcapi commit WanInfo_Message_$1/4

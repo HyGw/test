@@ -1,0 +1,7 @@
+kernel/drivers/net/mii.ko
+kernel/drivers/net/ppp_generic.ko
+kernel/drivers/net/ppp_deflate.ko
+kernel/drivers/net/bsd_comp.ko
+kernel/drivers/net/pppox.ko
+kernel/drivers/net/pppoe.ko
+kernel/drivers/net/slhc.ko

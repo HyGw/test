@@ -1,0 +1,2 @@
+0x00000000	phy_unregister_cb_handler	/opt/tclinux_phoenix/modules/private/xpon_phy/phy	EXPORT_SYMBOL
+0x00000000	phy_register_cb_handler	/opt/tclinux_phoenix/modules/private/xpon_phy/phy	EXPORT_SYMBOL

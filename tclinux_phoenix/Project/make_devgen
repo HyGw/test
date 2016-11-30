@@ -1,0 +1,274 @@
+devgen:
+	echo "mknod for dev"
+	rm -rf $(FILESYSTEM_DIR)/dev/*
+	mkdir $(FILESYSTEM_DIR)/dev/pts
+	mkdir $(FILESYSTEM_DIR)/dev/shm
+	mknod $(FILESYSTEM_DIR)/dev/console c 4 64
+	mknod $(FILESYSTEM_DIR)/dev/gpio c 10 123
+	mknod $(FILESYSTEM_DIR)/dev/led c 10 151
+ifneq ($(strip $(TCSUPPORT_CT_JOYME2)),)
+	mknod $(FILESYSTEM_DIR)/dev/ubi_ctrl c 10 59
+	mknod $(FILESYSTEM_DIR)/dev/ubi0 c 253 0
+	rm -rf $(FILESYSTEM_DIR)/sys
+	mkdir $(FILESYSTEM_DIR)/sys
+	if test -e $(PROFILE_DIR)/fstab; \
+	then cp $(PROFILE_DIR)/fstab $(FILESYSTEM_DIR)/usr/etc/; \
+	fi
+endif
+ifneq ($(strip $(TCSUPPORT_PORTBIND)),)
+	mknod $(FILESYSTEM_DIR)/dev/pmap c 200 0
+endif
+ifneq ($(strip $(TCSUPPORT_QOS)),)
+	mknod $(FILESYSTEM_DIR)/dev/qostype c 111 2
+ifneq ($(strip $(TCSUPPORT_CT_DS_LIMIT)),)
+	mknod $(FILESYSTEM_DIR)/dev/qos_dslimit c 112 0
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_PON_VLAN)),)
+	mknod $(FILESYSTEM_DIR)/dev/ponvlan c 215 0
+endif
+ifneq ($(strip $(TCSUPPORT_PON_MAC_FILTER)),)
+	mknod $(FILESYSTEM_DIR)/dev/ponmacfilter c 216 0
+endif
+	mknod $(FILESYSTEM_DIR)/dev/vdsp c 245 0
+	mknod $(FILESYSTEM_DIR)/dev/slic c 251 0
+	mknod $(FILESYSTEM_DIR)/dev/spi c 255 0
+ifneq ($(TCSUPPORT_CT_SIMCARD_SEPARATION)$(TCSUPPORT_SIMCARD_GENERAL),)
+	mknod $(FILESYSTEM_DIR)/dev/simcard c 168 0
+endif
+	mknod $(FILESYSTEM_DIR)/dev/mtd b 31 0
+ifneq ($(strip $(TCSUPPORT_MTD_PARTITIONS_CMDLINE)),)
+	if test -e $(TOOLS_DIR)/mknod_mtd.sh; \
+	then echo " mknod mtd partitions"; \
+		chmod 777 $(TOOLS_DIR)/mknod_mtd.sh; \
+		/bin/sh $(TOOLS_DIR)/mknod_mtd.sh $(TCSUPPORT_MTD_PARTITION_NUM) $(FILESYSTEM_DIR); \
+	fi
+else
+ifneq ($(strip $(TCSUPPORT_FWC_ENV)),)
+	mknod $(FILESYSTEM_DIR)/dev/mtd0 c 90 0
+	mknod $(FILESYSTEM_DIR)/dev/mtd1 c 90 2
+	mknod $(FILESYSTEM_DIR)/dev/mtd2 c 90 4
+	mknod $(FILESYSTEM_DIR)/dev/mtd3 c 90 6
+	mknod $(FILESYSTEM_DIR)/dev/mtd4 c 90 8
+	mknod $(FILESYSTEM_DIR)/dev/mtd5 c 90 10
+	mknod $(FILESYSTEM_DIR)/dev/mtd6 c 90 12
+	mknod $(FILESYSTEM_DIR)/dev/mtd7 c 90 14
+	mknod $(FILESYSTEM_DIR)/dev/mtd8 c 90 16
+	mknod $(FILESYSTEM_DIR)/dev/mtd9 c 90 18
+	mknod $(FILESYSTEM_DIR)/dev/mtd10 c 90 20
+	mknod $(FILESYSTEM_DIR)/dev/mtd11 c 90 22
+	mknod $(FILESYSTEM_DIR)/dev/mtd12 c 90 24
+	mknod $(FILESYSTEM_DIR)/dev/mtd13 c 90 26
+	mknod $(FILESYSTEM_DIR)/dev/mtd14 c 90 28
+	mknod $(FILESYSTEM_DIR)/dev/mtd15 c 90 30
+	mknod $(FILESYSTEM_DIR)/dev/mtd16 c 90 32
+	mknod $(FILESYSTEM_DIR)/dev/mtd17 c 90 34
+else
+	mknod $(FILESYSTEM_DIR)/dev/mtd0 c 90 0
+	mknod $(FILESYSTEM_DIR)/dev/mtd1 c 90 2
+	mknod $(FILESYSTEM_DIR)/dev/mtd2 c 90 4
+	mknod $(FILESYSTEM_DIR)/dev/mtd3 c 90 6
+	mknod $(FILESYSTEM_DIR)/dev/mtd4 c 90 8
+	mknod $(FILESYSTEM_DIR)/dev/mtd5 c 90 10
+	mknod $(FILESYSTEM_DIR)/dev/mtd6 c 90 12
+ifneq ($(strip $(TCSUPPORT_DUAL_IMAGE)),)
+	mknod $(FILESYSTEM_DIR)/dev/mtd7 c 90 14
+	mknod $(FILESYSTEM_DIR)/dev/mtd8 c 90 16
+	mknod $(FILESYSTEM_DIR)/dev/mtd9 c 90 18
+ifneq ($(strip $(TCSUPPORT_JFFS2_BLOCK)),)
+	mknod $(FILESYSTEM_DIR)/dev/mtd10 c 90 20
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_FWC_ENV)),)
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock0 b 31 0
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock1 b 31 1
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock2 b 31 2
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock3 b 31 3
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock4 b 31 4
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock5 b 31 5
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock6 b 31 6
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock7 b 31 7
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock8 b 31 8
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock9 b 31 9
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock10 b 31 10
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock11 b 31 11
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock12 b 31 12
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock13 b 31 13
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock14 b 31 14
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock15 b 31 15
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock16 b 31 16
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock17 b 31 17
+else
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock0 b 31 0
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock1 b 31 1
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock2 b 31 2
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock3 b 31 3
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock4 b 31 4
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock5 b 31 5
+ifneq ($(strip $(TCSUPPORT_DUAL_IMAGE)),)
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock6 b 31 6
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock7 b 31 7
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock8 b 31 8
+ifneq ($(strip $(TCSUPPORT_JFFS2_BLOCK)),)
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock9 b 31 9
+endif
+ifneq ($(strip $(TCSUPPORT_SQUASHFS_ADD_YAFFS)),)
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock10 b 31 10
+endif
+ifneq ($(strip $(TCSUPPORT_MULTI_BOOT)),)
+ifneq ($(strip $(TCSUPPORT_DUAL_IMAGE)),)
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock9 b 31 9
+ifneq ($(strip $(TCSUPPORT_SQUASHFS_ADD_YAFFS)),)
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock10 b 31 10
+endif
+else
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock6 b 31 6
+ifneq ($(strip $(TCSUPPORT_SQUASHFS_ADD_YAFFS)),)
+	mknod $(FILESYSTEM_DIR)/dev/mtdblock7 b 31 7
+endif
+endif
+endif
+endif
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_INIC_HOST)),)
+	$(MAKE) -C $(MODULES_FTTDP_INIC_DIR) devgen
+endif
+	mknod $(FILESYSTEM_DIR)/dev/null c 1 3
+	mknod $(FILESYSTEM_DIR)/dev/ppp c 108 0
+	mknod $(FILESYSTEM_DIR)/dev/ptmx c 5 2
+	mknod $(FILESYSTEM_DIR)/dev/ptyp0 c 2 0
+	mknod $(FILESYSTEM_DIR)/dev/ptyp1 c 2 1
+	mknod $(FILESYSTEM_DIR)/dev/ptyp2 c 2 2
+	mknod $(FILESYSTEM_DIR)/dev/sda b 8 0
+	mknod $(FILESYSTEM_DIR)/dev/sda1 b 8 1
+	mknod $(FILESYSTEM_DIR)/dev/sda2 b 8 2
+	mknod $(FILESYSTEM_DIR)/dev/sdb b 8 16
+	mknod $(FILESYSTEM_DIR)/dev/sdb1 b 8 17
+	mknod $(FILESYSTEM_DIR)/dev/sdb2 b 8 18
+	mknod $(FILESYSTEM_DIR)/dev/tty c 5 0
+	mknod $(FILESYSTEM_DIR)/dev/tty0 c 4 0
+	mknod $(FILESYSTEM_DIR)/dev/ttyp0 c 3 0
+	mknod $(FILESYSTEM_DIR)/dev/ttyp1 c 3 1
+	mknod $(FILESYSTEM_DIR)/dev/ttyp2 c 3 2
+	mknod $(FILESYSTEM_DIR)/dev/ttyS0 c 4 64
+ifneq ($(strip $(TCSUPPORT_UART2)),)
+	mknod $(FILESYSTEM_DIR)/dev/ttyS20 c 4 65
+endif
+	mknod $(FILESYSTEM_DIR)/dev/urandom c 1 9
+	mknod $(FILESYSTEM_DIR)/dev/watchdog c 10 130
+ifneq ($(strip $(TCSUPPORT_MUH_TEST)),)
+	mknod $(FILESYSTEM_DIR)/dev/cli c 234 0
+endif
+	mknod $(FILESYSTEM_DIR)/dev/zero c 1 5
+ifneq ($(strip $(TCSUPPORT_FON)),)
+	mknod $(FILESYSTEM_DIR)/dev/tun c 10 200
+endif
+ifneq ($(strip $(TCSUPPORT_USB_NTFS)),)
+	mknod $(FILESYSTEM_DIR)/dev/fuse c 10 229
+	mkdir $(FILESYSTEM_DIR)/dev/misc
+	mknod $(FILESYSTEM_DIR)/dev/misc/fuse c 10 229
+endif
+	mkdir $(FILESYSTEM_DIR)/dev/usb
+ifneq ($(strip $(TCSUPPORT_USB_3G_DONGLE)),)
+	mknod $(FILESYSTEM_DIR)/dev/ttyUSB0 c 188 0
+	mknod $(FILESYSTEM_DIR)/dev/ttyUSB1 c 188 1
+	mknod $(FILESYSTEM_DIR)/dev/ttyUSB2 c 188 2
+	mknod $(FILESYSTEM_DIR)/dev/ttyUSB3 c 188 3
+	mknod $(FILESYSTEM_DIR)/dev/ttyUSB4 c 188 4
+endif
+ifneq ($(strip $(TCSUPPORT_USB_PRINTER_SERVER)),)	
+	mknod $(FILESYSTEM_DIR)/dev/usb/lp0 c 180 0
+	chmod 666 $(FILESYSTEM_DIR)/dev/usb/lp0
+endif
+
+ifneq ($(strip $(TCSUPPORT_USB_CAMERA)),)
+	mknod $(FILESYSTEM_DIR)/dev/usb/video0 c 81 0
+	chmod 666 $(FILESYSTEM_DIR)/dev/usb/video0
+	ln -s /dev/usb/video0 $(FILESYSTEM_DIR)/dev/video0
+endif
+
+ifneq ($(strip $(TCSUPPORT_EIP93_VERIFY)),)
+ifeq ($(strip $(TC_BUILD_RELEASECODE)),)
+	mknod $(FILESYSTEM_DIR)/dev/slad_test c 239 0
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT_BUTTONDETECT)),)
+	mknod $(FILESYSTEM_DIR)/dev/led_button c 248 0
+endif
+
+ifneq ($(strip $(TCSUPPORT_CT_ACCESSLIMIT)),)
+	mknod $(FILESYSTEM_DIR)/dev/accesslimit c 123 0
+endif
+ifneq ($(strip $(TCSUPPORT_CT_URL_FILTER)),)
+	mknod $(FILESYSTEM_DIR)/dev/urlfilter c 124 0
+endif
+ifneq ($(strip $(TCSUPPORT_CT)),)
+ifneq ($(strip $(TCSUPPORT_SYSLOG)),)
+	ln -s /tmp/log $(FILESYSTEM_DIR)/dev/log
+endif
+else
+ifneq ($(strip $(TCSUPPORT_SYSLOG)),)
+	ln -s /var/log/log $(FILESYSTEM_DIR)/dev/log
+endif
+endif
+
+	echo "buildimage: copy voip PCM ,DSP and SLIC drivers"
+ifneq ($(strip $(TCSUPPORT_VOIP)),)
+	mknod $(FILESYSTEM_DIR)/dev/AclDsp c 234 0
+	mknod $(FILESYSTEM_DIR)/dev/FxsDrv c 235 0
+endif
+
+ifneq ($(strip $(TCSUPPORT_RA_HWNAT)),)
+	mknod $(FILESYSTEM_DIR)/dev/hwnat0 c 220 0
+	mknod $(FILESYSTEM_DIR)/dev/acl0 c 230 0
+	mknod $(FILESYSTEM_DIR)/dev/ac0 c 240 0
+	mknod $(FILESYSTEM_DIR)/dev/mtr0 c 250 0
+endif
+
+ifneq ($(strip $(TCSUPPORT_PONMGR)),)
+	mknod $(FILESYSTEM_DIR)/dev/pon c 190 0
+endif
+ifneq ($(strip $(TCSUPPORT_WAN_PTM)),)
+	mknod $(FILESYSTEM_DIR)/dev/ptm c 191 0
+endif
+ifneq ($(strip $(TCSUPPORT_WAN_EPON)),)
+	mknod $(FILESYSTEM_DIR)/dev/epon_mac c 221 0
+endif
+ifneq ($(strip $(TCSUPPORT_GPON_MAPPING) $(TCSUPPORT_EPON_MAPPING)),)
+	mknod $(FILESYSTEM_DIR)/dev/xponmap c 210 0
+endif
+
+ifneq ($(strip $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	mknod $(FILESYSTEM_DIR)/dev/vlanfilter c 252 0
+endif
+
+ifneq ($(strip $(TCSUPPORT_DRIVER_API) $(TCSUPPORT_XPON_HAL_API_EXT)),)
+	mknod $(FILESYSTEM_DIR)/dev/fe c 226 0	
+endif
+
+ifneq ($(strip $(TCSUPPORT_DRIVER_API)),)	
+	mknod $(FILESYSTEM_DIR)/dev/atm c 113 0
+ifneq ($(strip $(TCSUPPORT_WLAN)),)
+	mknod $(FILESYSTEM_DIR)/dev/pcie c 225 0
+endif	
+endif	
+ifneq ($(strip $(TCSUPPORT_QDMA_BUFMGR)),)
+	mknod $(FILESYSTEM_DIR)/dev/qdma_lan c 119 0
+	mknod $(FILESYSTEM_DIR)/dev/qdma_wan c 120 0
+endif
+
+ifneq ($(strip $(TCSUPPORT_FWC_MCST)),)
+	mknod $(FILESYSTEM_DIR)/dev/ecnt_igmp c 253 0
+endif
+
+ifneq ($(strip $(TCSUPPORT_FWC_TRAFFIC_CLASSIFY)),)
+	mknod $(FILESYSTEM_DIR)/dev/traffic_classify c 236 0
+endif
+
+ifneq ($(strip $(TCSUPPORT_FWC_ENV)),)
+	mknod $(FILESYSTEM_DIR)/dev/personality_parm c 237 0
+endif

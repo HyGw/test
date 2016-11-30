@@ -1,0 +1,2 @@
+0x00000000	storm_ctrl_shrehold_lan	/opt/tclinux_phoenix/modules/private/qdma/EN7512/qdma_lan	EXPORT_SYMBOL
+0x00000000	qdma_lan_fwd_timer	/opt/tclinux_phoenix/modules/private/qdma/EN7512/qdma_lan	EXPORT_SYMBOL

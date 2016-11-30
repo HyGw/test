@@ -1,0 +1,178 @@
+#! /bin/sh
+#***************************************************************************
+#                                  _   _ ____  _
+#  Project                     ___| | | |  _ \| |
+#                             / __| | | | |_) | |
+#                            | (__| |_| |  _ <| |___
+#                             \___|\___/|_| \_\_____|
+#
+# Copyright (C) 2001 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
+#
+# This software is licensed as described in the file COPYING, which
+# you should have received as part of this distribution. The terms
+# are also available at https://curl.haxx.se/docs/copyright.html.
+#
+# You may opt to use, copy, modify, merge, publish, distribute and/or sell
+# copies of the Software, and permit persons to whom the Software is
+# furnished to do so, under the terms of the COPYING file.
+#
+# This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
+# KIND, either express or implied.
+#
+###########################################################################
+
+prefix=/proj/vend_sr00011/WorkSpace_4/BBN_Linux/DEV/main/tclinux_phoenix/apps/public/curl-7.48.0/curl
+exec_prefix=${prefix}
+includedir=${prefix}/include
+cppflag_curl_staticlib=
+
+usage()
+{
+    cat <<EOF
+Usage: curl-config [OPTION]
+
+Available values for OPTION include:
+
+  --built-shared says 'yes' if libcurl was built shared
+  --ca        ca bundle install path
+  --cc        compiler
+  --cflags    pre-processor and compiler flags
+  --checkfor [version] check for (lib)curl of the specified version
+  --configure the arguments given to configure when building curl
+  --features  newline separated list of enabled features
+  --help      display this help and exit
+  --libs      library linking information
+  --prefix    curl install prefix
+  --protocols newline separated list of enabled protocols
+  --static-libs static libcurl library linking information
+  --version   output version information
+  --vernum    output the version information as a number (hexadecimal)
+EOF
+
+    exit $1
+}
+
+if test $# -eq 0; then
+    usage 1
+fi
+
+while test $# -gt 0; do
+    case "$1" in
+    # this deals with options in the style
+    # --option=value and extracts the value part
+    # [not currently used]
+    -*=*) value=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+    *) value= ;;
+    esac
+
+    case "$1" in
+    --built-shared)
+        echo yes
+        ;;
+
+    --ca)
+        echo 
+        ;;
+
+    --cc)
+        echo "mips-linux-uclibc-gcc"
+        ;;
+
+    --prefix)
+        echo "$prefix"
+        ;;
+
+    --feature|--features)
+        for feature in IPv6 UnixSockets ""; do
+            test -n "$feature" && echo "$feature"
+        done
+        ;;
+
+    --protocols)
+        for protocol in DICT FILE FTP GOPHER HTTP IMAP POP3 RTSP SMTP TELNET TFTP; do
+            echo "$protocol"
+        done
+        ;;
+
+    --version)
+        echo libcurl 7.48.0
+        exit 0
+        ;;
+
+    --checkfor)
+        checkfor=$2
+        cmajor=`echo $checkfor | cut -d. -f1`
+        cminor=`echo $checkfor | cut -d. -f2`
+        # when extracting the patch part we strip off everything after a
+        # dash as that's used for things like version 1.2.3-CVS
+        cpatch=`echo $checkfor | cut -d. -f3 | cut -d- -f1`
+        checknum=`echo "$cmajor*256*256 + $cminor*256 + ${cpatch:-0}" | bc`
+        numuppercase=`echo 073000 | tr 'a-f' 'A-F'`
+        nownum=`echo "obase=10; ibase=16; $numuppercase" | bc`
+
+        if test "$nownum" -ge "$checknum"; then
+          # silent success
+          exit 0
+        else
+          echo "requested version $checkfor is newer than existing 7.48.0"
+          exit 1
+        fi
+        ;;
+
+    --vernum)
+        echo 073000
+        exit 0
+        ;;
+
+    --help)
+        usage 0
+        ;;
+
+    --cflags)
+        if test "X$cppflag_curl_staticlib" = "X-DCURL_STATICLIB"; then
+          CPPFLAG_CURL_STATICLIB="-DCURL_STATICLIB "
+        else
+          CPPFLAG_CURL_STATICLIB=""
+        fi
+        if test "X${prefix}/include" = "X/usr/include"; then
+          echo "$CPPFLAG_CURL_STATICLIB"
+        else
+          echo "${CPPFLAG_CURL_STATICLIB}-I${prefix}/include"
+        fi
+        ;;
+
+    --libs)
+        if test "X${exec_prefix}/lib" != "X/usr/lib" -a "X${exec_prefix}/lib" != "X/usr/lib64"; then
+           CURLLIBDIR="-L${exec_prefix}/lib "
+        else
+           CURLLIBDIR=""
+        fi
+        if test "Xno" = "Xyes"; then
+          echo ${CURLLIBDIR}-lcurl 
+        else
+          echo ${CURLLIBDIR}-lcurl
+        fi
+        ;;
+
+    --static-libs)
+        if test "Xyes" != "Xno" ; then
+          echo ${exec_prefix}/lib/libcurl.a  
+        else
+          echo "curl was built with static libraries disabled" >&2
+          exit 1
+        fi
+        ;;
+
+    --configure)
+        echo " '--prefix=/proj/vend_sr00011/WorkSpace_4/BBN_Linux/DEV/main/tclinux_phoenix/apps/public/curl-7.48.0/curl' '--target=mips-linux-uclibc' '--host=mips-linux-uclibc' 'CC=mips-linux-uclibc-gcc' '--enable-static' 'CFLAGS= -I/proj/vend_sr00011/WorkSpace_4/BBN_Linux/DEV/main/tclinux_phoenix/global_inc -DTCSUPPORT_CPU_MT7520 -DTC3262 -DTCSUPPORT_MT7510_FE -DTCSUPPORT_MT7530_SWITCH_API -DTCSUPPORT_ADDR_MAPPING  -DTCSUPPORT_MERGED_DSCP_FORMAT -DCONFIG_USE_MT7520_ASIC -DTCSUPPORT_2_6_36_KERNEL -DTCSUPPORT_MT7530_SWITCH_API -DCONFIG_GPON_MAX_TCONT=16 -DTCSUPPORT_WAN_GPON -DTCSUPPORT_XPON_IFC -DCONFIG_GPON_MAX_GEMPORT=256 -DTCSUPPORT_WAN_EPON -DTCSUPPORT_XPON_IFC -DCONFIG_EPON_MAX_LLID=8 -DTCSUPPORT_QDMA_BUFMGR -DTCSUPPORT_GPON_MAPPING -DTCSUPPORT_EPON_MAPPING -DTCSUPPORT_GPON_DOWNSTREAM_MAPPING -DTCSUPPORT_DDR_CALI -DTCSUPPORT_BOOTROM_LARGE_SIZE -DSTART_ADDR=0x80002000 -DTCSUPPORT_FREE_BOOTBASE -DTR068_LED -DTCSUPPORT_I2C -DTCSUPPORT_CT_DNSBIND -DCMD_API -DTCSUPPORT_RA_HWNAT -I/proj/vend_sr00011/WorkSpace_4/BBN_Linux/DEV/main/tclinux_phoenix/modules/private/ra_hwnat_7510 -DTCSUPPORT_RA_HWNAT_ENHANCE_HOOK  -DTCSUPPORT_IPV6 -DIPV6 -DTCSUPPORT_IPV6_ENHANCEMENT -DTCSUPPORT_DSLITE -DTCSUPPORT_IPV6_ADVANCE -DWITHVOIP -DTCSUPPORT_VOIP -DTCSUPPORT_VOIP_MTK -DTCSUPPORT_ECN_SIP -DTCSUPPORT_VOIP_LED_APPCTRL -DTCSUPPORT_PON_VLAN -DTCSUPPORT_PON_MAC_FILTER -DTCSUPPORT_PON_USER_ISOLATION -DTCSUPPORT_PON_VLAN_FILTER -DTCSUPPORT_CWMP -DCWMP -DTCSUPPORT_CT_CWMP_WORK_COMPATIBLE -DTCSUPPORT_CT_STANDARD_E8C -DSSL -DTR143 -DCLMP -DTCSUPPORT_CLMP -DTCSUPPORT_QOS -DCONFIG_QOS -DTCSUPPORT_CT_QOS -DTCSUPPORT_CT_SWQOS -DTCSUPPORT_CT_URL_FILTER -DTCSUPPORT_CT_HWNAT_OFFLOAD -DTCSUPPORT_IGMP_QOS -DTCSUPPORT_PORTBIND -DTCSUPPORT_CT_PORT_BIND -DTCSUPPORT_CT_VLAN_TAG -DTCSUPPORT_GPON_MAPPING -DTCSUPPORT_GPON_DOWNSTREAM_MAPPING -DSTATIC_DHCP -DDHCP_PROFILE -DTCSUPPORT_E8B -DTCSUPPORT_DNSEACHPVC -DTCSUPPORT_MLD_SNOOPING -DTCSUPPORT_MLD_PROXY -DTCSUPPORT_IGMP_SNOOPING -DTCSUPPORT_IGMPSNOOPING_ENHANCE -DTCSUPPORT_MULTICAST_SPEED -DTCSUPPORT_IGMP_PROXY -DTCSUPPORT_SMUX -DCONFIG_DUAL_IMAGE -DTCSUPPORT_GPON_DUAL_IMAGE -DTCSUPPORT_EPON_DUAL_IMAGE -DTCSUPPORT_MT7520_PCIE -DTCSUPPORT_MTD_ENCHANCEMENT -DTCSUPPORT_RESERVEAREA_BLOCK=7 -DTCSUPPORT_BACKUPROMFILE -DTCSUPPORT_PRODUCTIONLINE -DTCSUPPORT_DMS -DTCSUPPORT_DMS_FULL_FORMAT -DTCSUPPORT_IMPROVE_GUI_PERFM -DTCSUPPORT_KEYPARA_STORE -DTCSUPPORT_RANDOM_INFORM -DTCSUPPORT_SYSLOG -DTCSUPPORT_MEMORY_CONTROL -DTCSUPPORT_TRACEROUTE -DTCSUPPORT_CT_INFORM_NODE -DTCSUPPORT_TEST_LED_ALL -DTCSUPPORT_GPON_ATTACK_ENHANCE -DTCSUPPORT_CT -DTCSUPPORT_CT_PPPOEPROXY -DTCSUPPORT_CT_PORT_BIND -DTCSUPPORT_CT_ACCESSLIMIT -DTCSUPPORT_CT_BACKUPROMFILEENCHANCEMENT -DTCSUPPORT_CT_BOOTLOADER_UPGRADE -DTCSUPPORT_CT_E8DDNS -DTCSUPPORT_KEYPARA_STORE -DTCSUPPORT_CT_DEFAULTPARA_STORE -DTCSUPPORT_CT_PORTAL_MANAGEMENT -DTCSUPPORT_CT_NETWORKMANAGESERVICE -DTCSUPPORT_CT_E8GUI -DTCSUPPORT_CT_PON -DTCSUPPORT_CWMP_PRECISE_TIME -DTCSUPPORT_IGMP_QUICK_LEAVE -DTCSUPPORT_CT_PORTSLIMIT -DTCSUPPORT_CT_CWMP_E8BPARAMETER -DTCSUPPORT_CT_2NTP -DTCSUPPORT_CT_5NTP -DTCSUPPORT_CT_NTPSERVERTYPE -DTCSUPPORT_CT_GUIACCESSLIMIT -DTCSUPPORT_CT_ZIPROMFILE -DTCSUPPORT_CT_FW_UPGRADE_16M -DTCSUPPORT_CT_IPPINGDIAGNOSTIC -DTCSUPPORT_CT_IPTV_NODE -DTCSUPPORT_CT_RECONNECT_NODE -DTCSUPPORT_CT_INFORM_NODE -DTCSUPPORT_CT_ALARMMONITOR -DTCSUPPORT_CT_ALGABILITY -DCT_COM_DEVICEREG -DTCSUPPORT_CT_PPPCONN_ERROR -DTCSUPPORT_CT_DHCPC_OPTION60 -DTCSUPPORT_CT_DHCPC_OPTION125 -DTCSUPPORT_CT_DHCP6_OPTION -DTCSUPPORT_VIR_SERVER -DTCSUPPORT_CT_DNSMASQ_MONITOR -DTCSUPPORT_CWMP_XPON -DTCSUPPORT_EPON_ATTACK_ENHANCE -DTCSUPPORT_IGMP_QUICK_LEAVE -DTCSUPPORT_MANUAL_ETHERNET_PORTMAP -DTCSUPPORT_ETHERNET_PORTMAP="-1_1_4_3_2_-1_-1" -DTCSUPPORT_FW_INTERNET_LED -DTCSUPPORT_OOM_RB_NEXT -DTCSUPPORT_MT7530_SWITCH_API -DTCSUPPORT_FTP_CMD -DTCSUPPORT_OMCI -DTCSUPPORT_OMCI_EXTENDED_MSG -DTCSUPPORT_OMCI_CTC -DTCSUPPORT_EPON_OAM -DTCSUPPORT_EPON_OAM_CTC -DTCSUPPORT_EPON_OAM_LAN_DBG -DTCSUPPORT_OMCI_DOT1AG -DTCSUPPORT_HGU_OMCI_MIB_UPLOAD_PPTP_ETH_UNI -DTCSUPPORT_HUAWEI_OLT_VENDOR_SPECIFIC_ME -DTCSUPPORT_OMCI_LAN_DEBUG -DTCSUPPORT_PONMGR -DTCSUPPORT_PMMGR -DPMMGR_DEBUG -DTCSUPPORT_XPON_IGMP -DTCSUPPORT_XPON_LED -DTCSUPPORT_CT_VLAN_BIND -DTCSUPPORT_CT_FULL_ROUTE -DTCSUPPORT_CT_WAN_STAT -DTCSUPPORT_CT_DUAL_IMAGE -DTCSUPPORT_CT_WAN_CHILD_PREFIX -DTCSUPPORT_CT_HWQOS -DTCSUPPORT_CT_DHCP6C_STATUS_CODE -DTCSUPPORT_CT_IPV4_RADIO -DTCSUPPORT_CT_SYSTEM_EX -DTCSUPPORT_CT_DSLITE -DTCSUPPORT_CT_BRIDGEARP_NOFWD_LAN -DTCSUPPORT_CT_UPNP_DM -DTCSUPPORT_CT_SERVICELIST_E8C -DTCSUPPORT_CT_CWMP_ZIPROMFILE -DTCSUPPORT_ZARLINK_LE89156B -DTCSUPPORT_CT_VOIP_SIP -DTCSUPPORT_VOIP_IMSSIP -DNUM_CHANNELS=2 -DTCSUPPORT_CT_VOIP_QOS -DTCSUPPORT_CT_DHCP_PORT_FILTER -DTCSUPPORT_CT_PON_CY -DTCSUPPORT_CT_PON_C9 -DTCSUPPORT_CT_PROLINE_SUPPORT -DTCSUPPORT_RESERVEAREA_EXTEND -DTCSUPPORT_CT_PON_YN -DTCSUPPORT_CT_PON_C9_HUN -DTCSUPPORT_CT_REMOTE_UPG_WEBREDIRECT -DTCSUPPORT_CT_PPP_ONDEMAND -DTCSUPPORT_CT_ADV_DNSPROXY -DTCSUPPORT_CT_2PORTS -DTCSUPPORT_CT_1FXS -DTCSUPPORT_CT_LOOPDETECT -DTCSUPPORT_CT_DHCP_FORCERENEW -DTCSUPPORT_CT_DHCP_ARPPING -DTCSUPPORT_CT_PON_BIND2 -DTCSUPPORT_PON_ROSTELECOM -DTCSUPPORT_C9_ROST_LED -DTCSUPPORT_CT_PORTSLIMIT -DTCSUPPORT_MT7570 -DTCSUPPORT_TR143_CURL_UPLOAD' 'host_alias=mips-linux-uclibc' 'target_alias=mips-linux-uclibc'"
+        ;;
+
+    *)
+        echo "unknown option: $1"
+        usage 1
+        ;;
+    esac
+    shift
+done
+
+exit 0

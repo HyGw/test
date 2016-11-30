@@ -1,0 +1,10 @@
+<node>
+  <interface name="com.ctc.igd1.PingTest">
+    <method name="StartTest">
+      <arg name="restult" direction="out" type="u"/>
+      <arg name="errdesc" direction="out" type="s"/>
+    </method>
+    <property name="PingStatus" type="b" access="readwrite"/>
+    <property name="PingResult" type="b" access="read"/>
+  </interface>
+</node>

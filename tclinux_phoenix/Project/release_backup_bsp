@@ -1,0 +1,47 @@
+#this target will do "make" process for SDK release, with loop of clean>>>make profile[i]>>>backup *.ko , *.o>>> clean....
+release_backup:
+	echo "*****release backup BSP*****"
+ifneq ($(strip $(BSP)),)
+	rm -rf $(APP_DIR)
+endif
+	cp -rf $(TRUNK_DIR)/filesystem $(TRUNK_DIR)/filesystem_clean;
+ifneq ($(strip $(KERNEL_2_6_36)),)
+	for release in ${PROFILE_SELECT} ; \
+	do \
+		echo "*************************************************"; \
+		echo "*************************************************"; \
+		echo "*****$$release making and backup in progress********"; \
+		echo "*************************************************"; \
+		sleep 3;\
+		echo "*************************************************"; \
+		${MAKE} -f "$(PROJECT_DIR)/MakeFile_Main" PROFILE=$${release} KERNEL_2_6_36=1 CUSTOM=${CUSTOM} BSP=1 clean ; if [ $$? != 0 ];then exit 1;fi; \
+		echo "*************************************************"; \
+		${MAKE} -f "$(PROJECT_DIR)/MakeFile_Main"  PROFILE=$${release} KERNEL_2_6_36=1 CUSTOM=${CUSTOM} BSP=1 RELEASEBSP=y bootbase kernel modules app_bsp; if [ $$? != 0 ];then exit 1;fi; \
+		echo "*************************************************"; \
+		${MAKE} -f "$(PROJECT_DIR)/MakeFile_Main" PROFILE=$${release} KERNEL_2_6_36=1 CUSTOM=${CUSTOM} BSP=1 RELEASEBSP=y release_bsp;if [ $$? != 0 ];then exit 1;fi; \
+		echo "**************************************************"; \
+		${MAKE} -f "$(PROJECT_DIR)/MakeFile_Main" PROFILE=$${release} KERNEL_2_6_36=1 CUSTOM=${CUSTOM} BSP=1 clean ; if [ $$? != 0 ];then exit 1;fi; \
+		echo "**************************************************"; \
+	done
+else
+	for release in ${PROFILE_SELECT} ; \
+	do \
+		echo "*************************************************"; \
+		echo "*************************************************"; \
+		echo "*****$$release making and backup in progress********"; \
+		echo "*************************************************"; \
+		sleep 3;\
+		echo "*************************************************"; \
+		${MAKE} -f "$(PROJECT_DIR)/MakeFile_Main" PROFILE=$${release} CUSTOM=${CUSTOM} BSP=1 clean ; if [ $$? != 0 ];then exit 1;fi; \
+		echo "*************************************************"; \
+		${MAKE} -f "$(PROJECT_DIR)/MakeFile_Main"  PROFILE=$${release} CUSTOM=${CUSTOM} BSP=1 RELEASEBSP=y bootbase kernel modules app_bsp; if [ $$? != 0 ];then exit 1;fi; \
+		echo "*************************************************"; \
+		${MAKE} -f "$(PROJECT_DIR)/MakeFile_Main" PROFILE=$${release} CUSTOM=${CUSTOM} BSP=1 RELEASEBSP=y release_bsp;if [ $$? != 0 ];then exit 1;fi; \
+		echo "**************************************************"; \
+		${MAKE} -f "$(PROJECT_DIR)/MakeFile_Main" PROFILE=$${release} CUSTOM=${CUSTOM} BSP=1 clean ; if [ $$? != 0 ];then exit 1;fi; \
+		echo "**************************************************"; \
+	done
+endif
+
+	rm -rf $(TRUNK_DIR)/filesystem;
+	mv -f  $(TRUNK_DIR)/filesystem_clean $(TRUNK_DIR)/filesystem

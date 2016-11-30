@@ -1,0 +1,957 @@
+#!/bin/sh
+PROFILE_CFG=/userfs/profile.cfg
+if [ -f $PROFILE_CFG ] ; then
+    chmod 777 $PROFILE_CFG
+    . $PROFILE_CFG
+fi
+
+if [ "$TCSUPPORT_2_6_36_KERNEL" != "" ] ;then
+	KERNEL_DIR=/lib/modules/2.6.36
+else
+if [ "$TCSUPPORT_3_18_21_KERNEL" != "" ] ;then
+	KERNEL_DIR=/lib/modules/3.18.21
+else
+	KERNEL_DIR=/lib/modules/2.6.22.15
+fi
+fi
+mount -a
+
+/bin/busybox cp -a /usr/etc /tmp
+
+/bin/mkdir -m 0777 -p /tmp/var
+/bin/mkdir -m 0777 -p /var/lock
+/bin/mkdir -m 0777 -p /var/log
+/bin/mkdir -m 0777 -p /var/run
+/bin/mkdir -m 0777 -p /var/sim
+/bin/mkdir -m 0777 -p /var/tmp
+if [ "$TCSUPPORT_CT_MIDWARE" != "" ] ;then
+/bin/mkdir -m 0777 -p /var/ct/tmp
+fi
+if [ "$TCSUPPORT_CT_JOYME" != "" ] ;then
+/bin/mkdir -m 0777 -p /var/osgi
+fi
+insmod $KERNEL_DIR/kernel/net/bridge/netfilter/ebtables.ko
+insmod $KERNEL_DIR/kernel/net/bridge/netfilter/ebtable_filter.ko
+insmod $KERNEL_DIR/kernel/net/bridge/netfilter/ebt_ip.ko
+insmod $KERNEL_DIR/kernel/net/bridge/netfilter/ebt_ip6.ko
+insmod $KERNEL_DIR/kernel/net/netfilter/xt_layer7.ko
+
+if [  "$TCSUPPORT_CT_PORTAL_MANAGEMENT" != "" ] ;then
+insmod $KERNEL_DIR/kernel/net/ipv4/netfilter/ipt_REDIRECT.ko
+fi
+
+if [  "$TCSUPPORT_CT_VLAN_BIND" != "" ] ;then
+insmod $KERNEL_DIR/kernel/net/bridge/netfilter/ebtable_broute.ko
+insmod $KERNEL_DIR/kernel/net/bridge/netfilter/ebt_mark.ko
+insmod $KERNEL_DIR/kernel/net/bridge/netfilter/ebt_vlan.ko
+fi
+
+if [ "$TCSUPPORT_CT_BRIDGEARP_NOFWD_LAN" != "" ] ;then
+insmod $KERNEL_DIR/kernel/net/bridge/netfilter/ebt_arp.ko
+fi
+
+#add for 7570 
+if [ "$TCSUPPORT_MT7570" != "" ] ;then
+/usr/bin/prolinecmd mt7570bob get
+fi
+if [ "$TCSUPPORT_CT_MAXNET_DPI" != "" ] ;then
+insmod /lib/modules/maxnetdpi.ko
+fi
+if [ "$TCSUPPORT_CT_JOYME" != "" ] ;then
+insmod /lib/modules/plugin_netlimit.ko
+fi
+insmod /lib/modules/tcfullcone.ko
+insmod /lib/modules/module_sel.ko
+
+if [ "$TCSUPPORT_CPU_EN7512" != "" ] || [ "$TCSUPPORT_CPU_EN7521" != "" ] ;then
+echo "7512 chip select"	
+CHIPTPYE=`cat /proc/tc3162/sys_chip_type`
+echo "$CHIPTPYE"
+case $CHIPTPYE in
+	7526F)
+		  LEDFILE="/userfs/7526fled.conf" ;;
+	7521F)
+		  LEDFILE="/userfs/7521fled.conf" ;;
+	7521S)
+	    LEDFILE="/userfs/7521sled.conf" ;;  
+	7512)
+	    LEDFILE="/userfs/7512led.conf" ;;
+	7526D)
+	    LEDFILE="/userfs/7526dled.conf" ;;
+	7513)
+	    LEDFILE="/userfs/7513led.conf" ;;
+	7526G)
+	    LEDFILE="/userfs/7526gled.conf" ;;
+	7521G)
+	    LEDFILE="/userfs/7521gled.conf" ;;
+	7513G)
+	    LEDFILE="/userfs/7513gled.conf" ;;
+	7586)
+	    LEDFILE="/userfs/7586led.conf" ;;
+  *)	
+  	  echo "error chip id" ;;		
+  	  
+esac
+	echo $LEDFILE
+	if [ -f $LEDFILE ] ; then 
+	  cp $LEDFILE /tmp/led.conf
+	else
+	 cp /userfs/led.conf /tmp/led.conf;
+	fi
+fi
+
+if [  "$TCSUPPORT_CPU_RT65168" != "" ] ;then
+insmod /lib/modules/pwm.ko
+fi
+
+if [ "$TCSUPPORT_CT_VLAN_TAG" != "" ] ;then
+insmod /lib/modules/vlantag_ct.ko
+fi
+
+if [ "$TCSUPPORT_SMUX" != "" ] ;then
+insmod /lib/modules/tcsmux.ko
+fi
+
+if [ "$TCSUPPORT_PORTBIND" != "" ] && [ "$TCSUPPORT_CUC_SFU" = "" ] ;then
+insmod /lib/modules/tcportbind.ko
+fi
+
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+echo 1 > /proc/sys/net/ipv4/tcp_syncookies
+
+if [ "$TCSUPPORT_CT" != "" ] ;then
+echo 6000 > /proc/sys/net/nf_conntrack_max
+if [ "$TCSUPPORT_CUC" != "" ] ;then
+echo 6000 > /proc/sys/net/ipv4/tcp_max_tw_buckets
+else
+echo 2048 > /proc/sys/net/ipv4/tcp_max_tw_buckets
+fi
+else
+echo 4096 > /proc/sys/net/nf_conntrack_max	
+fi
+
+if [ "$TCSUPPORT_IPV6" != "" ] ;then
+echo "TCSUPPORT_IPV6"
+#Modify gc_stale_time for IPv6 self test
+echo 6000 > /proc/sys/net/ipv6/neigh/default/gc_stale_time
+
+echo 1 >/proc/sys/net/ipv6/conf/all/forwarding
+fi
+
+#krammer add for LAN can't continuous ping to WAN when exchenging the routing mode
+#bug1126
+echo 3 > /proc/sys/net/netfilter/nf_conntrack_icmp_timeout 
+
+echo 0 > /proc/sys/net/ipv4/conf/default/accept_source_route
+echo 0 > /proc/sys/net/ipv4/conf/all/accept_source_route
+
+if [ "$TCSUPPORT_USBHOST" != "" ] ;then
+echo "TCSUPPORT_USBHOST"
+#usb host
+insmod /lib/modules/usbhost/scsi_mod.ko
+insmod /lib/modules/usbhost/scsi_wait_scan.ko
+insmod /lib/modules/usbhost/sd_mod.ko
+insmod /lib/modules/usbhost/nls_base.ko
+insmod /lib/modules/usbhost/nls_ascii.ko
+insmod /lib/modules/usbhost/nls_cp437.ko
+if [ "$TCSUPPORT_CT_FTP_DOWNLOADCLIENT" != "" ] ;then
+insmod /lib/modules/usbhost/nls_cp936.ko
+fi
+insmod /lib/modules/usbhost/fat.ko
+#insmod /lib/modules/usbhost/msdos.ko
+insmod /lib/modules/usbhost/vfat.ko
+insmod /lib/modules/usbhost/usbcore.ko
+if [ "$TCSUPPORT_MUH" != "" ] ;then
+insmod /lib/modules/usbhost/xhci-hcd.ko
+else
+insmod /lib/modules/usbhost/ehci-hcd.ko
+insmod /lib/modules/usbhost/ohci-hcd.ko
+fi
+insmod /lib/modules/usbhost/usb-storage.ko
+if [ "$TCSUPPORT_USB_NTFS" != "" ] ;then
+insmod lib/modules/usbhost/fuse.ko
+fi
+if [ "$TCSUPPORT_USB_3G_DONGLE" != "" ] ;then
+insmod lib/modules/usbhost/usbserial.ko
+insmod lib/modules/usbhost/option.ko
+
+insmod $KERNEL_DIR/kernel/lib/crc-ccitt.ko
+insmod lib/modules/ppp_async.ko
+fi
+if [ "$TCSUPPORT_USB_CAMERA" != "" ] ;then
+insmod lib/modules/usbhost/v4l1-compat.ko
+insmod lib/modules/usbhost/videodev.ko
+insmod lib/modules/usbhost/usbvideo.ko
+insmod lib/modules/usbhost/uvcvideo.ko
+fi
+if [ "$TCSUPPORT_USB_PRINTER_SERVER" != "" ] ;then
+insmod lib/modules/usbhost/usblp.ko
+fi	
+fi
+
+
+
+if [ "$TCSUPPORT_CT_ACCESSLIMIT" != "" ] ;then
+insmod lib/modules/accesslimit.ko
+fi
+
+if [ "$TCSUPPORT_CT_URL_FILTER" != "" ] ;then
+insmod lib/modules/urlfilter.ko
+fi
+
+insmod /lib/modules/tcledctrl.ko
+insmod /lib/modules/tccicmd.ko
+
+if [ "$TCSUPPORT_I2C" != "" ] ;then
+insmod /lib/modules/sif.ko
+fi
+
+if [ "$TCSUPPORT_CT_SIMCARD_SEPARATION" != "" ] ;then
+insmod /lib/modules/mt7510sim.ko
+fi
+
+if [ "$TCSUPPORT_USBDEVICE20" != "" ] ;then
+echo "TCSUPPORT_USBDEVICE20"
+#usb device
+insmod /lib/modules/tc3162_udc20.ko
+insmod /lib/modules/g_ether.ko
+fi
+
+#if [ "$TCSUPPORT_VOIP" != "" ] ;then
+#echo "TCSUPPORT_VOIP"
+#userfs/bin/tcVoIPApiServer &
+#fi
+
+if [ "$TCSUPPORT_CT_PON" = "" ] ;then
+#Startup atmcmd demon
+/usr/bin/atmcmdd &
+sleep 1
+fi
+
+#USB Backup and Restore
+if [ "$TCSUPPORT_CT_USB_BACKUPRESTORE" != "" ] ;then
+/userfs/bin/mtd readflash /tmp/var/romfile.cfg~~ 65536 0 romfile
+fi
+
+#mount yaffs2 or jffs2
+if [ "$TCSUPPORT_CT_JOYME" != "" ] ;then
+insmod /lib/modules/nlk_msg.ko
+insmod /lib/modules/usbhost/nls_utf8.ko
+YAFFS_MTDBLOCK="/dev/mtdblock8"
+if [ "$TCSUPPORT_SQUASHFS_ADD_YAFFS" != "" ] ;then
+mount -t yaffs2 $YAFFS_MTDBLOCK /usr/osgi/ -o tags-ecc-off
+/bin/mkdir -m 0777 -p /usr/osgi/cgroups
+mount -t cgroup -o cpu,memory cpu_memory /usr/osgi/cgroups
+if [ "$?" != "0" ] ;then
+echo "erase yaffs2 and mount again!"
+#mtd erase yaffs
+mount -t yaffs2 $YAFFS_MTDBLOCK /usr/osgi/ -o tags-ecc-off
+/bin/mkdir -m 0777 -p /usr/osgi/cgroups
+mount -t cgroup -o cpu,memory cpu_memory /usr/osgi/cgroups
+else
+echo "mount yaffs2 success!"
+fi
+else
+mount -t jffs2 -o rw /dev/mtdblock8 /usr/osgi/
+if [ "$?" != "0" ] ;then
+echo "erase jffs2 and mount again!"
+#/userfs/bin/mtd erase jffs2
+mount -t jffs2 -o rw /dev/mtdblock8 /usr/osgi/
+else
+echo "mount jffs2 success!"
+fi
+/bin/mkdir -m 0777 -p /usr/osgi/cgroups
+mount -t cgroup -o cpu,memory cpu_memory /usr/osgi/cgroups
+fi
+fi
+/userfs/bin/cfg_manager & 
+if [ "$TCSUPPORT_CT_BLOCK_PROCESS" = "" ] ;then
+echo "sleep 5 after cfg_manager&" 
+sleep 5
+fi
+
+
+#LED GPIO Settings
+CONFFILE=/etc/led.conf
+if [ -f $CONFFILE ]; then
+	chmod 777 $CONFFILE
+	. $CONFFILE
+fi
+if [ "$LAN" != "" ]; then
+	echo $LAN > /proc/tc3162/led_def
+fi
+
+
+if [ "$TCSUPPORT_CT" != "" ] ;then
+/bin/echo 0 > /proc/net/auto_clear_cache
+/bin/echo 0 > /proc/net/auto_kill_process
+/bin/echo 1 > /proc/sys/kernel/panic
+/bin/echo 4096 > /proc/net/skbmgr_driver_max_skb
+/bin/echo 3072 > /proc/net/skbmgr_limit
+/bin/echo 2048 > /proc/net/skbmgr_4k_limit
+/bin/echo 500 > /proc/sys/net/core/netdev_max_backlog
+/bin/echo 3 > /proc/sys/net/netfilter/nf_conntrack_esp_timeout
+fi
+
+if [ "$TCSUPPORT_CPU_TC3162" != "" ] ;then
+echo "insmod tc3162 mac driver" 
+insmod /lib/modules/tc3162l2mac.ko
+fi
+
+if [ "$TCSUPPORT_CPU_TC3162U" != "" ] ;then
+echo "insmod tc3162u mac driver" 
+insmod /lib/modules/tc3162l2mac.ko
+fi
+
+if [ "$TCSUPPORT_CPU_TC3262" != "" ] ;then
+echo "insmod tc3262 gmac driver"
+insmod /lib/modules/tc3262gmac.ko
+fi
+
+if [ "$TCSUPPORT_CPU_TC3182" != ""  -o "$TCSUPPORT_CPU_RT65168" != "" ] ;then
+echo "insmod tc3262 gmac driver"
+insmod /lib/modules/tc3262gmac.ko
+if [ "$TCSUPPORT_CPU_RT65168" != "" ] && [ "$TCSUPPORT_VOIP" = "" ];then
+echo 8 >/proc/irq/22/smp_affinity
+fi
+if [ -f "/proc/tc3162/sys_has_2gmac" ] ;then
+insmod /lib/modules/tc3262gmac1.ko
+fi	
+fi
+
+if [ "$TCSUPPORT_FWC_MCST" != "" ] ;then
+echo "insmod specific ecnt igmp snooping driver"
+insmod /lib/modules/ecnt_igmp.ko
+fi
+
+if [ -f "/proc/tc3162/sys_has_ptm" ] ;then
+if [ "$TCSUPPORT_CT_WAN_PTM" != "" ] ;then
+if [ "$TCSUPPORT_CPU_MT7510" != "" ] ;then
+insmod /lib/modules/mt7510ptm.ko
+else
+insmod /lib/modules/tc3262ptm.ko
+fi
+fi
+fi
+
+if [ "$TCSUPPORT_CPU_RT63365" != "" ] || [ "$TCSUPPORT_CPU_RT63368" != "" ] || [ "$TCSUPPORT_CPU_MT7510" != "" ] || [ "$TCSUPPORT_CPU_MT7520" != "" ] || [ "$TCSUPPORT_CPU_MT7505" != "" ] || [ "$TCSUPPORT_CPU_EN7512" != "" ] || [ "$TCSUPPORT_CPU_EN7521" != "" ] ;then
+if [ "$TCSUPPORT_CPU_EN7512" != "" ] || [ "$TCSUPPORT_CPU_EN7521" != "" ] ;then
+echo "insmod ETH_LAN driver"
+insmod /lib/modules/fe_core.ko
+insmod /lib/modules/qdma_lan.ko
+insmod /lib/modules/eth.ko
+insmod /lib/modules/eth_ephy.ko
+/userfs/bin/qdmamgr_lan set rxratelimit config Enable packet
+/userfs/bin/qdmamgr_lan set rxratelimit value 0 6000
+/userfs/bin/qdmamgr_lan set rxratelimit value 1 1000000
+
+else
+echo "insmod raeth driver"
+insmod /lib/modules/raeth.ko
+fi
+
+if [ "$TCSUPPORT_VOIP" = "" ];then
+echo 8 >/proc/irq/22/smp_affinity
+fi
+fi
+
+ifconfig eth0 0.0.0.0
+
+if [ "$TCSUPPORT_QDMA_BUFMGR" != "" ] ;then
+if [ "$TCSUPPORT_CPU_EN7512" != "" ] || [ "$TCSUPPORT_CPU_EN7521" != "" ] ;then
+insmod /lib/modules/qdma_wan.ko
+/userfs/bin/qdmamgr_wan set rxratelimit config Enable packet
+/userfs/bin/qdmamgr_wan set rxratelimit value 0 6000
+/userfs/bin/qdmamgr_wan set rxratelimit value 1 1000000
+else
+insmod /lib/modules/qdma.ko
+fi
+fi
+
+if [ "$TCSUPPORT_SLM_VERIFY" != "" ] ;then
+insmod /lib/modules/slm_verify.ko
+fi
+
+### for MT7520 modules install
+if [ "$TCSUPPORT_CPU_MT7520" != "" ] || [ "$TCSUPPORT_CPU_EN7521" != "" ] ;then
+insmod /lib/modules/phy.ko
+insmod /lib/modules/xpon.ko
+ifconfig pon up
+if [ "$TCSUPPORT_WAN_GPON" != "" ] ;then
+ifconfig omci up
+fi
+if [ "$TCSUPPORT_WAN_EPON" != "" ] ;then
+ifconfig oam up
+fi
+if [ "$TCSUPPORT_GPON_MAPPING" != "" ] || [ "$TCSUPPORT_EPON_MAPPING" != "" ] ;then
+insmod /lib/modules/xponmap.ko
+fi
+### for MT7510 modules install
+elif [ "$TCSUPPORT_CPU_MT7510" != "" ] ;then
+insmod /lib/modules/tc3162_dmt.ko
+if [ "$TCSUPPORT_ASB_VECTOR" != "" ] ;then
+echo 8 >/proc/irq/23/smp_affinity
+fi
+elif [ "$TCSUPPORT_CPU_MT7505" != "" ] ;then
+echo install dmt for mt7505
+insmod /lib/modules/mt7510sar.ko
+insmod /lib/modules/tc3162_dmt.ko
+### for others
+else
+insmod /lib/modules/tc3162l2sar.ko
+if [ "$TCSUPPORT_CPU_TC3182" != ""  -o "$TCSUPPORT_CPU_RT63365" != ""  -o "$TCSUPPORT_CPU_RT63368" != ""  -o "$TCSUPPORT_CPU_RT65168" != "" ] ;then
+#Binding sar to VPE 2. shnwind add.
+echo 4 >/proc/irq/23/smp_affinity
+fi
+insmod /lib/modules/tc3162_dmt.ko
+fi
+insmod /lib/modules/brg_shortcut.ko
+
+if [ "$TCSUPPORT_CT_PON" != "" ] || [ "$TCSUPPORT_CPU_MT7505" != "" ] ;then
+if [ "$TCSUPPORT_CT_SWQOS" != "" ] ;then
+insmod /lib/modules/swqos.ko
+fi
+fi
+
+if [ "$TCSUPPORT_FWC_TRAFFIC_CLASSIFY" != "" ] ;then
+insmod /lib/modules/traffic_classify.ko
+fi
+
+if [ "$TCSUPPORT_WLAN" != "" ] ;then
+echo "TCSUPPORT_WLAN"
+if [ "$TCSUPPORT_WLAN_RT2561" != "" ] ;then
+echo "TCSUPPORT_WLAN_RT2561"
+insmod /lib/modules/rt61ap.ko
+fi
+if [ "$TCSUPPORT_WLAN_RT3390" != "" ] ;then
+echo "TCSUPPORT_WLAN_RT3390"
+insmod /lib/modules/rt3390ap.ko
+fi
+if [ "$TCSUPPORT_WLAN_RT5392" != "" ] ;then
+echo "TCSUPPORT_WLAN_RT5392"
+insmod /lib/modules/rt5390ap.ko
+fi
+if [ "$TCSUPPORT_WLAN_RT5390" != "" ] ;then
+echo "TCSUPPORT_WLAN_RT5390"
+insmod /lib/modules/rt5390ap.ko
+fi
+if [ "$TCSUPPORT_WLAN_RT3090" != "" ] ;then
+echo "TCSUPPORT_WLAN_RT3090"
+insmod /lib/modules/rt3090ap.ko
+fi
+if [ "$TCSUPPORT_WLAN_MULTIDRIVER" != "" ] ;then
+echo "TCSUPPORT_WLAN_MULTIDRIVER"
+if [ "$TCSUPPORT_CT_WLAN_WAPI" != "" ] ;then
+insmod /lib/modules/wapi_module.ko
+fi
+insmod /lib/modules/rt3593ap.ko
+fi
+if [ "$TCSUPPORT_DUAL_WLAN_MT7612E" != "" ] ;then
+echo "TCSUPPORT_DUAL_WLAN_MT7612E"
+insmod /lib/modules/mt7662e_ap.ko
+fi
+if [ "$TCSUPPORT_WLAN_MT7592" != "" ] ;then
+echo "TCSUPPORT_WLAN_MT7592"
+insmod /lib/modules/mt7603eap.ko
+fi
+fi
+
+# support QoS
+if [ "$TCSUPPORT_QOS" != "" ] ;then
+insmod $KERNEL_DIR/kernel/net/sched/act_mirred.ko
+insmod $KERNEL_DIR/kernel/net/sched/cls_fw.ko
+insmod $KERNEL_DIR/kernel/net/sched/sch_htb.ko
+insmod $KERNEL_DIR/kernel/net/sched/sch_prio.ko
+ifconfig imq0 up
+fi
+
+if [ "$TCSUPPORT_IGMP_SNOOPING" != "" ] ;then
+insmod /lib/modules/igmpsnoop.ko
+fi
+
+if [ "$TCSUPPORT_MLD_SNOOPING" != "" ] ;then
+insmod /lib/modules/mldsnooping.ko
+fi
+
+if [ "$TCSUPPORT_CT_LOOPDETECT" != "" ] ;then
+insmod /lib/modules/loopdetect.ko
+fi
+
+if [ "$TCSUPPORT_EPON_DUMMY" != "" ] ;then
+insmod /lib/modules/bridgedetect.ko
+fi
+
+ifconfig lo 127.0.0.1
+route add -net 127.0.0.0 netmask 255.255.0.0 lo
+
+if [ -f "/proc/tc3162/sys_has_2gmac" ] ;then
+ifconfig eth1 0.0.0.0
+fi	
+if [ "$TCSUPPORT_USBDEVICE20" != "" ] ;then
+echo "TCSUPPORT_USBDEVICE20: ifconfig usb0 0.0.0.0 up"
+ifconfig usb0 0.0.0.0 up
+fi
+
+if [ "$TCSUPPORT_CPU_RT63365" != "" ] || [ "$TCSUPPORT_CPU_MT7510" != "" ] || [ "$TCSUPPORT_CPU_MT7520" != "" ] || [ "$TCSUPPORT_CPU_MT7505" != "" ] || [ "$TCSUPPORT_CPU_EN7512" != "" ] || [ "$TCSUPPORT_CPU_EN7521" != "" ];then
+if [ -f "/proc/tc3162/sys_has_hwnat" ] ;then
+if [ "$TCSUPPORT_RA_HWNAT" != "" ] ;then
+insmod /lib/modules/hw_nat.ko
+fi
+fi	
+fi
+
+if [ "$TCSUPPORT_L2TP_VPN_HWNAT" != "" ] ;then
+insmod /lib/modules/l2tp_offload.ko
+fi
+
+if [ "$TCSUPPORT_CT_WAN_PTM" != "" ] ;then
+hw_nat -U 5 5 5 5
+fi
+
+if [ "$TCSUPPORT_CY" != "" ] || [ "$TCSUPPORT_C7" != "" ] || [ "$TCSUPPORT_CT_ADSL_HN" != "" ];then
+echo 1 > /proc/tc3162/port_reverse
+fi
+
+if [ "$TCSUPPORT_CT_PON_CJ" != "" ] || ([ "$TCSUPPORT_CT_PON_CY" != "" ] && [ "$TCSUPPORT_CT_PON_C9" = "" ]) || [ "$TCSUPPORT_CT_PON_CJZ" != "" ] || [ "$TCSUPPORT_CT_PON_C5" != "" ] || [ "$TCSUPPORT_CT_PON_C7" != "" ] || [ "$TCSUPPORT_CUC_C5_4P" != "" ] ;then
+echo 1 > /proc/tc3162/port_reverse
+fi
+
+if [ "$TCSUPPORT_CT_PON_CZ_GD" != "" ] ;then
+echo 0 > /proc/tc3162/port_reverse
+fi
+
+if [ "$TCSUPPORT_CT_BLOCK_PROCESS" != "" ] ;then
+echo "start blockProcess===============>"
+/userfs/bin/blockProcess
+fi
+
+brctl addbr br0
+brctl addif br0 eth0
+if [ -f "/proc/tc3162/sys_has_2gmac" ] ;then
+brctl addif br0 eth1
+fi	
+
+if [ "$TCSUPPORT_USBDEVICE20" != "" ] ;then
+echo "TCSUPPORT_USBDEVICE20: brctl addif br0 usb0"
+brctl addif br0 usb0
+fi
+brctl setfd br0 0
+brctl stp br0 off
+
+ifconfig eth0 | sed -n '1p' | sed 's/^.*HWaddr /WAN_MAC=/g' >> /etc/mac.conf
+ifconfig eth0 | sed -n '1p' | sed 's/^.*HWaddr /LAN_MAC=/g' >> /etc/mac.conf
+
+if [ "$TCSUPPORT_WLAN" != "" ] ;then
+echo "TCSUPPORT_WLAN: ifconfig"
+i=0
+CONFFILE=/etc/Wireless/WLAN_APOn
+
+if [ -f $CONFFILE ]; then
+	chmod 777 $CONFFILE
+	. $CONFFILE
+if [ "$TCSUPPORT_CT_WLAN_NODE" != "" ]; then
+	case "$APOn" in
+		"1" )
+			while [ "$i" -lt "$Bssid_num" ];do
+			 	case "$i" in
+			 	"0" )	ifconfig ra$i 0.0.0.0 up
+			                brctl addif br0 ra$i
+                                        if [ "$ssid0" = "" ]; then                                                
+				                        ifconfig ra$i 0.0.0.0 down
+                                                
+                                        fi
+					;;
+				"1" )	ifconfig ra$i 0.0.0.0 up
+			                brctl addif br0 ra$i
+                                        if [ "$ssid1" = "" ]; then                                                
+				                        ifconfig ra$i 0.0.0.0 down
+                                                
+                                        fi
+					;;
+				"2" )	ifconfig ra$i 0.0.0.0 up
+			                brctl addif br0 ra$i
+                                        if [ "$ssid2" = "" ]; then                                                
+				                        ifconfig ra$i 0.0.0.0 down
+                                                
+                                        fi
+					;;
+				"3" )	ifconfig ra$i 0.0.0.0 up
+			                brctl addif br0 ra$i
+                                        if [ "$ssid3" = "" ]; then                                                
+				                        ifconfig ra$i 0.0.0.0 down
+                                                
+                                        fi
+					;;
+				esac
+				i=`expr $i + 1`
+			done
+			;;
+		"0" ) 	while [ "$i" -lt "$Bssid_num" ];do
+					ifconfig ra$i 0.0.0.0 up
+		    	    brctl addif br0 ra$i
+					ifconfig ra$i 0.0.0.0 down
+					i=`expr $i + 1`
+				done
+				;;
+	esac
+else
+	while [ "$i" -lt "$Bssid_num" ];do
+		case "$APOn" in
+			"1" )	ifconfig ra$i 0.0.0.0 up
+				brctl addif br0 ra$i;;
+			"0" )	ifconfig ra$i 0.0.0.0 up
+			        brctl addif br0 ra$i
+				ifconfig ra$i 0.0.0.0 down;;
+		esac	
+		i=`expr $i + 1`
+	done
+fi
+fi
+
+i=0
+CONFFILE=/etc/Wireless/WLAN_APOn_AC
+
+if [ -f $CONFFILE ] ;then
+	chmod 777 $CONFFILE
+	. $CONFFILE
+	if [ "$TCSUPPORT_WLAN_PERSSID_SWITCH" != "" ] ;then
+		case "$APOn" in
+			"1" )
+				ifconfig rai0 0.0.0.0 up
+				ifconfig rai0 0.0.0.0 down
+				while [ "$i" -lt "$Bssid_num" ];do
+				 	case "$i" in
+				 	"0" )
+						if [ "$ssid0" = "1" ] ;then 
+							ifconfig rai$i 0.0.0.0 up
+							brctl addif br0 rai$i
+						fi
+						;;
+					"1" )
+						if [ "$ssid1" = "1" ] ;then
+							ifconfig rai$i 0.0.0.0 up
+			                brctl addif br0 rai$i
+						fi
+						;;
+					"2" )
+						if [ "$ssid2" = "1" ] ;then
+							ifconfig rai$i 0.0.0.0 up
+			                brctl addif br0 rai$i
+						fi
+						;;
+					"3" )
+						if [ "$ssid3" = "1" ] ;then
+							ifconfig rai$i 0.0.0.0 up
+			                brctl addif br0 rai$i
+						fi
+						;;
+					esac
+					i=`expr $i + 1`
+					done
+				;;
+			"0" )
+				while [ "$i" -lt "$Bssid_num" ];do
+					ifconfig rai$i 0.0.0.0 up
+					brctl addif br0 rai$i
+					ifconfig rai$i 0.0.0.0 down
+					i=`expr $i + 1`
+				done			
+				;;
+		esac
+	else
+		while [ "$i" -lt "$Bssid_num" ];do
+			case "$APOn" in
+				"1" )
+					ifconfig rai$i 0.0.0.0 up
+					brctl addif br0 rai$i
+					;;
+				"0" )	
+					ifconfig rai$i 0.0.0.0 up
+					brctl addif br0 rai$i
+					ifconfig rai$i 0.0.0.0 down
+					;;
+			esac	
+		i=`expr $i + 1`
+		done
+	fi
+	
+	if [ "$TCSUPPORT_WLAN_WDS" != "" ] ;then
+		echo "TCSUPPORT_WLAN_WDS"
+		if [ "$APOn" = "1" ] ;then
+		case "$WdsEnable" in
+			"1"|"2"|"3"|"4" )
+					ifconfig wdsi0 0.0.0.0 up
+					brctl addif br0 wdsi0
+					ifconfig wdsi1 0.0.0.0 up
+					brctl addif br0 wdsi1
+					ifconfig wdsi2 0.0.0.0 up
+					brctl addif br0 wdsi2
+					ifconfig wdsi3 0.0.0.0 up
+					brctl addif br0 wdsi3
+				;;
+			"0" )
+				;;
+		esac
+		fi
+	fi
+fi
+
+fi
+
+HOSTNAME=`/userfs/bin/tcapi get Snmpd_Entry sysName`
+# Set the hostname.
+echo $HOSTNAME > /etc/hostname
+hostname -F /etc/hostname
+rm -rf /etc/hostname
+
+if [ "$TCSUPPORT_CPU_TC3262" != "" -o "$TCSUPPORT_CPU_TC3182" != "" ] ;then
+wan ghs set annex a
+wan adsl reset
+fi
+
+tcwdog -t 1 /dev/watchdog &
+
+if [ "$TCSUPPORT_CT_NETWORKMANAGESERVICE" != "" ] ;then
+echo "TCSUPPORT_CT_NETWORKMANAGESERVICE:no need to start utelnetd up in rcs!"
+else
+utelnetd -l /bin/login -d 
+fi
+
+#Web server
+/userfs/bin/boa -c /boaroot -d &
+
+#network function
+if [ "$TCSUPPORT_CT_NETWORKMANAGESERVICE" != "" ] ;then
+echo "TCSUPPORT_CT_NETWORKMANAGESERVICE:no need to use inetd!"
+else
+if [ -f /etc/inetd.conf ]; then
+        /userfs/bin/inetd &
+fi
+fi
+
+#tftp server
+if [ "$TCSUPPORT_CT" != "" ] ;then
+echo "TCSUPPORT_CT:no need to use tftpd!"	
+else	
+/userfs/bin/tftpd &
+fi
+
+#AutoMount
+if [ "$TCSUPPORT_USB_AUTOMOUNT" != "" ] ;then
+/userfs/bin/usb_auto_mount &
+fi
+
+if [ "$TCSUPPORT_MT7520S" != "" -o "$TCSUPPORT_CUC_SFU" != "" ] ;then
+echo "MT7520S single Giga Port"
+/userfs/bin/ethphxcmd eth0 vlanpt disable
+else
+if [ "$TCSUPPORT_TC2031" != "" ] ;then
+echo "signal port"
+else
+echo "four ports"
+if [ "$TCSUPPORT_CT_PON" != "" ] ;then
+	/userfs/bin/ethphxcmd eth0 vlanpt disable
+	/bin/echo 1 > /proc/tc3162/stag_to_vtag
+fi
+/userfs/bin/ethphxcmd eth0 vlanpt enable
+fi
+fi
+
+#. /userfs/startup.sh
+/userfs/bin/tcapi set System_Entry start_up 1
+/userfs/bin/tcapi commit System_Entry
+/userfs/bin/tcapi set System_Entry start_up 0
+
+if [ "$TCSUPPORT_VOIP" != "" ] ;then
+echo 8 > /proc/irq/12/smp_affinity
+taskset -p 0x8 `pidof vtspr`
+fi
+
+if [ "$TCSUPPORT_CPU_EN7521" != "" ] && [ "$TCSUPPORT_DUAL_WLAN_MT7612E" != "" ];then
+echo "bind cpu1"
+echo 8 > /proc/irq/24/smp_affinity
+echo 8 > /proc/irq/25/smp_affinity
+fi
+
+if [ "$TCSUPPORT_CT_E8GUI" != "" ] ;then
+/userfs/bin/tcapi set Account_Entry0 Logged 0
+/userfs/bin/tcapi set Account_Entry1 Logged 0
+/userfs/bin/tcapi set Account_Entry2 Logged 0
+
+if [ "$TCSUPPORT_C1_CUC" != "" -o "$TCSUPPORT_CT_WAN_PTM" != "" -o "$TCSUPPORT_CT_E8B_ADSL" != "" -o "$TCSUPPORT_CT_PON" != "" ] ;then
+echo "ct com"
+else
+if [ "$TCSUPPORT_CT_E8GUI_ONLY" != "" ] ;then
+/userfs/bin/tcapi set Account_Entry0 display_mask 'FF FF FF FF FF FA FF FF FF'
+fi
+fi
+fi
+
+if [ "$TCSUPPORT_CPU_TC3262" != "" -o "$TCSUPPORT_CPU_TC3182" != "" ] ;then
+w rts dbg off
+fi
+
+w dmt2 set largeD 2
+
+#USB Backup and Restore
+if [ "$TCSUPPORT_CT_USB_BACKUPRESTORE" != "" ] ;then
+sh /usr/script/restore.sh
+fi
+
+if [ "$TCSUPPORT_CPU_MT7520" != "" ] || [ "$TCSUPPORT_CPU_EN7521" != "" ] ;then
+#pon vlan 
+if [ "$TCSUPPORT_PON_VLAN" != "" ] ;then
+insmod /lib/modules/ponvlan.ko
+fi
+#pon igmp snooping
+if [ "$TCSUPPORT_XPON_IGMP" != "" ] ;then
+insmod /lib/modules/xpon_igmp.ko
+fi
+if [ "$TCSUPPORT_PON_MAC_FILTER" != "" ] ;then
+insmod /lib/modules/ponmacfilter.ko
+fi
+if [ "$TCSUPPORT_MAX_PACKET_2000" != "" ] ;then
+ifconfig eth0 mtu 2000
+ifconfig eth0.1 mtu 2000
+ifconfig eth0.2 mtu 2000
+ifconfig eth0.3 mtu 2000
+ifconfig eth0.4 mtu 2000
+ifconfig ra0 mtu 2000
+ifconfig br0 mtu 2000
+fi
+fi
+
+#epon_dummy_detect
+if [ "$TCSUPPORT_EPON_DUMMY" != "" ] ;then
+/userfs/bin/epon_dummy_detect &
+sleep 1
+taskset -p 0x1 `pidof epon_dummy_detect`
+fi
+
+if [ "$TCSUPPORT_VOIP" != "" ] ;then
+
+echo "MTK DSP support"
+COUNTRY=`/userfs/bin/tcapi get VoIPAdvanced_Common VoIPRegion`
+echo 3 > /proc/sys/vm/drop_caches
+
+if [ -f /userfs/bin/voip_loader ] ;then
+/userfs/bin/voip_loader
+#if [ $? = 0 ];then
+VOIP_LOADER_SUCCESS=yes
+#fi
+fi
+if [ "$VOIP_LOADER_SUCCESS" != "yes" ] ;then
+
+insmod /lib/modules/sys_mod.ko
+insmod /lib/modules/DSPCore.ko
+insmod /lib/modules/pcm1.ko
+insmod /lib/modules/lec.ko
+insmod /lib/modules/spi.ko
+insmod /lib/modules/slic3.ko
+insmod /lib/modules/fxs3.ko slic1="zl88601" slic2="zl88601"
+insmod /lib/modules/ksocket.ko
+insmod /lib/modules/ortp.ko
+insmod /lib/modules/acodec_x.ko
+insmod /lib/modules/foip.ko
+insmod /lib/modules/ovdsp.ko
+insmod /lib/modules/pcmDump.ko
+fi #end of VOIP_LOADER_SUCCESS
+
+sleep 1
+taskset -p 0x8 `pidof ORTP_TASK`
+taskset -p 0x8 `pidof fxs_task`
+taskset -p 0x8 `pidof DSPProc`
+taskset -p 0x8 `pidof DspDlTask`
+taskset -p 0x8 `pidof DspUlTask`
+
+echo "1" >/proc/pcm1/pcmreset
+
+FXSNUM=`cat /proc/fxs/fxsNum`
+FXONUM=`cat /proc/fxs/fxoNum`
+sleep 2
+INFCNUM=`expr $FXSNUM + $FXONUM`
+/userfs/bin/tcapi set VoIPSysParam_Common SC_SYS_CFG_MAX_LINE $INFCNUM
+/userfs/bin/tcapi set VoIPSysParam_Common SC_SYS_CFG_MAX_ACCT $INFCNUM
+STRMNUM=`expr $INFCNUM \* 2`
+/userfs/bin/tcapi set VoIPSysParam_Common SC_SYS_CFG_MAX_CALL $STRMNUM
+echo "[VOIP] Usage: $INFCNUM acct $STRMNUM"
+/userfs/bin/tcapi set VoIPSysParam_Common SlicFXSNum "$FXSNUM"
+/userfs/bin/tcapi set VoIPSysParam_Common SlicFXONum "$FXONUM"
+if [ "$FXSNUM" = "2" ] ;then
+/userfs/bin/tcapi set VoIPBasic_Common VoIPLine2Enable Yes
+else
+/userfs/bin/tcapi set VoIPBasic_Common VoIPLine2Enable No
+fi
+#/userfs/bin/sipclient &
+if [ "$TCSUPPORT_ECN_SIP" != "" ] || [ "$TCSUPPORT_ECN_MEGACO" != "" ] ;then
+/userfs/bin/tcapi set System_Entry start_up 2
+/userfs/bin/tcapi commit System_Entry
+/userfs/bin/tcapi set System_Entry start_up 0
+
+if [ "$TCSUPPORT_ECN_SIP" != "" ] && [ "$TCSUPPORT_ECN_MEGACO" != "" ] ;then
+SIPPROTOCOL=`/userfs/bin/tcapi get VoIPBasic_Common SIPProtocol`
+usr/bin/killall -9 mgapp
+usr/bin/killall -9 tcVoIPApiServer
+usr/bin/killall -9 sipclient
+
+if [ "$SIPPROTOCOL" != "H.248" ] ;then
+/userfs/bin/sipclient &
+else
+/userfs/bin/tcVoIPApiServer &
+/userfs/bin/mgapp -id 0 &
+fi
+else
+if [ "$TCSUPPORT_ECN_SIP" != "" ];then
+/userfs/bin/sipclient &
+else
+/userfs/bin/tcVoIPApiServer &
+/userfs/bin/mgapp -id 0 &
+fi
+fi
+else
+/userfs/bin/sipapp &
+fi
+#set default value to auto gain control,default disable
+/bin/echo "0 15 -12 0" > /proc/fxs/autogain
+fi
+
+if [ "$TCSUPPORT_CUC" != "" ] || [ "$TCSUPPORT_CT_PON_JS" != "" ] ;then
+/userfs/bin/hw_nat -U 60 60 60 60
+fi
+
+if [ "$TCSUPPORT_GPON_ATTACK_ENHANCE" != "" ] ;then
+echo 1 64 128 100 > /proc/qdma/protect_mode
+echo 1 128 100 > /proc/tc3162/protect_mode
+fi
+
+if [ "$TCSUPPORT_CT_PON_C9" != "" ] ;then
+/bin/echo 1 > /proc/tc3162/eth_forward
+fi
+
+if [ "$TCSUPPORT_CT_DS_LIMIT" != "" ] ;then
+/userfs/bin/tcapi commit DataSpeedLimit
+fi
+
+if [ "$TCSUPPORT_GPON_ATTACK_ENHANCE" != "" ] ;then
+/bin/echo 1 64 128 100 > /proc/qdma/protect_mode
+/bin/echo 1 128 100 > /proc/tc3162/protect_mode
+fi
+
+if [ "$TCSUPPORT_CT_JOYME" != "" ] ;then
+/userfs/bin/usb_monitor &
+/userfs/bin/plugin_monitor & 
+if [ "$TCSUPPORT_CT_JOYME_BANDWIDTH" != "" ] ;then
+/userfs/bin/bandwidth & 
+fi
+fi
+
+if [ "$TCSUPPORT_CT_JOYME" != "" ] ;then
+/userfs/bin/bundle_monitor &
+cd /usr/osgi/felix-framework
+../bin/jamvm -Xms32M -Xmx64M -jar bin/felix.jar &
+fi
+
+if [ "$TCSUPPORT_FWC_MCST" != "" ] ;then
+/userfs/bin/hw_nat -V1
+fi

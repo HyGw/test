@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: mjson-@MILESTONE@
+Description: M's JSON Parser
+Requires:
+Version: @VERSION@
+Libs: -L${libdir} -lmjson-@MILESTONE@
+Cflags: -I${includedir}/mjson-@MILESTONE@
+

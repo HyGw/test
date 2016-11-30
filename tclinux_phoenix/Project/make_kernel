@@ -1,0 +1,328 @@
+autokernel:
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_AUTO)),)
+#No support Purebridge Mode
+#ifneq ($(strip $(TCSUPPORT_PUREBRIDGE)),)
+#	cp $(KERNEL_DIR)/tc3162_pb_config $(PROJECT_AUTOCONFIG_DIR)/kernel.config	
+#else
+	cd $(PROJECT_AUTOCONFIG_DIR) && ./create_kernel_config
+#	cp $(PROJECT_AUTOCONFIG_DIR)/kernel.config $(KERNEL_DIR)/.config
+#endif
+endif
+
+kernel: 
+	echo "build kernel"
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_AUTO)),)
+
+#No support Purebridge Mode
+#ifneq ($(strip $(TCSUPPORT_PUREBRIDGE)),)
+#	cp $(KERNEL_DIR)/tc3162_pb_config $(KERNEL_DIR)/.config
+#	cp $(KERNEL_DIR)/tc3162_pb_config $(PROJECT_AUTOCONFIG_DIR)/kernel.config
+#else
+	cd $(PROJECT_AUTOCONFIG_DIR) && ./create_kernel_config
+	rm -f $(KERNEL_DIR)/.config
+	rm -f $(KERNEL_DIR)/.config.old
+	cp $(PROJECT_AUTOCONFIG_DIR)/kernel.config $(KERNEL_DIR)/.config
+#endif
+	
+else
+
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162)),)
+	cp $(KERNEL_DIR)/tc3162_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162_PB)),)
+	cp $(KERNEL_DIR)/tc3162_pb_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162_VOIP)),)
+	cp $(KERNEL_DIR)/tc3162_voip_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162_IPv6)),)
+	cp $(KERNEL_DIR)/tc3162_ipv6_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162U)),)
+ifneq ($(strip $(TCSUPPORT_DMS)),)
+	cp $(KERNEL_DIR)/tc3162u_dms_config $(KERNEL_DIR)/.config;
+else
+	cp $(KERNEL_DIR)/tc3162u_config $(KERNEL_DIR)/.config;
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162U_IPv6)),)
+	cp $(KERNEL_DIR)/tc3162u_ipv6_config $(KERNEL_DIR)/.config;
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp -f $(KERNEL_DIR)/tc3162u_ipv6_ct_config $(KERNEL_DIR)/.config;
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162U_IPv6_E8B)),)
+	cp $(KERNEL_DIR)/tc3162u_ipv6_e8b_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3262)),)
+	cp $(KERNEL_DIR)/tc3262_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3182)),)
+	cp $(KERNEL_DIR)/tc3182_config $(KERNEL_DIR)/.config;
+#if use new qos mechanism, config kernel
+#ifneq ($(strip $(TCSUPPORT_QOS)),)
+#	cp $(KERNEL_DIR)/tc3182_new_qos_config $(KERNEL_DIR)/.config
+#endif
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(KERNEL_DIR)/tc3182_ct_config $(KERNEL_DIR)/.config
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_RT63165)),)
+	cp $(KERNEL_DIR)/rt63165_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_RT63365)),)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(KERNEL_DIR)/rt63365_ct_config $(KERNEL_DIR)/.config
+else
+	cp $(KERNEL_DIR)/rt63365_config $(KERNEL_DIR)/.config;
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_RT63368)),)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(KERNEL_DIR)/rt63365_ct_config $(KERNEL_DIR)/.config
+else
+	cp $(KERNEL_DIR)/rt63365_config $(KERNEL_DIR)/.config;
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_RT65168)),)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(KERNEL_DIR)/rt65168_ct_config $(KERNEL_DIR)/.config
+else
+	cp $(KERNEL_DIR)/rt65168_config $(KERNEL_DIR)/.config;
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_EN7512)),)
+	cp $(KERNEL_DIR)/en7512_config $(KERNEL_DIR)/.config;
+endif
+
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_EN7521)),)
+	cp $(KERNEL_DIR)/en7512_config $(KERNEL_DIR)/.config;
+endif
+
+
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_MT7510)),)
+ifneq ($(strip $(TCSUPPORT_INIC_CLIENT)),)
+	cp $(KERNEL_DIR)/mt7515_config $(KERNEL_DIR)/.config;
+else
+	cp $(KERNEL_DIR)/mt7510_config $(KERNEL_DIR)/.config;
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_MT7520)),)
+ifeq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(KERNEL_DIR)/mt7520_ct_config $(KERNEL_DIR)/.config;
+else
+	cp $(KERNEL_DIR)/mt7520_config $(KERNEL_DIR)/.config;
+endif
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_MT7505)),)
+	cp $(KERNEL_DIR)/mt7505_config $(KERNEL_DIR)/.config;
+endif
+
+endif
+
+	#copy if user make menuconfig
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL)),)
+	if test -e $(PROFILE_DIR)/kernel_36.config; \
+	then cp $(PROFILE_DIR)/kernel_36.config $(KERNEL_DIR)/.config; \
+	fi
+else
+ifneq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+	if test -e $(PROFILE_DIR)/kernel_3_18.config; \
+	then cp $(PROFILE_DIR)/kernel_3_18.config $(KERNEL_DIR)/.config; \
+	fi
+else
+	if test -e $(PROFILE_DIR)/kernel.config; \
+	then cp $(PROFILE_DIR)/kernel.config $(KERNEL_DIR)/.config; \
+	fi
+endif
+endif
+
+	cp $(APP_BSP_DIR)/script/add_kernel_config.sh $(KERNEL_DIR)/
+	chmod 777 $(KERNEL_DIR)/add_kernel_config.sh
+	cd $(KERNEL_DIR) && ./add_kernel_config.sh $(KERNEL_DIR)/.config $(KERNEL_DIR)/.config_add
+	if test -e $(KERNEL_DIR)/.config_add; \
+	then cp $(KERNEL_DIR)/.config_add $(KERNEL_DIR)/.config; rm $(KERNEL_DIR)/.config_add; \
+	fi
+
+	#copy mow kernel config as kernel_config to support release BSP
+	rm -f $(KERNEL_DIR)/kernel_config
+	cp $(KERNEL_DIR)/.config $(KERNEL_DIR)/kernel_config
+ifneq ($(strip $(TCSUPPORT_PARALLEL_BUILD_KERNEL_OFF)),)
+	@echo -e "\e[31mParallel build kernel disabled, build process will be very slow!\e[0m"
+else
+	@echo -e "\e[33mParallel build kernel enabled, 4-6 minutes are expected to be saved!\e[0m"
+endif
+	$(MAKE) $(TC_PARALLEL_BUILD_PARAM_KERNEL) -C $(KERNEL_DIR) 
+	$(MAKE) $(TC_PARALLEL_BUILD_PARAM_KERNEL) -C $(KERNEL_DIR) linux.7z
+	$(MAKE) $(TC_PARALLEL_BUILD_PARAM_KERNEL) -C $(KERNEL_DIR) modules
+	if test -e $(KERNEL_DIR)/linux.7z; \
+	then echo "Compile kernel success"; \
+	else echo "Compile kernel error!"; exit 1; \
+	fi	
+
+#ifneq ($(strip $(TCSUPPORT_CPU_TC3262)),)
+	$(MAKE) $(TC_PARALLEL_BUILD_PARAM_KERNEL) -C $(KERNEL_DIR) INSTALL_MOD_PATH=$(FILESYSTEM_DIR) modules_install
+#endif
+	rm -rf $(FILESYSTEM_DIR)/lib/modules/2.6.22.15/kernel/drivers/scsi/
+	rm -rf $(FILESYSTEM_DIR)/lib/modules/2.6.22.15/kernel/drivers/usb/
+	rm -rf $(FILESYSTEM_DIR)/lib/modules/2.6.22.15/kernel/fs/
+	rm -rf $(FILESYSTEM_DIR)/lib/modules/2.6.36/kernel/drivers/scsi/
+	rm -rf $(FILESYSTEM_DIR)/lib/modules/2.6.36/kernel/drivers/usb/
+	rm -rf $(FILESYSTEM_DIR)/lib/modules/2.6.36/kernel/fs/	
+#ifneq ($(strip $(TCSUPPORT_CPU_TC3182)),)
+#	$(MAKE) -C $(KERNEL_DIR) INSTALL_MOD_PATH=$(FILESYSTEM_DIR) modules_install
+#endif
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL)),)
+	cd $(FILESYSTEM_DIR)/lib/modules/2.6.36/ && find . -name "*.ko" -type f |xargs $(STRIP) --strip-unneeded 
+endif
+ifneq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+	cd $(FILESYSTEM_DIR)/lib/modules/3.18.21/ && find . -name "*.ko" -type f |xargs $(STRIP) --strip-unneeded 
+endif
+#kernel header install
+ifneq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+	echo "install kernel header"
+	cd $(KERNEL_DIR) && make headers_install
+endif
+kernel_menuconfig:
+	echo "kernel menuconfig"
+	echo "build kernel menuconfig"
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_AUTO)),)
+
+#No support Purebridge Mode
+#ifneq ($(strip $(TCSUPPORT_PUREBRIDGE)),)
+#	cp $(KERNEL_DIR)/tc3162_pb_config $(KERNEL_DIR)/.config
+#	cp $(KERNEL_DIR)/tc3162_pb_config $(PROJECT_AUTOCONFIG_DIR)/kernel.config
+#else
+	cd $(PROJECT_AUTOCONFIG_DIR) && ./create_kernel_config
+	rm -f $(KERNEL_DIR)/.config
+	rm -f $(KERNEL_DIR)/.config.old
+	cp $(PROJECT_AUTOCONFIG_DIR)/kernel.config $(KERNEL_DIR)/.config
+#endif
+	
+else
+
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162)),)
+	cp $(KERNEL_DIR)/tc3162_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162_PB)),)
+	cp $(KERNEL_DIR)/tc3162_pb_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162_VOIP)),)
+	cp $(KERNEL_DIR)/tc3162_voip_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162_IPv6)),)
+	cp $(KERNEL_DIR)/tc3162_ipv6_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162U)),)
+ifneq ($(strip $(TCSUPPORT_DMS)),)
+	cp $(KERNEL_DIR)/tc3162u_dms_config $(KERNEL_DIR)/.config;
+else
+	cp $(KERNEL_DIR)/tc3162u_config $(KERNEL_DIR)/.config;
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162U_IPv6)),)
+	cp $(KERNEL_DIR)/tc3162u_ipv6_config $(KERNEL_DIR)/.config;
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp -f $(KERNEL_DIR)/tc3162u_ipv6_ct_config $(KERNEL_DIR)/.config;
+endif
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3162U_IPv6_E8B)),)
+	cp $(KERNEL_DIR)/tc3162u_ipv6_e8b_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3262)),)
+	cp $(KERNEL_DIR)/tc3262_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_TC3182)),)
+	cp $(KERNEL_DIR)/tc3182_config $(KERNEL_DIR)/.config;
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp -f $(KERNEL_DIR)/tc3182_ct_config $(KERNEL_DIR)/.config;
+endif
+#if use new qos mechanism, config kernel
+#ifneq ($(strip $(TCSUPPORT_QOS)),)
+#	cp $(KERNEL_DIR)/tc3182_new_qos_config $(KERNEL_DIR)/.config
+#endif
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_RT63165)),)
+	cp $(KERNEL_DIR)/rt63165_config $(KERNEL_DIR)/.config;
+endif
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_RT63365)),)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(KERNEL_DIR)/rt63365_ct_config $(KERNEL_DIR)/.config
+else
+	cp $(KERNEL_DIR)/rt63365_config $(KERNEL_DIR)/.config;
+endif
+endif
+
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_MT7510)),)
+	cp $(KERNEL_DIR)/mt7510_config $(KERNEL_DIR)/.config;
+endif
+
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_EN7512)),)
+	cp $(KERNEL_DIR)/en7512_config $(KERNEL_DIR)/.config;
+endif
+
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_EN7521)),)
+	cp $(KERNEL_DIR)/en7512_config $(KERNEL_DIR)/.config;
+endif
+
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_MT7505)),)
+	cp $(KERNEL_DIR)/mt7505_config $(KERNEL_DIR)/.config;
+endif
+
+ifneq ($(strip $(TCSUPPORT_KERNELCONFIG_RT65168)),)
+ifneq ($(strip $(TCSUPPORT_CT)),)
+	cp $(KERNEL_DIR)/rt65168_ct_config $(KERNEL_DIR)/.config
+else
+	cp $(KERNEL_DIR)/rt65168_config $(KERNEL_DIR)/.config;
+endif
+endif
+
+endif
+
+	#copy if user make menuconfig
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL)),)
+	if test -e $(PROFILE_DIR)/kernel_36.config; \
+	then cp $(PROFILE_DIR)/kernel_36.config $(KERNEL_DIR)/.config; \
+	fi
+else
+ifneq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+	if test -e $(PROFILE_DIR)/kernel_3_18.config; \
+	then cp $(PROFILE_DIR)/kernel_3_18.config $(KERNEL_DIR)/.config; \
+	fi
+else
+	if test -e $(PROFILE_DIR)/kernel.config; \
+	then cp $(PROFILE_DIR)/kernel.config $(KERNEL_DIR)/.config; \
+	fi
+endif
+endif
+	
+	cp $(APP_BSP_DIR)/script/add_kernel_config.sh $(KERNEL_DIR)/
+	chmod 777 $(KERNEL_DIR)/add_kernel_config.sh
+	cd $(KERNEL_DIR) && ./add_kernel_config.sh $(KERNEL_DIR)/.config $(KERNEL_DIR)/.config_add
+	if test -e $(KERNEL_DIR)/.config_add; \
+	then cp $(KERNEL_DIR)/.config_add $(KERNEL_DIR)/.config; rm $(KERNEL_DIR)/.config_add; \
+	fi
+
+	#copy mow kernel config as kernel_config to support release BSP
+	rm -f $(KERNEL_DIR)/kernel_config
+	cp $(KERNEL_DIR)/.config $(KERNEL_DIR)/kernel_config
+
+	$(MAKE) -C $(KERNEL_DIR) menuconfig
+#	cp $(KERNEL_DIR)/.config  $(PROFILE_DIR)/kernel_template.config
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL)),)
+	cp $(KERNEL_DIR)/.config  $(PROFILE_DIR)/kernel_36.config
+else
+ifneq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+	cp $(KERNEL_DIR)/.config  $(PROFILE_DIR)/kernel_3_18.config
+else
+	cp $(KERNEL_DIR)/.config  $(PROFILE_DIR)/kernel.config	
+endif
+endif
+kernel_clean:
+	echo "build kernel"
+	$(MAKE) -C $(KERNEL_DIR) clean

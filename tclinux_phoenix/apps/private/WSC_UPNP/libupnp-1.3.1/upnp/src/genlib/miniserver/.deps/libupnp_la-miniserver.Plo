@@ -1,0 +1,361 @@
+src/genlib/miniserver/libupnp_la-miniserver.lo: \
+ src/genlib/miniserver/miniserver.c \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdc-predef.h \
+ src/inc/config.h ../autoconfig.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/arpa/inet.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/features.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/cdefs.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/wordsize.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sgidefs.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/gnu/stubs.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/gnu/stubs-o32_soft.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/netinet/in.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/lib/gcc/mips-buildroot-linux-gnu/4.9.3/include/stdint.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdint.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/wchar.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/socket.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/uio.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/types.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/types.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/typesizes.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/time.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/lib/gcc/mips-buildroot-linux-gnu/4.9.3/include/stddef.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/endian.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/endian.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/byteswap.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/byteswap-16.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/select.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/select.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sigset.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/time.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/sysmacros.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/pthreadtypes.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/uio.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/socket.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/socket_type.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sockaddr.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/asm/socket.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/asm/sockios.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/asm/ioctl.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/asm-generic/ioctl.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/in.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/time.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/wait.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/signal.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/signum.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/siginfo.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sigaction.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sigcontext.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sigstack.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/ucontext.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sigthread.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/waitflags.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/waitstatus.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/unistd.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/posix_opt.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/environments.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/confname.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/getopt.h \
+ src/inc/unixutil.h ../threadutil/inc/ithread.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/pthread.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sched.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sched.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/xlocale.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/setjmp.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/assert.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/errno.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/errno.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/linux/errno.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/asm/errno.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/asm-generic/errno-base.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdio.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/libio.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/_G_config.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/wchar.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/lib/gcc/mips-buildroot-linux-gnu/4.9.3/include/stdarg.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/stdio_lim.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sys_errlist.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdlib.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/alloca.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/stdlib-float.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/string.h \
+ src/inc/ssdplib.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/setjmp.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/fcntl.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/fcntl.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/fcntl-linux.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/stat.h \
+ src/inc/httpparser.h src/inc/util.h ../upnp/inc/upnp.h \
+ ../ixml/inc/ixml.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/malloc.h \
+ ../upnp/inc/upnpconfig.h src/inc/membuffer.h src/inc/uri.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/ctype.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/netdb.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/rpc/netdb.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/netdb.h \
+ ../threadutil/inc/LinkedList.h ../threadutil/inc/FreeList.h \
+ ../threadutil/inc/ithread.h src/inc/httpreadwrite.h src/inc/config.h \
+ src/inc/sock.h src/inc/miniserver.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/syslog.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/syslog.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/syslog-path.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/netinet/in_systm.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/netinet/ip.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/netinet/ip_icmp.h \
+ src/inc/util.h src/inc/miniserver.h ../threadutil/inc/ThreadPool.h \
+ ../threadutil/inc/LinkedList.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/timeb.h \
+ src/inc/httpreadwrite.h src/inc/statcodes.h src/inc/upnpapi.h \
+ src/inc/client_table.h src/inc/service_table.h \
+ ../threadutil/inc/TimerThread.h ../threadutil/inc/ThreadPool.h \
+ src/inc/upnp_timeout.h
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdc-predef.h:
+
+src/inc/config.h:
+
+../autoconfig.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/arpa/inet.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/features.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/cdefs.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/wordsize.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sgidefs.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/gnu/stubs.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/gnu/stubs-o32_soft.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/netinet/in.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/lib/gcc/mips-buildroot-linux-gnu/4.9.3/include/stdint.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdint.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/wchar.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/socket.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/uio.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/types.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/types.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/typesizes.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/time.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/lib/gcc/mips-buildroot-linux-gnu/4.9.3/include/stddef.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/endian.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/endian.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/byteswap.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/byteswap-16.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/select.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/select.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sigset.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/time.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/sysmacros.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/pthreadtypes.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/uio.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/socket.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/socket_type.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sockaddr.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/asm/socket.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/asm/sockios.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/asm/ioctl.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/asm-generic/ioctl.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/in.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/time.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/wait.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/signal.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/signum.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/siginfo.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sigaction.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sigcontext.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sigstack.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/ucontext.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sigthread.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/waitflags.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/waitstatus.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/unistd.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/posix_opt.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/environments.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/confname.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/getopt.h:
+
+src/inc/unixutil.h:
+
+../threadutil/inc/ithread.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/pthread.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sched.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sched.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/xlocale.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/setjmp.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/assert.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/errno.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/errno.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/linux/errno.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/asm/errno.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/asm-generic/errno-base.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdio.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/libio.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/_G_config.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/wchar.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/lib/gcc/mips-buildroot-linux-gnu/4.9.3/include/stdarg.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/stdio_lim.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sys_errlist.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdlib.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/alloca.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/stdlib-float.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/string.h:
+
+src/inc/ssdplib.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/setjmp.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/fcntl.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/fcntl.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/fcntl-linux.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/stat.h:
+
+src/inc/httpparser.h:
+
+src/inc/util.h:
+
+../upnp/inc/upnp.h:
+
+../ixml/inc/ixml.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/malloc.h:
+
+../upnp/inc/upnpconfig.h:
+
+src/inc/membuffer.h:
+
+src/inc/uri.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/ctype.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/netdb.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/rpc/netdb.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/netdb.h:
+
+../threadutil/inc/LinkedList.h:
+
+../threadutil/inc/FreeList.h:
+
+../threadutil/inc/ithread.h:
+
+src/inc/httpreadwrite.h:
+
+src/inc/config.h:
+
+src/inc/sock.h:
+
+src/inc/miniserver.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/syslog.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/syslog.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/syslog-path.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/netinet/in_systm.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/netinet/ip.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/netinet/ip_icmp.h:
+
+src/inc/util.h:
+
+src/inc/miniserver.h:
+
+../threadutil/inc/ThreadPool.h:
+
+../threadutil/inc/LinkedList.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/timeb.h:
+
+src/inc/httpreadwrite.h:
+
+src/inc/statcodes.h:
+
+src/inc/upnpapi.h:
+
+src/inc/client_table.h:
+
+src/inc/service_table.h:
+
+../threadutil/inc/TimerThread.h:
+
+../threadutil/inc/ThreadPool.h:
+
+src/inc/upnp_timeout.h:

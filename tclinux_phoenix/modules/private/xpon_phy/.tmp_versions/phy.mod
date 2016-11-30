@@ -1,0 +1,2 @@
+/opt/tclinux_phoenix/modules/private/xpon_phy/phy.ko
+/opt/tclinux_phoenix/modules/private/xpon_phy/src/phy.o /opt/tclinux_phoenix/modules/private/xpon_phy/src/i2c.o /opt/tclinux_phoenix/modules/private/xpon_phy/src/mt7570.o /opt/tclinux_phoenix/modules/private/xpon_phy/src/phy_init.o /opt/tclinux_phoenix/modules/private/xpon_phy/src/phy_rx.o /opt/tclinux_phoenix/modules/private/xpon_phy/src/phy_tx.o

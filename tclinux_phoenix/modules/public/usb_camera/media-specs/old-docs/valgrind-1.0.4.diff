@@ -1,0 +1,357 @@
+diff -Naur valgrind-1.0.4.orig/vg_syscall_mem.c valgrind-1.0.4/vg_syscall_mem.c
+--- valgrind-1.0.4.orig/vg_syscall_mem.c	2002-10-13 17:04:49.000000000 +0200
++++ valgrind-1.0.4/vg_syscall_mem.c	2003-03-03 07:34:50.000000000 +0100
+@@ -2323,6 +2323,336 @@
+		     sizeof(struct cdrom_msf));
+		  KERNEL_DO_SYSCALL(tid,res);
+		  break;
++
++            /* DVB (Digital Video Broadcasting) related stuff
++             * http://www.linuxtv.org
++             */
++	    case AUDIO_STOP:
++	    case AUDIO_PLAY:
++	    case AUDIO_PAUSE:
++	    case AUDIO_CONTINUE:
++	    case AUDIO_SELECT_SOURCE:
++	    case AUDIO_SET_MUTE:
++	    case AUDIO_SET_AV_SYNC:
++	    case AUDIO_SET_BYPASS_MODE:
++	    case AUDIO_CHANNEL_SELECT:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case AUDIO_GET_STATUS:
++                 must_be_writable(tst, "ioctl(AUDIO_GET_STATUS)", arg3,
++                         sizeof(audio_status_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(audio_status_t));
++                 break;
++	    case AUDIO_GET_CAPABILITIES:
++		 must_be_writable(tst, "ioctl(AUDIO_GET_CAPABILITIES)", arg3,
++                         sizeof(unsigned int));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(unsigned int));
++                 break;
++	    case AUDIO_CLEAR_BUFFER:
++	    case AUDIO_SET_ID:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case AUDIO_SET_MIXER:
++                 must_be_readable(tst, "ioctl(AUDIO_SET_MIXER)", arg3,
++                         sizeof(audio_mixer_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case AUDIO_SET_STREAMTYPE:
++	    case AUDIO_SET_EXT_ID:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case AUDIO_SET_ATTRIBUTES:
++                 must_be_readable(tst, "ioctl(AUDIO_SET_ATTRIBUTES)", arg3,
++                         sizeof(audio_attributes_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case AUDIO_SET_KARAOKE:
++                 must_be_readable(tst, "ioctl(AUDIO_SET_KARAOKE)", arg3,
++                         sizeof(audio_karaoke_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case CA_RESET:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case CA_GET_CAP:
++		 must_be_writable(tst, "ioctl(CA_GET_CAP)", arg3,
++                         sizeof(ca_caps_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(ca_caps_t));
++                 break;
++	    case CA_GET_SLOT_INFO:
++		 must_be_writable(tst, "ioctl(CA_GET_SLOT_INFO)", arg3,
++                         sizeof(ca_slot_info_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(ca_slot_info_t));
++                 break;
++	    case CA_GET_DESCR_INFO:
++		 must_be_writable(tst, "ioctl(CA_GET_DESCR_INFO)", arg3,
++                         sizeof(ca_descr_info_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(ca_descr_info_t));
++                 break;
++	    case CA_GET_MSG:
++		 must_be_writable(tst, "ioctl(CA_GET_MSG)", arg3,
++                         sizeof(ca_msg_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(ca_msg_t));
++                 break;
++	    case CA_SEND_MSG:
++                 must_be_readable(tst, "ioctl(CA_SEND_MSG)", arg3,
++                         sizeof(ca_msg_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case CA_SET_DESCR:
++                 must_be_readable(tst, "ioctl(CA_SET_DESCR)", arg3,
++                         sizeof(ca_descr_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case CA_SET_PID:
++                 must_be_readable(tst, "ioctl(CA_SET_PID)", arg3,
++                         sizeof(ca_pid_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++            case DMX_START:
++            case DMX_STOP:
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case DMX_SET_FILTER:
++                 must_be_readable(tst, "ioctl(DMX_SET_FILTER)", arg3,
++                         sizeof(struct dmx_sct_filter_params));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case DMX_SET_PES_FILTER:
++                 must_be_readable(tst, "ioctl(DMX_SET_PES_FILTER)", arg3,
++                         sizeof(struct dmx_pes_filter_params));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case DMX_SET_BUFFER_SIZE:
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case DMX_GET_EVENT:
++                 must_be_writable(tst, "ioctl(DMX_GET_EVENT)", arg3,
++                         sizeof(struct dmx_event));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(struct dmx_event));
++                 break;
++            case DMX_GET_PES_PIDS:
++                 must_be_writable(tst, "ioctl(DMX_GET_PES_PIDS)", arg3,
++                         5*sizeof(uint16_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, 5*sizeof(uint16_t));
++                 break;
++            case DMX_GET_CAPS:
++                 must_be_writable(tst, "ioctl(DMX_GET_CAPS)", arg3,
++                         sizeof(dmx_caps_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(dmx_caps_t));
++                 break;
++            case DMX_SET_SOURCE:
++                 must_be_readable(tst, "ioctl(DMX_SET_SOURCE)", arg3,
++                         sizeof(dmx_source_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case FE_GET_INFO:
++                 must_be_writable(tst, "ioctl(FE_GET_INFO)", arg3,
++                         sizeof(struct dvb_frontend_info));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(struct dvb_frontend_info));
++                 break;
++            case FE_DISEQC_RESET_OVERLOAD:
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case FE_DISEQC_SEND_MASTER_CMD:
++                 must_be_readable(tst, "ioctl(FE_DISEQC_SEND_MASTER_CMD)", arg3,
++                         sizeof(struct dvb_diseqc_master_cmd));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case FE_DISEQC_RECV_SLAVE_REPLY:
++                 must_be_writable(tst, "ioctl(FE_DISEQC_RECV_SLAVE_REPLY)", arg3,
++                         sizeof(struct dvb_diseqc_slave_reply));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(struct dvb_diseqc_slave_reply));
++                 break;
++            case FE_DISEQC_SEND_BURST:
++            case FE_SET_TONE:
++            case FE_SET_VOLTAGE:
++            case FE_ENABLE_HIGH_LNB_VOLTAGE:
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case FE_READ_STATUS:
++                 must_be_writable(tst, "ioctl(FE_READ_STATUS)", arg3,
++                         sizeof(fe_status_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(fe_status_t));
++                 break;
++            case FE_READ_BER:
++                 must_be_writable(tst, "ioctl(FE_READ_BER)", arg3,
++                         sizeof(uint32_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(uint32_t));
++                 break;
++            case FE_READ_SIGNAL_STRENGTH:
++                 must_be_writable(tst, "ioctl(FE_READ_SIGNAL_STRENGTH)", arg3,
++                         sizeof(uint16_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(uint16_t));
++                 break;
++            case FE_READ_SNR:
++                 must_be_writable(tst, "ioctl(FE_READ_SNR)", arg3,
++                         sizeof(uint16_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(uint16_t));
++                 break;
++            case FE_READ_UNCORRECTED_BLOCKS:
++                 must_be_writable(tst, "ioctl(FE_READ_UNCORRECTED_BLOCKS)", arg3,
++                         sizeof(uint32_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(uint32_t));
++                 break;
++            case FE_SET_FRONTEND:
++                 must_be_readable(tst, "ioctl(FE_SET_FRONTEND)", arg3,
++                         sizeof(struct dvb_frontend_parameters));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++            case FE_GET_FRONTEND:
++                 must_be_writable(tst, "ioctl(FE_GET_FRONTEND)", arg3,
++                         sizeof(struct dvb_frontend_parameters));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(struct dvb_frontend_parameters));
++                 break;
++            case FE_GET_EVENT:
++                 must_be_writable(tst, "ioctl(FE_GET_EVENT)", arg3,
++                         sizeof(struct dvb_frontend_event));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(struct dvb_frontend_event));
++                 break;
++	    case NET_ADD_IF:
++                 must_be_readable(tst, "ioctl(NET_ADD_IF (pid, uint16_t))",
++			 (int) &(((struct dvb_net_if *) arg3)->pid),
++			 sizeof(((struct dvb_net_if *) arg3)->pid));
++                 must_be_writable(tst, "ioctl(NET_ADD_IF (if_num, uint16_t))",
++                         (int) &(((struct dvb_net_if *) arg3)->if_num),
++			 sizeof(((struct dvb_net_if *) arg3)->if_num));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(struct dvb_net_if));
++                 break;
++	    case NET_REMOVE_IF:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case NET_GET_IF:
++                 must_be_readable(tst, "ioctl(NET_GET_IF (if_num, uint16_t))",
++                         (int) &(((struct dvb_net_if *) arg3)->if_num),
++			 sizeof(((struct dvb_net_if *) arg3)->if_num));
++                 must_be_writable(tst, "ioctl(NET_GET_IF (pid, uint16_t))",
++			 (int) &(((struct dvb_net_if *) arg3)->pid),
++			 sizeof(((struct dvb_net_if *) arg3)->pid));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(struct dvb_net_if));
++                 break;
++	    case OSD_SEND_CMD:
++                 must_be_readable(tst, "ioctl(OSD_SEND_CMD)", arg3,
++                         sizeof(osd_cmd_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++	    case VIDEO_STOP:
++	    case VIDEO_PLAY:
++	    case VIDEO_FREEZE:
++	    case VIDEO_CONTINUE:
++	    case VIDEO_SELECT_SOURCE:
++	    case VIDEO_SET_BLANK:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case VIDEO_GET_STATUS:
++                 must_be_writable(tst, "ioctl(VIDEO_GET_STATUS)", arg3,
++                         sizeof(struct video_status));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(struct video_status));
++                 break;
++	    case VIDEO_GET_EVENT:
++                 must_be_writable(tst, "ioctl(VIDEO_GET_EVENT)", arg3,
++                         sizeof(struct video_event));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(struct video_event));
++                 break;
++	    case VIDEO_SET_DISPLAY_FORMAT:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case VIDEO_STILLPICTURE:
++                 must_be_readable(tst, "ioctl(VIDEO_STILLPICTURE)", arg3,
++                         sizeof(struct video_still_picture));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++	    case VIDEO_FAST_FORWARD:
++	    case VIDEO_SLOWMOTION:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case VIDEO_GET_CAPABILITIES:
++                 must_be_writable(tst, "ioctl(VIDEO_GET_CAPABILITIES)", arg3,
++                         sizeof(unsigned int));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(unsigned int));
++                 break;
++	    case VIDEO_CLEAR_BUFFER:
++	    case VIDEO_SET_ID:
++	    case VIDEO_SET_STREAMTYPE:
++	    case VIDEO_SET_FORMAT:
++	    case VIDEO_SET_SYSTEM:
++		 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++	    case VIDEO_SET_HIGHLIGHT:
++                 must_be_readable(tst, "ioctl(VIDEO_SET_HIGHLIGHT)", arg3,
++                         sizeof(video_highlight_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++	    case VIDEO_SET_SPU:
++                 must_be_readable(tst, "ioctl(VIDEO_SET_SPU)", arg3,
++                         sizeof(video_spu_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++	    case VIDEO_SET_SPU_PALETTE:
++                 must_be_readable(tst, "ioctl(VIDEO_SET_SPU_PALETTE)", arg3,
++                         sizeof(video_spu_palette_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 break;
++	    case VIDEO_GET_NAVI:
++                 must_be_writable(tst, "ioctl(VIDEO_GET_NAVI)", arg3,
++                         sizeof(video_navi_pack_t));
++                 KERNEL_DO_SYSCALL(tid,res);
++                 if (!VG_(is_kerror)(res) && res == 0)
++                    make_readable (arg3, sizeof(video_navi_pack_t));
++                 break;
++#if 0
++	    /* FIXME: conflicts with NET_REMOVE_IF - both are _IO('o', 53) */
++	    case VIDEO_SET_ATTRIBUTES:
++                 KERNEL_DO_SYSCALL(tid,res);
++		 break;
++#endif
++
+	     /* We don't have any specific information on it, so
+		try to do something reasonable based on direction and
+		size bits.  The encoding scheme is described in
+diff -Naur valgrind-1.0.4.orig/vg_unsafe.h valgrind-1.0.4/vg_unsafe.h
+--- valgrind-1.0.4.orig/vg_unsafe.h	2002-09-17 16:31:08.000000000 +0200
++++ valgrind-1.0.4/vg_unsafe.h	2003-03-03 06:12:23.000000000 +0100
+@@ -86,6 +86,13 @@
+
+ #include <sys/poll.h>
+
++#include <linux/dvb/audio.h>
++#include <linux/dvb/ca.h>
++#include <linux/dvb/dmx.h>
++#include <linux/dvb/frontend.h>
++#include <linux/dvb/net.h>
++#include <linux/dvb/osd.h>
++#include <linux/dvb/video.h>
+
+ /*--------------------------------------------------------------------*/
+ /*--- end                                              vg_unsafe.h ---*/

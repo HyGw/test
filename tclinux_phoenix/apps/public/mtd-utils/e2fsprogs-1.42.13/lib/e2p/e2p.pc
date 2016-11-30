@@ -1,0 +1,11 @@
+prefix=/proj/mtk11340/Code1/newkernel_0420/BBN_Linux/DEV/main/tclinux_phoenix/apps/public/mtd-utils/install_e2fs
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: e2p
+Description: Ext2fs userpace programs utility library
+Version: 1.42.13
+Requires: 
+Cflags: -I${includedir}/e2p -I${includedir}
+Libs: -L${libdir} -le2p

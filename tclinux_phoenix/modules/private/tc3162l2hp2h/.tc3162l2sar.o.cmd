@@ -1,0 +1,1 @@
+cmd_/opt/tclinux_phoenix/modules/private/tc3162l2hp2h/tc3162l2sar.o := mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o /opt/tclinux_phoenix/modules/private/tc3162l2hp2h/tc3162l2sar.o /opt/tclinux_phoenix/modules/private/tc3162l2hp2h/sar_tc3162l2.o /opt/tclinux_phoenix/modules/private/tc3162l2hp2h/autoPVC.o 

@@ -1,0 +1,31 @@
+app_bsp: compileoption_lib api bsp_exclusive
+app_bsp_clean: compileoption_lib_clean api_clean bsp_exclusive_clean
+
+include $(APP_BSP_EXCLUSIVE_DIR)/make_bsp_exclusive
+include $(APP_BSP_API_DIR)/make_api
+
+compileoption_lib:
+	echo "Copy compileoption_lib source code from kernel"
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL)),)
+	cp $(KERNEL_DIR)/arch/mips/ralink/libcompileoption.c $(APP_COMPILEOPTION_LIB_DIR)
+else
+ifneq ($(strip $(TCSUPPORT_3_18_21_KERNEL)),)
+	cp $(KERNEL_DIR)/arch/mips/econet/libcompileoption.c $(APP_COMPILEOPTION_LIB_DIR)
+else
+	cp $(KERNEL_DIR)/arch/mips/trendchip/tc3162/libcompileoption.c $(APP_COMPILEOPTION_LIB_DIR)
+endif
+endif
+	cp $(KERNEL_DIR)/include/linux/libcompileoption.h $(APP_COMPILEOPTION_LIB_DIR)
+	echo "Building compileoption_lib library"	
+	$(MAKE) -C $(APP_COMPILEOPTION_LIB_DIR)
+	if test -e $(APP_COMPILEOPTION_LIB_DIR)/libcompileoption.so.1.4; \
+	then echo "Compile APP_COMPILEOPTION_LIB_DIR Lib success"; \
+	else echo "Compile APP_COMPILEOPTION_LIB_DIR Lib error!"; exit 1; \
+	fi
+	$(MAKE) -C $(APP_COMPILEOPTION_LIB_DIR) install
+	cp  $(APP_COMPILEOPTION_LIB_DIR)/libcompileoption.so  $(FILESYSTEM_DIR)/lib/
+	cp  $(APP_COMPILEOPTION_LIB_DIR)/libcompileoption.so.*  $(FILESYSTEM_DIR)/lib/
+
+compileoption_lib_clean:
+	echo "Clean APP_COMPILEOPTION_LIB_DIR library"
+	$(MAKE) -C $(APP_COMPILEOPTION_LIB_DIR) clean

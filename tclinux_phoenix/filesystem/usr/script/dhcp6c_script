@@ -1,0 +1,48 @@
+#!/bin/sh
+
+#for nameserver in $new_domain_name_servers; do
+#	echo nameserver=$nameserver >> $1 
+#done
+STATE=$1
+DEVICE=$interface
+
+if [ "$STATE" = "release" ] ; then
+	#/sbin/ifconfig $DEVICE down
+	#/sbin/ifconfig $DEVICE up
+	echo "down" > /var/run/$DEVICE/status6
+	/userfs/bin/tcapi commit WanInfo_Message_$DEVICE/6
+	
+
+	#if [ -f /var/run/$DEVICE/dns6 ]; then
+	#	rm /var/run/$DEVICE/dns6
+	#fi
+else
+	#if [ -n "$iapd_0" ] ; then
+	#echo $iapd_0 > /var/run/$DEVICE/pd6
+	#fi
+	
+	if [ -n "$iana_0" ] ; then
+	echo $iana_0 > /var/run/$DEVICE/ip6
+	echo "64" > /var/run/$DEVICE/prefix6
+	fi
+	
+	if [ -f /var/run/$DEVICE/dns6 ]; then
+		rm /var/run/$DEVICE/dns6
+	fi
+
+	if [ -n "$dslite_address" ] ; then
+		echo $dslite_address > /var/run/$DEVICE/dsliteaddr
+	fi
+	if [ -n "$dslite_name" ] ; then
+		echo $dslite_name > /var/run/$DEVICE/dslitename
+	fi
+
+	for nameserver in $new_domain_name_servers; do
+		echo $nameserver >> /var/run/$DEVICE/dns6 
+	done
+	
+	sleep 1
+	echo "up" > /var/run/$DEVICE/status6
+	/userfs/bin/tcapi commit WanInfo_Message_$DEVICE/6
+fi
+

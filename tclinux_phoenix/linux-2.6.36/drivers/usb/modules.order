@@ -1,0 +1,4 @@
+kernel/drivers/usb/class/usblp.ko
+kernel/drivers/usb/storage/usb-storage.ko
+kernel/drivers/usb/serial/option.ko
+kernel/drivers/usb/serial/usb_wwan.ko

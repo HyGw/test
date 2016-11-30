@@ -1,0 +1,19 @@
+<html><head>
+<META http-equiv=Content-Type content="text/html; charset=gb2312">
+<meta http-equiv=Content-Script-Type content=text/javascript>
+<meta http-equiv=Content-Style-Type content=text/css>
+<script language=JavaScript type=text/javascript>
+	function rmCookie(name)
+	{  
+		var exp = new Date();  
+		exp.setTime(exp.getTime() - 10000);  
+		document.cookie = name + "=del;expires=" + exp.toGMTString();  
+		document.cookie = name + "=del;expires=" + exp.toGMTString()+";path=/;";  
+	}
+
+	rmCookie('logintype');
+	document.cookie = "logintype=adm;path=/;";
+	top.window.location.href = '/cgi-bin/content.asp';
+</script>
+</head>
+</html>

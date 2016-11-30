@@ -1,0 +1,13 @@
+src/uuid/libupnp_la-md5.lo: src/uuid/md5.c \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdc-predef.h \
+ src/inc/config.h ../autoconfig.h src/inc/global.h src/inc/md5.h
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdc-predef.h:
+
+src/inc/config.h:
+
+../autoconfig.h:
+
+src/inc/global.h:
+
+src/inc/md5.h:

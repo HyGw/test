@@ -1,0 +1,16 @@
+<node>
+<interface name="net.Corp.MyApp.Frobber">
+  <method name="HelloWorld">
+    <arg name="greeting" direction="in" type="s"/>
+    <arg name="response" direction="out" type="s"/>
+  </method>
+
+  <signal name="Notification">
+    <arg name="icon_blob" type="ay"/>
+    <arg name="height" type="i"/>
+    <arg name="messages" type="as"/>
+  </signal>
+
+  <property name="Verbose" type="b" access="readwrite"/>
+</interface>
+</node>

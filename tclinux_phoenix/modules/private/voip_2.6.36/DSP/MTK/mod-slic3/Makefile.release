@@ -1,0 +1,423 @@
+##
+#	@author mtk02588 
+#
+ifeq ($(strip $(TCSUPPORT_SLIC_SEPARATE)),1)
+NAME=slic3_sep
+else
+ifeq ($(SLIC),SILICON)
+NAME=slic3_silicon
+else
+NAME=slic3
+endif
+endif
+SLIC3_DIR :=$(shell pwd)
+
+FPGA = 0
+BIT = 0
+IS_LINUX = 1
+PREFIX 	 = ../install
+include $(MODULES_MTK_SLIC3_DIR)/$(PREFIX)/config.mk
+
+############################################################################################################
+#
+#	Use different build criteria according to platform
+#
+############################################################################################################
+#ifeq ($(strip $(IS_LINUX)), 1)
+####################################################################################################
+#
+#	Linux
+#
+####################################################################################################
+
+
+##
+#       @brief where is your linux
+#
+KERNELDIR ?= $(KERNEL_DIR)
+
+##
+#       @brief object files of this module
+#
+
+$(NAME)-objs=src/slic3_main.o
+$(NAME)-objs += src/ddr_slic.o
+$(NAME)-objs += src/slic3_proc.o
+
+EXTRA_CFLAGS+=$(VOIP_CFLAGS) -I$(MODULES_MTK_DSP_DIR)/pcm -I$(MODULES_MTK_DSP_DIR)/mod-core
+#custom add compile option here
+#EXTRA_CFLAGS += -Dxxx
+
+ifeq ($(strip $(TCSUPPORT_SLIC_SEPARATE)),1)
+
+CONFIG+= -Wfatal-errors -D D2MOD_VP -D VP_CC_890_SERIES -D VP_CC_886_SERIES -D SLIC_TYPE_ZARLINK -D VTSP_USER_SLIC_NUM=2 -D VTSP_USER_FXS_NUM=2 -D VTSP_USER_FXO_NUM=1 -D OSBN_VOIP -D VP886_FXS_SUPPORT -D VP886_FXO_SUPPORT  -D SLIC_DETAIL_DBG_MSG
+
+EXTRA_CFLAGS += $(CONFIG) -DLINUX -I$(MODULES_MTK_SLIC3_DIR)/include \
+                -I$(MODULES_MTK_DSP_DIR)/install/include \
+                -I$(MODULES_MTK_SLIC3_DIR)/src/zarlink \
+                -I$(KERNEL_DIR)/include \
+		-DTCSUPPORT_SLIC_SEPARATE \
+
+#EXTRA_CFLAGS += -I $(shell pwd)/src/lib/
+
+################################################################
+#else of TCSUPPORT_SLIC_SEPARATE
+else
+################################################################
+ifeq ($(SLIC),SILICON)
+#================ silabs common setting ================
+#SLIC_CHIP_VERSION := si32266
+#SLIC_CHIP_VERSION := two_si32266
+#SLIC_CHIP_VERSION := si32260
+#SLIC_CHIP_VERSION := si32176
+#SLIC_CHIP_VERSION := si3218x
+#SLIC_CHIP_VERSION := si3228x
+	SILAB_CHIP_DIR := src/silab/
+	PROSLIC_API_SRC_DIR := $(SILAB_CHIP_DIR)/proslic_api/src/
+	MODULES_MTK_SILAB_DIR :=$(MODULES_MTK_SLIC3_DIR)/$(SILAB_CHIP_DIR)
+	PROSLIC_MLT_API_SRC_DIR:=$(SILAB_CHIP_DIR)/proslic_mlt_api/src/
+	CONFIG+= -Wfatal-errors -DSLIC_TYPE_SILAB -D SLIC_SILICON -D OSBN_VOIP -D SLIC_DETAIL_DBG_MSG -D SLIC=SILICON -D PROSLIC_LINUX_KERNEL
+	
+
+#================ special for one si32266 ================
+ifeq ($(SLIC_CHIP_VERSION),si32266)
+	CONFIG+= -DSI3226X -D VTSP_USER_FXS_NUM=2 -D VTSP_USER_FXO_NUM=0 -DSLIC_ISI
+	EXTRA_CFLAGS += -I$(MODULES_MTK_SILAB_DIR)3226x
+	$(NAME)-objs += $(PROSLIC_API_SRC_DIR)si3226x_intf.o \
+	$(PROSLIC_MLT_API_SRC_DIR)si3226x_mlt.o\
+                  $(SILAB_CHIP_DIR)3226x/si3226x.o \
+                  $(SILAB_CHIP_DIR)3226x/si3226x_CUK_constants.o \
+                  $(SILAB_CHIP_DIR)3226x/si3226x_patch_C_FB_2014JUN18.o 
+endif
+
+
+#================ special for two si32266 ================
+ifeq ($(SLIC_CHIP_VERSION),two_si32266)
+	CONFIG+= -DSI3226X -D VTSP_USER_FXS_NUM=2 -D VTSP_USER_FXO_NUM=0 -DSLIC_ISI -DSLIC_TWO
+	EXTRA_CFLAGS += -I$(MODULES_MTK_SILAB_DIR)3226x
+	$(NAME)-objs += $(PROSLIC_API_SRC_DIR)si3226x_intf.o \
+	$(PROSLIC_MLT_API_SRC_DIR)si3226x_mlt.o\
+                  $(SILAB_CHIP_DIR)3226x/si3226x.o \
+                  $(SILAB_CHIP_DIR)3226x/si3226x_CUK_constants.o \
+                  $(SILAB_CHIP_DIR)3226x/si3226x_patch_C_FB_2014JUN18.o                  
+                  
+  EXTRA_CFLAGS += -I$(MODULES_MTK_SILAB_DIR)3226x_1
+	$(NAME)-objs += $(SILAB_CHIP_DIR)3226x_1/si3226x_1.o 
+endif
+
+
+
+#================ special for si32260 ================
+#ifeq ($(SLIC_CHIP_VERSION),si32260)
+	CONFIG+= -DSI3226X -D VTSP_USER_FXS_NUM=2 -D VTSP_USER_FXO_NUM=0 
+	EXTRA_CFLAGS += -I$(MODULES_MTK_SILAB_DIR)3226x
+	$(NAME)-objs += $(PROSLIC_API_SRC_DIR)si3226x_intf.o \
+	$(PROSLIC_MLT_API_SRC_DIR)si3226x_mlt.o\
+                  $(SILAB_CHIP_DIR)3226x/si3226x.o \
+                  $(SILAB_CHIP_DIR)3226x/si3226x_constants.o \
+                  $(SILAB_CHIP_DIR)3226x/si3226x_patch_C_FB_2012DEC06.o 
+#endif
+
+#================ special for si32176 ================
+#ifeq ($(SLIC_CHIP_VERSION),si32176)
+	CONFIG+= -DSI3217X -D VTSP_USER_FXS_NUM=1 -D VTSP_USER_FXO_NUM=0 
+	EXTRA_CFLAGS += -I$(MODULES_MTK_SILAB_DIR)3217x
+	$(NAME)-objs += $(PROSLIC_API_SRC_DIR)si3217x_intf.o \
+                  $(PROSLIC_API_SRC_DIR)si3217x_revb_intf.o \
+                  $(PROSLIC_API_SRC_DIR)si3217x_revc_intf.o \
+                  $(PROSLIC_MLT_API_SRC_DIR)si3217x_mlt.o\
+                  $(SILAB_CHIP_DIR)3217x/si3217x.o \
+                  $(SILAB_CHIP_DIR)3217x/si3217x_constants.o \
+                  $(SILAB_CHIP_DIR)3217x/si3217x_patch_C_FB_2014JUN18.o 
+#endif
+
+#================ special for si3218x ================
+#ifeq ($(SLIC_CHIP_VERSION),si3218x)
+	CONFIG+= -DSI3218X -D VTSP_USER_FXS_NUM=1 -D VTSP_USER_FXO_NUM=0 
+	EXTRA_CFLAGS += -I$(MODULES_MTK_SILAB_DIR)3218x
+	$(NAME)-objs += $(PROSLIC_API_SRC_DIR)si3218x_intf.o \
+                  $(SILAB_CHIP_DIR)3218x/si3218x.o \
+                  $(SILAB_CHIP_DIR)3218x/si3218x_LCCB_constants.o \
+                  $(SILAB_CHIP_DIR)3218x/si3218x_patch_A_2015JUN30.o \
+                  $(PROSLIC_MLT_API_SRC_DIR)si3218x_mlt.o
+
+#endif
+
+#================ special for si3228x ================
+#ifeq ($(SLIC_CHIP_VERSION),si3228x)
+	CONFIG+= -DSI3228X -D VTSP_USER_FXS_NUM=2 -D VTSP_USER_FXO_NUM=0 
+	EXTRA_CFLAGS += -I$(MODULES_MTK_SILAB_DIR)3228x
+	$(NAME)-objs += $(PROSLIC_API_SRC_DIR)si3228x_intf.o \
+                  $(SILAB_CHIP_DIR)3228x/si3228x.o \
+                  $(SILAB_CHIP_DIR)3228x/si3228x_LCCB_SR_constants.o \
+                  $(SILAB_CHIP_DIR)3228x/si3228x_patch_A_2015OCT29.o \
+                  $(PROSLIC_MLT_API_SRC_DIR)si3228x_mlt.o
+
+#endif
+
+#================ silabs common setting ================
+$(NAME)-objs+=$(PROSLIC_API_SRC_DIR)proslic.o \
+		$(PROSLIC_API_SRC_DIR)si_voice.o \
+		$(PROSLIC_API_SRC_DIR)si_voice_version.o \
+		$(PROSLIC_MLT_API_SRC_DIR)proslic_mlt.o\
+		$(PROSLIC_MLT_API_SRC_DIR)proslic_mlt_dcfeed.o\
+		$(PROSLIC_MLT_API_SRC_DIR)proslic_mlt_diag_madc.o\
+		$(PROSLIC_MLT_API_SRC_DIR)proslic_mlt_math.o\
+		$(PROSLIC_MLT_API_SRC_DIR)proslic_mlt_version.o\
+		$(SILAB_CHIP_DIR)proslic_mlt_api/custom/silab_linetest.o
+
+
+EXTRA_CFLAGS += $(CONFIG) -DLINUX -I$(MODULES_MTK_SLIC3_DIR)/include \
+                -I$(MODULES_MTK_DSP_DIR)/install/include \
+                -I$(MODULES_MTK_SILAB_DIR) \
+                -I$(MODULES_MTK_SILAB_DIR)proslic_api/src \
+                -I$(MODULES_MTK_SILAB_DIR)proslic_api/inc \
+                -I$(MODULES_MTK_SILAB_DIR)proslic_api/custom \
+                -I$(MODULES_MTK_SILAB_DIR)proslic_mlt_api/inc \
+                -I$(MODULES_MTK_SILAB_DIR)proslic_mlt_api/custom \
+                -I$(KERNEL_DIR)/include      
+
+#================ SPI================ 
+#$(NAME)-objs += src/spi/slic_ctrl.o
+
+#################################################################################                
+#else of SLIC_SILICON
+else
+$(NAME)-objs+=src/zarlink/lt/slic_linetest.o \
+		src/zarlink/lt/api_lib/common/vp_pcm_compute.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_3ele_cap.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_3ele_res_hg.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_3ele_res_lg.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_ac_rloop.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_calibrate.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_conclude.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_cross_connect.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_dc_rloop.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_flt_dscrm.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_hybrid_loss.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_loop_conditions.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_loopback.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_met_ramp.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_met_ramp_int.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_msocket.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_open_vxc.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_test_timer.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_testline.o\
+		src/zarlink/lt/api_lib/vp890_api/vp890_3ele_cap.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_3ele_res_hg.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_3ele_res_lg.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_ac_rloop.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_calibrate.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_conclude.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_cross_connect.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_dc_rloop.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_flt_dscrm.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_hybrid_loss.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_loop_conditions.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_loopback.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_met_ramp.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_met_ramp_int.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_msocket.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_open_vxc.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_test_timer.o \
+		src/zarlink/lt/api_lib/vp890_api/vp890_testline.o\
+		src/zarlink/lt/api_lib/vp886_api/vp886_3ele_cap.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_ac_rloop.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_conclude.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_dc_rloop.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_loop_conditions.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_loopback.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_met_ramp.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_met_ramp_init.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_mpicmd.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_msocket.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_open_vxc.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_prepare.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_res_flt.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_testline.o\
+		src/zarlink/lt/api_lib/vp886_api/vp886_timer.o \
+		src/zarlink/lt/api_lib/vp886_api/vp886_xconnect.o\
+		src/zarlink/lt/lt_api/common/lt_api.o \
+		src/zarlink/lt/lt_api/common/lt_debug.o\
+	        src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_all_gr_909.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_cap.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_cap_ringers.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_cross_connect.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_dc_feed.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_dc_voltage.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_flt_dscrm.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_line_v.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_loopback.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_master_socket.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_on_off_hook_st.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_pre_linev.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_rd_bat_cond.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_rd_loop_cond.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_res_flt.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_ringers.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_ringing_st.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_roh.o \
+		src/zarlink/lt/lt_api/vp890_lt/lt_api_vp890_vvp_calculate_results.o \
+	  src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_909_all.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_cap.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_dc_feed_st.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_dc_voltage.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_line_v.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_loopback.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_msocket.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_on_off_hook_st.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_pre_line_v.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_rd_bat_cond.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_rd_loop_cond.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_res_flt.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_ringers.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_ringing_st.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_roh.o \
+		src/zarlink/lt/lt_api/vp886_lt/lt_api_vp886_xconnect.o \
+		src/zarlink/VE890_ACA_Rev2_5profiles8.o \
+		src/zarlink/Le89156_100V_IB_Profile.o \
+		src/zarlink/ZLR88621L_SM2_DEF.o \
+		src/zarlink/ZLR96622_SM2_FULL.o \
+		src/zarlink/89316/le89316.o \
+		src/zarlink/89116/le89116.o \
+		src/zarlink/89116_1/le89116_1.o \
+		src/zarlink/89156/le89156.o \
+		src/zarlink/89156_2/le89156_2.o \
+		src/zarlink/88601/zl88601.o \
+		src/zarlink/88601_1/zl88601_1.o \
+		src/zarlink/9662/le9662.o \
+		src/zarlink/9662_1/le9662_1.o \
+		src/zarlink/9641/le9641.o \
+		src/zarlink/9641_1/le9641_1.o \
+		src/zarlink/vp_api_ii/common/vp_api_common.o \
+		src/zarlink/vp_api_ii/common/vp_api_config.o \
+		src/zarlink/vp_api_ii/common/vp_api_control.o \
+		src/zarlink/vp_api_ii/common/vp_api_init.o \
+		src/zarlink/vp_api_ii/common/vp_api_query.o \
+		src/zarlink/vp_api_ii/common/vp_api_test.o \
+		src/zarlink/vp_api_ii/common/vp_debug.o \
+		src/zarlink/vp_api_ii/common/vp_dtmf_detect.o \
+		src/zarlink/vp_api_ii/common/vp_pulse_decode.o \
+		src/zarlink/vp_api_ii/common/vp_timer_queue.o \
+		src/zarlink/vp_api_ii/common/vp_api_cslac_seq.o \
+		src/zarlink/vp_api_ii/custom/sys_service.o \
+		src/zarlink/vp_api_ii/custom/vp_hal_trendchip1.o \
+		src/zarlink/vp_api_ii/custom/sdk_qs_utils.o \
+		src/zarlink/vp_api_ii/vp890_api/vp890_apiCal.o \
+		src/zarlink/vp_api_ii/vp890_api/vp890_common.o \
+		src/zarlink/vp_api_ii/vp890_api/vp890_config.o \
+		src/zarlink/vp_api_ii/vp890_api/vp890_control.o \
+		src/zarlink/vp_api_ii/vp890_api/vp890_fxo_control.o \
+		src/zarlink/vp_api_ii/vp890_api/vp890_fxs_control.o \
+		src/zarlink/vp_api_ii/vp890_api/vp890_init.o \
+		src/zarlink/vp_api_ii/vp890_api/vp890_lp_control.o \
+		src/zarlink/vp_api_ii/vp890_api/vp890_query.o \
+		src/zarlink/vp_api_ii/vp890_api/vp890_seq.o \
+		src/zarlink/vp_api_ii/vp890_api/vp890_apiCal.o \
+		src/zarlink/vp_api_ii/vp886_api/vp886_adaptive_ringing.o \
+		src/zarlink/vp_api_ii/vp886_api/vp886_calibration_common.o \
+		src/zarlink/vp_api_ii/vp886_api/vp886_common.o \
+		src/zarlink/vp_api_ii/vp886_api/vp886_control.o \
+		src/zarlink/vp_api_ii/vp886_api/vp886_events.o \
+		src/zarlink/vp_api_ii/vp886_api/vp886_init.o \
+		src/zarlink/vp_api_ii/vp886_api/vp886_query.o \
+		src/zarlink/vp_api_ii/vp886_api/vp886_slac.o \
+		src/zarlink/vp_api_ii/vp886_api/vp886_seq.o \
+		src/zarlink/vp_api_ii/vp886_api/vp886_timers.o
+		
+ifneq ($(strip $(SLIC_LE9641_IB_SUPPORT)),)
+	$(NAME)-objs += src/zarlink/ZLR964124_Le9641_IB_profiles.o
+else
+	$(NAME)-objs += src/zarlink/ZLR964124_Le9641_BB_profiles.o
+endif
+
+		#src/slic_glue.o
+
+#SIlab	
+	#src/siliconlab/src/proslic_version.o \
+	#src/siliconlab/src/si324x_intf.c 
+
+##
+#	SPI
+#$(NAME)-objs += src/spi/slic_ctrl.o
+
+#       @brief unit test to generate 
+#
+UNIT=  # slic3_main_x.ko
+
+##
+#       @brief set your own config here
+#
+#
+CONFIG+= -Wfatal-errors -D D2MOD_VP -D VP_CC_890_SERIES -D VP_CC_886_SERIES -D SLIC_TYPE_ZARLINK -D VTSP_USER_SLIC_NUM=2 -D VTSP_USER_FXS_NUM=2 -D VTSP_USER_FXO_NUM=1 -D OSBN_VOIP -D VP886_FXS_SUPPORT -D VP886_FXO_SUPPORT  -D SLIC_DETAIL_DBG_MSG
+
+
+##
+#	Module generic
+#
+EXTRA_CFLAGS += $(CONFIG) -DLINUX -I$(MODULES_MTK_SLIC3_DIR)/include \
+		-I$(MODULES_MTK_DSP_DIR)/install/include \
+		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink \
+ 		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink/vp_api_ii/custom \
+		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink/vp_api_ii/includes \
+		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink/vp_api_ii/vp890_api \
+		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink/vp_api_ii/vp886_api \
+		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink/vp_api_ii/vpp_api \
+		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink/lt \
+		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink/lt/api_lib/include \
+		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink/lt/api_lib/vp890_api \
+		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink/lt/api_lib/vp886_api \
+		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink/lt/lt_api/includes \
+		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink/lt/lt_api/vp890_lt \
+		-I$(MODULES_MTK_SLIC3_DIR)/src/zarlink/lt/lt_api/vp886_lt \
+		-I$(KERNEL_DIR)/src/zarlink/89316 \
+		-I$(KERNEL_DIR)/src/zarlink/89116 \
+		-I$(KERNEL_DIR)/src/zarlink/89156 \
+		-I$(KERNEL_DIR)/src/zarlink/88601 \
+		-I$(KERNEL_DIR)/src/zarlink/88601_1 \
+    -I$(KERNEL_DIR)/src/zarlink/9662 \
+    -I$(KERNEL_DIR)/src/zarlink/9662_1 \
+		-I$(KERNEL_DIR)/src/zarlink/9641 \
+		-I$(KERNEL_DIR)/src/zarlink/9641_1 \
+		-I$(KERNEL_DIR)/include \
+		-I$(KERNEL_DIR)/src/zarlink/89116_1 \
+		-I$(KERNEL_DIR)/src/zarlink/89156_2
+
+#EXTRA_CFLAGS += -I $(shell pwd)/src/lib/
+
+################################################################################# 
+#end of not SLIC_SILICON 
+endif
+################################################################################# 
+#end of not SLIC SEPERATE
+endif
+################################################################################# 
+
+export EXTRA_CFLAGS
+
+obj-m:=$(NAME).o
+target:=$(NAME)
+
+
+ifneq ($(strip $(VOIP_CFLAGS)),)
+EXTRA_CFLAGS+=$(VOIP_CFLAGS)
+endif
+export EXTRA_CFLAGS
+
+all:
+	$(MAKE) -C $(KERNEL_DIR) M=`pwd` modules
+	$(STRIP) --strip-unneeded $(MODULES_MTK_SLIC3_DIR)/$(target).ko
+	@date
+
+clean:
+	@find $(MODULES_MTK_SLIC3_DIR) -name "*.o" | xargs rm -rf
+	@find $(MODULES_MTK_SLIC3_DIR) -name "*.cmd" | xargs rm -rf
+	@find $(MODULES_MTK_SLIC3_DIR) -name "*.o.cmd" | xargs rm -rf
+	@find $(MODULES_MTK_SLIC3_DIR) -name ".*.o.cmd" | xargs rm -rf
+	@find $(MODULES_MTK_SLIC3_DIR) -name ".*.ko.cmd" | xargs rm -rf
+	@rm -rf $(SLIC3_DIR)/*.ko $(SLIC3_DIR)/*.mod.c $(SLIC3_DIR)/.tmp_versions
+	@rm -f Module.symvers
+	@date
+

@@ -1,0 +1,36 @@
+div.layout{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	min-height: 670px;
+	min-width: 1000px;
+}
+
+table.layout_pages{
+	position: absolute;
+	min-height: 670px;
+}
+
+div#layout_bg_left{
+	background: url(../../include/images/layout_bg_left.gif) top left repeat-y;
+}
+
+div#layout_bg_right{
+	background: url(../../include/images/layout_bg_right.gif) top right repeat-y;
+}
+
+div#layout_top{
+	background: url(../../include/images/layout_divisor.gif) bottom repeat-x;
+	height: 94px;
+}
+
+div#layout_top_content{
+	width: 850px;
+	padding-top: 15px;
+}
+
+div#layout_content{
+	width: 850px;
+	height: 480px;
+	*padding: 45px 0 45px 0; /*IE7*/ 
+}

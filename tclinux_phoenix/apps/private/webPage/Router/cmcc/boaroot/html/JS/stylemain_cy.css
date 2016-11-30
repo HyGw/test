@@ -1,0 +1,98 @@
+.Menu_L1_Link {
+	FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #000000; FONT-FAMILY: "宋体"; LETTER-SPACING: 10px; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+.Menu_L1_Active {
+	FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #ffffff; FONT-FAMILY: "宋体"; LETTER-SPACING: 10px; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+.Menu_L2_Link {
+	FONT-SIZE: 12px; COLOR: #000000; FONT-FAMILY: "宋体"; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+.Menu_L2_Active {
+	FONT-SIZE: 12px; COLOR: #ffffff; FONT-FAMILY: "宋体"; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+.LocationDisplay {
+	FONT-WEIGHT: bold; FONT-SIZE: 36px; COLOR: #ffffff; FONT-FAMILY: "宋体"
+}
+.Item_L1 {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #ffffff; FONT-FAMILY: "宋体"; TEXT-ALIGN: right; TEXT-DECORATION: none
+}
+.Item_L2 {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #000000; FONT-FAMILY: "宋体"; TEXT-ALIGN: right; TEXT-DECORATION: none
+}
+BODY {
+	FONT-SIZE: 12px; COLOR: #333333; FONT-FAMILY: "宋体"; background-attachment:fixed; background-repeat:no-repeat; background-position:center center;
+}
+.logout {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #ffffff; FONT-FAMILY: "宋体"; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+TABLE {
+	FONT-SIZE: 12px; FONT-FAMILY: "宋体"
+}
+.GatewayName {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #ffffff; FONT-FAMILY: "宋体"
+}
+.GatewayType {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #ffffff; FONT-FAMILY: "宋体"
+}
+.table_title {
+	FONT-WEIGHT: bold; LINE-HEIGHT: 22px; BACKGROUND-COLOR: #e7e7e7
+}
+.curUserName {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #023da3; FONT-FAMILY: "宋体"
+}
+.welcom {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #ffffff; FONT-FAMILY: "宋体"
+}
+.TimeOut {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #0436a5; FONT-FAMILY: "宋体"; TEXT-DECORATION: none
+}
+#loading {
+	width: 380px;
+	background-color: #ffffff;
+	border: 1px solid #ff9900;
+}
+#loadcss {
+	display: block;
+	background-color: #ff9900;
+	text-align: right;
+}
+#btnOK {
+	BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; BORDER-LEFT-COLOR: #cccccc; BORDER-BOTTOM-WIDTH: 1px; BORDER-BOTTOM-COLOR: #cccccc; BORDER-TOP-COLOR: #cccccc; BORDER-RIGHT-WIDTH: 1px; BORDER-RIGHT-COLOR: #cccccc
+}
+#btnCancel {
+	BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; BORDER-LEFT-COLOR: #cccccc; BORDER-BOTTOM-WIDTH: 1px; BORDER-BOTTOM-COLOR: #cccccc; BORDER-TOP-COLOR: #cccccc; BORDER-RIGHT-WIDTH: 1px; BORDER-RIGHT-COLOR: #cccccc
+}
+.InputTextWarning {
+	border-top:0px;
+	border-bottom:0px;
+	border-left:0px;
+	border-right:0px;
+	color:#CC0000;
+}
+
+.table1_help {
+	width:80px;
+}
+.table1_bg {
+	BACKGROUND-COLOR: #767676; margin-top:-1px;
+}
+.table1_title {
+	BORDER-BOTTOM: #c4d7e5; TEXT-ALIGN: center; BORDER-LEFT: #c4d7e5; LINE-HEIGHT: 20px; BACKGROUND-COLOR: #e7e7e7; HEIGHT: 20px; FONT-SIZE: 12px; BORDER-TOP: #c4d7e5; FONT-WEIGHT: bold; BORDER-RIGHT: #c4d7e5
+}
+.table1_head {
+	LINE-HEIGHT: 20px; HEIGHT: 20px; FONT-SIZE: 12px; FONT-WEIGHT: bold
+}
+.table1_left {
+	LINE-HEIGHT: 24px; BACKGROUND-COLOR: #e7e7e7; PADDING-LEFT: 5px; HEIGHT: 24px;
+}
+.table1_right {
+	LINE-HEIGHT: 24px; BACKGROUND-COLOR: #f8f8f8; PADDING-LEFT: 5px; HEIGHT: 24px
+}
+.table1_submit {
+	PADDING-BOTTOM: 5px; LINE-HEIGHT: 24px; PADDING-LEFT: 5px; HEIGHT: 24px; PADDING-TOP: 5px
+}.table1_01 {
+	LINE-HEIGHT: 20px; BACKGROUND-COLOR: #f8f8f8; PADDING-LEFT: 5px; HEIGHT: 20px; COLOR: #000; FONT-SIZE: 12px
+}
+.table1_02 {
+	LINE-HEIGHT: 20px; BACKGROUND-COLOR: #f8f8f8; PADDING-LEFT: 5px; HEIGHT: 20px; COLOR: #000; FONT-SIZE: 12px
+}

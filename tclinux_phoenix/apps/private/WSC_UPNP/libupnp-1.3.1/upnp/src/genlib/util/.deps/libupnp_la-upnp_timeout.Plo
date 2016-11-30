@@ -1,0 +1,63 @@
+src/genlib/util/libupnp_la-upnp_timeout.lo: \
+ src/genlib/util/upnp_timeout.c \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdc-predef.h \
+ src/inc/config.h ../autoconfig.h src/inc/upnp_timeout.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/malloc.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/features.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/cdefs.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/wordsize.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sgidefs.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/gnu/stubs.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/gnu/stubs-o32_soft.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/lib/gcc/mips-buildroot-linux-gnu/4.9.3/include/stddef.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdio.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/types.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/typesizes.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/libio.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/_G_config.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/wchar.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/lib/gcc/mips-buildroot-linux-gnu/4.9.3/include/stdarg.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/stdio_lim.h \
+ /opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sys_errlist.h
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdc-predef.h:
+
+src/inc/config.h:
+
+../autoconfig.h:
+
+src/inc/upnp_timeout.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/malloc.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/features.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sys/cdefs.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/wordsize.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/sgidefs.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/gnu/stubs.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/gnu/stubs-o32_soft.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/lib/gcc/mips-buildroot-linux-gnu/4.9.3/include/stddef.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/stdio.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/types.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/typesizes.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/libio.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/_G_config.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/wchar.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/lib/gcc/mips-buildroot-linux-gnu/4.9.3/include/stdarg.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/stdio_lim.h:
+
+/opt/trendchip/mips-linux-glibc-4.9.3/usr/mips-buildroot-linux-gnu/sysroot/usr/include/bits/sys_errlist.h:

@@ -1,0 +1,1 @@
+cmd_net/sched/cls_fw.ko := mips-buildroot-linux-gnu-ld -r  -m elf32btsmip -T /opt/tclinux_phoenix/linux-2.6.36/scripts/module-common.lds --build-id  -o net/sched/cls_fw.ko net/sched/cls_fw.o net/sched/cls_fw.mod.o

@@ -1,0 +1,1 @@
+cmd_net/bridge/netfilter/ebt_ip6.ko := mips-buildroot-linux-gnu-ld -r  -m elf32btsmip -T /opt/tclinux_phoenix/linux-2.6.36/scripts/module-common.lds --build-id  -o net/bridge/netfilter/ebt_ip6.ko net/bridge/netfilter/ebt_ip6.o net/bridge/netfilter/ebt_ip6.mod.o

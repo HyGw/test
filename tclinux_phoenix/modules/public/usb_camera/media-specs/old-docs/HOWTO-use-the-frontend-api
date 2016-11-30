@@ -1,0 +1,204 @@
+
+-------------------------------------------------------------------------------
+
+What has changed since the old Nokia OST API?
+
+  file naming:
+    - /dev/ost directory is now called /dev/dvb
+    - each DVB adapter has it's own directory /dev/dvb/adapterX
+    - here you'll find a number of frontend devices /dev/dvb/adapterX/frontendY
+    - driver header directory is located now in /usr/include/linux/dvb/
+    - we have a linux/dvb/version.h file, this is included by all headers which
+       don't use the original OST API anymore
+
+  struct naming:
+    - we follow the kernel naming scheme and try to get the namespace clean,
+      these changes are mostly syntactical
+
+  DiSEqC:
+    - DiSEqC 2.0 ioctls
+    - the sec-device is gone, DiSEqC ioctls are passed to the frontend
+       filedescriptor - this matches the hardware better
+    - the old secCmdSequence is replaced by lowlevel FE_DISEQC_XXX ioctls,
+       this allows asynchronous DiSEqC, DiSEqC 2.0 and more flexibility for
+       cascaded devices and exotic setup
+
+  frontend events:
+    - the event struct is simplified, you get an event now whenever one of the
+       frontend status bits changes
+
+  ioctls:
+    - FE_SELFTEST is gone, was a noop anyway
+    - FE_GET_NEXT_FREQUENCY and FE_GET_NEXT_SYMBOL_RATE are gone,
+       this information can be obtained with FE_GET_INFO
+    - FE_SET_POWER_STATE is gone, powermanagement is done implicitly by device
+       open()/close() calls
+
+-------------------------------------------------------------------------------
+
+How to determine the API version?
+
+  Check in your configure script for #include <linux/dvb/version.h>,
+  include it and check the DVB_API_VERSION #define.
+
+  Currently we use version 3, it will be incremented whenever an API change
+  meets the CVS main branch.
+
+-------------------------------------------------------------------------------
+
+What is a DVB frontend?
+
+  the term 'frontend' refers to this part of the DVB adapter which receives
+  an MPEG transport stream and will feed it later into the Demultiplexer.
+  Whenever you want to receive MPEG streams via satellite, antenna or cable
+  you have to set up your frontend first.
+
+  When you watch on your DVB card or into your SetTopBox the frontend is usually
+  the combination of a demodulator chip and a small silver metal box with the
+  HF electronic. Usually the demodulator is built into this metal box.
+
+-------------------------------------------------------------------------------
+
+What do you have to do to set up your frontend?
+
+  First you should try to determine the type of your frontend.
+
+	#include <linux/dvb/frontend.h>
+
+	struct dvb_frontend_info info;
+	int fd;
+
+	if ((fd = open ("/dev/dvb/adapter0/frontend0", O_RDWR)) < 0) {
+		perror ("open failed");
+		return -1;
+	}
+
+	ioctl (fd, FE_GET_INFO, &info);
+
+  Now the info.type field contains either FE_QPSK for a satellite frontend,
+  FE_QAM for a cable frontend or FE_OFDM for a terrestrial frontend.
+
+  The info.name field contains a human readable vendor string of your frontend.
+  You might want to show this in your GUI to make support easier.
+
+  The info struct also contains the frequency limits, frontend capabilities,
+  the frequency and symbol rate tolerance the AFC or timing recovery loop can
+  compensate and some fields you are not interested in.
+
+-------------------------------------------------------------------------------
+
+How to set up a cable or terrestrial frontend?
+
+  Fill a dvb_frontend_parameters struct according to the data in your channel
+  list. For cable frontends, you have to fill the qam field of the union, for
+  terrestrial frontends it's the ofdm field.
+
+  Apply it using the FE_SET_FRONTEND_PARAMETERS ioctl. That's all.
+
+-------------------------------------------------------------------------------
+
+How to set up a satellite frontend?
+
+  Before you set the frontend parameters you have to setup DiSEqC switches and
+  the LNB. Modern LNB's switch their polarisation depending of the DC component
+  of their input (13V for vertical polarisation, 18V for horizontal). When they
+  see a 22kHz signal at their input they switch into the high band and use a
+  somewhat higher intermediate frequency to downconvert the signal.
+
+  When your satellite equipment contains a DiSEqC switch device to switch
+  between different satellites you have to send the according DiSEqC commands,
+  usually command 0x38. Take a look into the DiSEqC spec available at
+  http://www.eutelsat.org/ for the complete list of commands.
+
+  The burst signal is used in old equipments and by cheap satellite A/B
+  switches.
+
+  Voltage, burst and 22kHz tone have to be consistent to the values encoded in
+  the DiSEqC commands.
+
+  The complete sequence to set up switch and LNB according to the DiSEqC spec
+  looks like this:
+
+   - stop continous tone
+   - setup polarisation voltage
+   - wait at least 15ms.
+   - send your DiSEqC commands using the FE_DISEQC_SEND_MASTER_CMD ioctl
+   - wait another 15ms
+   - send burst
+   - wait 15ms
+   - start the 22kHz tone when you tune to a transponder in the high band
+
+  You can copy'n'paste this code sniplets from szap.c or diseqc.c, both
+  test programs are distributed with the linuxtv DVB driver source. All
+  DiSEqC related ioctls are passed to the frontend device filedescriptor.
+
+  Depending on the equipment setup, you may or may not have to repeat the
+  DiSEqC commands (only commands, not the whole sequence) for cascaded devices
+  and can pack committed/uncommitted switch messages. See the DiSEqC spec for
+  details.
+
+  In an advanced program, you probably want to send this sequence using an
+  asynchonous thread. Since sleep() and similiar calls are pthread
+  cancellation points, it's really simple to stop a running DiSEqC thread
+  before submitting a new sequence.
+
+  Now you have set up switch and LNB, a valid RF signal of the requested
+  satellite should be at the input of the demodulator.
+
+  Fill a dvb_frontend_parameters struct using the qpsk field in the union and
+  apply it using the FE_SET_FRONTEND_PARAMETERS ioctl.
+
+-------------------------------------------------------------------------------
+
+How do I check the frontend status?
+
+  You can perform a poll()/select() on the frontend file descriptor. Whenever
+  one of the frontend status bits toggles the poll returns. Now you can
+  submit the FE_GET_EVENT ioctl to receive the new status bits. When you used
+  one of the XXX_AUTO parameters you might want to use the event.parameters
+  field to determine the correct tuned parameters and update your channel list.
+
+  If you want to simulate the old FE_FAILURE_EV frontend event behaviour you
+  should check the FE_TIMEDOUT bit, this will be set when the tuning was not
+  successful within a few seconds.
+
+  When you get a FE_REINIT event the frontend was reinitialized. You should
+  send the DiSEqC sequence again if you use a QPSK frontend.
+
+  The FE_READ_SIGNAL_STRENGTH ioctl will fill the signal strength into the
+  16 LSBs of the passed argument. The signal strength range is from 0 (bad)
+  to 65535 (too good to be true).
+
+  FE_READ_SNR returns the signal noise ratio. range 0 (bad) to 65535 (not real).
+  For both the signal strength and signal noise ratio a value of about 60-70%
+  means a good signal.
+
+  Not all FE_READ_XXX ioctl()s are supported by all hardware. Check the ioctl
+  return value, if it's less than 0 this ioctl is not supported.
+
+-------------------------------------------------------------------------------
+
+What does FE_ENABLE_HIGH_LNB_VOLTAGE?
+
+  some STBs (the dbox2 for example) support somewhat higher LNB voltages than
+  13 and 18V. They add about 0.5V to compensate voltage drop on long cables.
+
+  This ioctl is not supported on all boxes. You probably want to show an extra
+  menu item in your GUI when this ioctl returns a zero value.
+
+-------------------------------------------------------------------------------
+
+How to do powermanagement, the FE_SET_POWER_STATE ioctls are gone?
+
+  An open() call on the frontend device powers up and initializes the
+  demodulator and switches on LNB power if necessairy. The DiSEqC bus won't
+  be resetted, do this manually if you think you need to.
+
+  Some seconds after the device is closed (and was not opened by a new process)
+  LNB power and the demodulator are shut down into sleep mode.
+
+  You can configure the shutdown timeout using the shutdown_timeout module
+  parameter. To disable power management set shutdown_timeout=0.
+
+-------------------------------------------------------------------------------
+

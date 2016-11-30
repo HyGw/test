@@ -1,0 +1,19 @@
+AT_BANNER([tunnel_push_pop_ipv6])
+
+AT_SETUP([tunnel_push_pop_ipv6 - action])
+
+OVS_VSWITCHD_START([add-port br0 p0 -- set Interface p0 type=dummy ofport_request=1 other-config:hwaddr=aa:55:aa:55:00:00])
+AT_CHECK([ovs-vsctl add-br int-br -- set bridge int-br datapath_type=dummy], [0])
+AT_CHECK([ovs-vsctl add-port int-br t2 -- set Interface t2 type=vxlan \
+                       options:remote_ip=2001:cafe::92 options:key=123 ofport_request=2\
+                    -- add-port int-br t1 -- set Interface t1 type=gre \
+                       options:remote_ip=2001:cafe::92 options:key=456 ofport_request=3\
+                    -- add-port int-br t3 -- set Interface t3 type=vxlan \
+                       options:remote_ip=2001:cafe::93 options:out_key=flow options:csum=true ofport_request=4\
+                       ], [0], [], [dnl
+ovs-vsctl: Error detected while setting up 't2', 't1', 't3'.  See ovs-vswitchd log for details.
+])
+
+OVS_VSWITCHD_STOP(["/remote_ip/d
+/could not set configuration/d"])
+AT_CLEANUP

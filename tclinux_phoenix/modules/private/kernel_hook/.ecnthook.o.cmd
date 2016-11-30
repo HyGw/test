@@ -1,0 +1,1 @@
+cmd_/opt/tclinux_phoenix/modules/private/kernel_hook/ecnthook.o := mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o /opt/tclinux_phoenix/modules/private/kernel_hook/ecnthook.o /opt/tclinux_phoenix/modules/private/kernel_hook/ecnt_hook_register.o 

@@ -1,0 +1,6 @@
+#define UTS_VERSION "#618 Mon Sep 6 15:23:59 CST 2004"
+#define LINUX_COMPILE_TIME "15:23:59"
+#define LINUX_COMPILE_BY "lino"
+#define LINUX_COMPILE_HOST "localhost.localdomain"
+#define LINUX_COMPILE_DOMAIN "localdomain"
+#define LINUX_COMPILER "gcc version egcs-2.91.66 19990314/Linux (egcs-1.1.2 release)"

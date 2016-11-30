@@ -1,0 +1,27 @@
+#
+# USB Host Controller Drivers
+#
+comment "USB Host Controller Drivers"
+	depends on USB
+
+config USB_MTK_XHCI_HCD_TEST_DRV
+	tristate "MTK xHCI HCD (USB 3.0) Test Driver"
+	depends on USB 
+
+config USB_XHCI_HCD_DEBUGGING
+	bool "Debugging for the xHCI host controller"
+	depends on USB_MTK_XHCI_HCD_TEST_DRV
+	---help---
+	  Say 'Y' to turn on debugging for the xHCI host controller driver.
+	  This will spew debugging output, even in interrupt context.
+	  This should only be used for debugging xHCI driver bugs.
+
+	  If unsure, say N.
+
+config U3_PHY_GPIO_SUPPORT
+	depends on USB_MTK_XHCI_HCD_TEST_DRV
+	bool "U3 PHY GPIO access registers support"
+
+config A60810_SUPPORT
+	depends on USB_MTK_XHCI_HCD_TEST_DRV
+        bool "U3 PHY A60810 support"

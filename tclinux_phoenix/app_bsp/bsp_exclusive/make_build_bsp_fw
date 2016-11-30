@@ -1,0 +1,28 @@
+build_fw:
+	rm -rf $(TRUNK_DIR)/tmpfilesys
+	mkdir $(TRUNK_DIR)/tmpfilesys
+	cp -rf $(FILESYSTEM_DIR) $(TRUNK_DIR)/tmpfilesys
+
+	find $(TRUNK_DIR)/tmpfilesys -name ".svn" | xargs rm -rf
+	find $(TRUNK_DIR)/tmpfilesys -name "CVS" | xargs rm -rf
+	
+ifneq ($(strip $(TCSUPPORT_CODE_SHRINK)),)
+	$(STRIP) --strip-unneeded -R .comment  $(TRUNK_DIR)/tmpfilesys/filesystem/usr/bin/*
+#	$(STRIP) --strip-unneeded -R .comment  $(TRUNK_DIR)/tmpfilesys/filesystem/userfs/bin/*
+#	$(STRIP) --strip-unneeded -R .comment  $(TRUNK_DIR)/tmpfilesys/filesystem/lib/modules/*
+endif
+
+ifneq ($(strip $(TCSUPPORT_2_6_36_KERNEL) $(TCSUPPORT_3_18_21_KERNEL)),)
+	$(TOOLS_DIR)/mksquashfs4 $(TRUNK_DIR)/tmpfilesys/filesystem $(TRUNK_DIR)/rootfs -comp lzma -nopad -noappend
+else
+	$(TOOLS_DIR)/mksquashfs-lzma $(TRUNK_DIR)/tmpfilesys/filesystem $(TRUNK_DIR)/rootfs -be -noappend
+endif
+	
+	cp $(TRUNK_DIR)/rootfs $(APP_BSP_BUILD_DIR)
+	rm -f $(TRUNK_DIR)/rootfs
+	cp $(KERNEL_DIR)/linux.7z $(APP_BSP_BUILD_DIR)
+
+	cd $(APP_BSP_BUILD_DIR) && ./buildImage.sh
+	cp $(APP_BSP_BUILD_DIR)/tclinux.bin $(PROJECT_DIR)/images	
+
+	rm -rf $(TRUNK_DIR)/tmpfilesys

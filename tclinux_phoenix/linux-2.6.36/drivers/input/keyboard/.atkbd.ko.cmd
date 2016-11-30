@@ -1,0 +1,1 @@
+cmd_drivers/input/keyboard/atkbd.ko := mips-buildroot-linux-gnu-ld -r  -m elf32btsmip -T /opt/tclinux_phoenix/linux-2.6.36/scripts/module-common.lds --build-id  -o drivers/input/keyboard/atkbd.ko drivers/input/keyboard/atkbd.o drivers/input/keyboard/atkbd.mod.o

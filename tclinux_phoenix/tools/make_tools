@@ -1,0 +1,118 @@
+tools_clean:squashfstools_clean
+
+tools:squashfstools 
+
+squashfstools:lzma
+	make -C $(TOOLS_DIR)/squashfs-tools
+	cp $(TOOLS_DIR)/squashfs-tools/mksquashfs  $(TOOLS_DIR)
+	cp $(TOOLS_DIR)/squashfs-tools/mksquashfs-lzma $(TOOLS_DIR)
+	cp $(TOOLS_DIR)/squashfs-tools/unsquashfs $(TOOLS_DIR)
+
+squashfstools_clean:lzma_clean
+	make -C $(TOOLS_DIR)/squashfs-tools clean
+	rm -f $(TOOLS_DIR)/mksquashfs
+	rm -f $(TOOLS_DIR)/mksquashfs-lzma
+	rm -f $(TOOLS_DIR)/unsquashfs 
+
+lzma:
+	make -C  $(LZMA_LIB) 
+	cp -f  $(LZMA_ALONE)/makefile.gcc $(LZMA_ALONE)/makefile
+	make -C $(LZMA_ALONE)
+	cp -f $(LZMA_ALONE)/lzma $(TOOLS_DIR)
+
+lzma_clean:
+	cp -f  $(LZMA_ALONE)/makefile.gcc $(LZMA_ALONE)/makefile
+	make -C $(LZMA_LIB) clean
+	make -C $(LZMA_ALONE) clean
+	rm -f $(TOOLS_DIR)/lzma
+
+mlCheckHash:
+	make -C $(TOOLS_DIR)/mlCheckHash
+
+mlCheckHash_clean:
+	make -C $(TOOLS_DIR)/mlCheckHash clean
+	rm -f $(TOOLS_DIR)/mlCheckHash
+
+
+checktools:
+	echo making compile options checking  tools
+#	make -C $(TOOLS_DIR)/cplopts_checktool clean
+	make -C $(TOOLS_DIR)/cplopts_checktool
+	cp -f $(TOOLS_DIR)/cplopts_checktool/cplopts_begin $(TOOLS_DIR)
+	cp -f $(TOOLS_DIR)/cplopts_checktool/cplopts_formcheck $(TOOLS_DIR)
+	cp -f $(TOOLS_DIR)/cplopts_checktool/cplopts_remove $(TOOLS_DIR)
+
+checktools_clean:
+	echo cleaning compile options checking  tools
+	make -C $(TOOLS_DIR)/cplopts_checktool clean
+
+diag:
+	echo Data path debug tool
+	cd $(MODULES_DIAG_TOOL) && perl $(MODULES_DIAG_TOOL)/version.pl
+	$(MAKE) -C $(MODULES_DIAG_TOOL)
+	cp $(MODULES_DIAG_TOOL)/*.ko $(FILESYSTEM_DIR)/lib/modules/
+	mtkbuild -s -x diag.ko -o $(MODULES_DIAG_TOOL)
+diag_clean:
+	make -C $(MODULES_DIAG_TOOL) clean
+	cd $(FILESYSTEM_DIR)/lib/modules/ && rm -f diag.ko 
+
+
+bootbase_check:restore checktools
+ifneq ($(strip $(KERNEL_2_6_36)),)
+	$(TOOLS_DIR)/cplopts_begin $(BOOTROM_DIR) $(PROJECT_DIR)/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE)_2_6_36.profile
+else
+	$(TOOLS_DIR)/cplopts_begin $(BOOTROM_DIR) $(PROJECT_DIR)/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE).profile
+endif
+
+apps_check: restore checktools
+ifneq ($(strip $(KERNEL_2_6_36)),)
+	$(TOOLS_DIR)/cplopts_begin $(APP_DIR) $(PROJECT_DIR)/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE)_2_6_36.profile 
+else
+	$(TOOLS_DIR)/cplopts_begin $(APP_DIR) $(PROJECT_DIR)/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE).profile 
+endif
+
+kernel_check:restore checktools
+ifneq ($(strip $(KERNEL_2_6_36)),)
+	$(TOOLS_DIR)/cplopts_begin $(KERNEL_DIR) $(PROJECT_DIR)/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE)_2_6_36.profile
+else
+	$(TOOLS_DIR)/cplopts_begin $(KERNEL_DIR) $(PROJECT_DIR)/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE).profile
+endif
+
+all_check:checktools
+	if test -e $(TOOLS_DIR)/cplopts_checktool/tmp/restore.sh; \
+	then echo "Please restore the files first before any modification!"; exit 1; \
+	else echo "executing all check"; \
+	fi
+
+ifneq ($(strip $(CHKDIR)),)
+	echo "checking CHDIR"
+ifneq ($(strip $(KERNEL_2_6_36)),)
+	$(TOOLS_DIR)/cplopts_begin $(TRUNK_DIR)/$(CHKDIR) $(PROJECT_DIR)/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE)_2_6_36.profile
+else
+	$(TOOLS_DIR)/cplopts_begin $(TRUNK_DIR)/$(CHKDIR) $(PROJECT_DIR)/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE).profile
+endif
+else
+	echo "checking all files in trunk dir"
+ifneq ($(strip $(KERNEL_2_6_36)),)
+	$(TOOLS_DIR)/cplopts_begin $(TRUNK_DIR) $(PROJECT_DIR)/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE)_2_6_36.profile
+else
+	$(TOOLS_DIR)/cplopts_begin $(TRUNK_DIR) $(PROJECT_DIR)/profile/$(CUSTOM)/$(PROFILE)/$(PROFILE).profile
+endif
+endif
+	if test -e $(TOOLS_DIR)/cplopts_checktool/tmp/error; \
+	then echo "Compile code error"; exit 1; \
+	fi
+	if test -e $(TOOLS_DIR)/cplopts_checktool/tmp/parsingfile; \
+	then echo "Tool couldn't work totally! The error filename is";\
+			 cat $(TOOLS_DIR)/cplopts_checktool/tmp/parsingfile;rm -f $(TOOLS_DIR)/cplopts_checktool/tmp/parsingfile;exit 1; \
+	else echo "Tool works totally and Compile code success"; \
+	fi
+
+restore:checktools
+	if test -e $(TOOLS_DIR)/cplopts_checktool/tmp/restore.sh; \
+	then echo "Compile bootbase success"; \
+	/bin/sh $(TOOLS_DIR)/cplopts_checktool/tmp/restore.sh; \
+	rm -f $(TOOLS_DIR)/cplopts_checktool/tmp/restore.sh; \
+	rm -rf $(TRUNK_DIR)/backup; \
+	fi
+	echo "Files  restored!" 

@@ -1,0 +1,1 @@
+cmd_net/ipv6/netfilter/built-in.o :=  mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o net/ipv6/netfilter/built-in.o net/ipv6/netfilter/ip6_tables.o net/ipv6/netfilter/ip6table_filter.o net/ipv6/netfilter/ip6t_LOG.o net/ipv6/netfilter/nf_conntrack_ipv6.o 

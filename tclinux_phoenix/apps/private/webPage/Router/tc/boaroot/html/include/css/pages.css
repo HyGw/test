@@ -1,0 +1,302 @@
+div.page_content{
+	height: 435px;
+}
+div.page_title{
+	font-family: 'TradeGothicBoldTwo';
+	font-size: 22px;
+	margin-bottom: 7px;
+}
+div.page_maxtitle{
+	font-size: 25px;
+	margin-bottom: 7px;
+}
+div.page_subtitle_special{
+	font-size: 21px;
+	line-height: 36px;
+}
+div.page_orador_oi_title{
+	margin-bottom: 13px;
+}
+div.page_txt{
+	font-size: 18px;
+	line-height: 28px;
+}
+div.page_txt p{
+	margin-bottom: 25px;
+}
+div.page_txt a{
+	color: #20ebe7;
+	text-decoration: underline;
+}
+div.page_txt a:hover{
+	color: #f4cd58;
+}
+span.page_txt_highlights{
+	font-family: 'TradeGothicBoldTwo';
+}
+div.page_btns{
+	margin-top: 15px;
+	height: 30px;
+	text-align: right;
+}
+div.page_btns img{
+	margin-left: 11px;
+}
+div.page_txt_load{
+	text-align: center;
+	font-size: 30px;
+	margin-bottom: 31px;
+}
+div.page_load{
+	text-align: center;
+}
+div.page_form{
+	margin-top: 42px;
+}
+div.page_form_problem{
+	margin-top: 25px;
+}
+div.page_form_line{
+	height: 25px;
+	margin-bottom: 14px;
+}
+div.page_form_line_name{
+	font-family: 'TradeGothicBoldTwo';
+	float: left;
+	text-align: right;
+	font-size: 16px;
+	margin: 4px 24px 0 0;
+}
+div.page_form_line_field{
+	float: left;
+	width: 240px;
+	height: 25px;
+	margin-right: 9px;
+}
+div.page_form_line_field input{
+	background-color: #f5f5f5;
+	padding: 4px 3px 3px 3px;
+	font-size: 14px;
+	margin-left: 2px;
+	margin-top: 1px\9; /*IE8 and below*/
+	width: 230px;
+}
+div.page_form_line_field_input{
+	background-image: url(../../include/images/page_form_field.png);
+}
+div.page_form_line_description{
+	float: left;
+	font-size: 13px;
+	margin-top: 8px;
+}
+select.page_form_problem{
+	width: 397px;
+}
+div.page_form_radio_button{
+	font-size: 14px;
+	line-height: 24px;
+}
+div.page_form_radio_button input{
+	margin-left: 0;
+}
+div.page_form_radio_button a{
+	color: #20ebe7;
+	text-decoration: underline;
+}
+div.page_form_radio_button a:hover{
+	color: #f4cd58;
+}
+div.page_help{
+	margin-top: 65px;
+}
+div.page_help_icon{
+	float: left;
+	margin-right: 7px;
+}
+div.page_help_txt{
+	float: left;
+	font-size: 13px;
+	margin-top: 3px;
+	line-height: 23px;
+}
+div.page_help_txt a{
+	color: #20ebe7;
+	text-decoration: underline;
+}
+div.page_help_txt a:hover{
+	color: #f4cd58;
+}
+div.page_table{
+	border-bottom: 1px solid #4db8c1;
+}
+div.page_table_title{
+	margin-bottom: 20px;
+}
+div.page_table_problem{
+	width: 228px;
+	float: left;
+}
+div.page_table_problem_content{
+	font-family: 'TradeGothicBoldTwo';
+	font-size: 20px;
+	padding: 27px;
+}
+div.page_table_steps{
+	width: 619px;
+	float: left;
+	border-left: 1px solid #4db8c1; 
+}
+div.page_table_steps_content{
+	padding: 27px 27px 7px 27px;
+}
+div.page_table_steps_list{
+	font-size: 16px;
+	line-height: 24px;
+	margin-bottom: 18px;
+}
+div.page_table_steps_list_bold{
+	font-weight: bold;
+}
+div.page_table_steps_sublist{
+	font-size: 13px;
+	line-height: 18px;
+}
+div.page_table_steps_list img{
+	float: left;
+	margin: 6px 9px 0 0;
+}
+div.page_table_steps_list_title{
+	font-weight: bold;
+	text-transform: uppercase;
+	margin-bottom: 7px;
+}
+div.page_table_top{
+	font-family: 'TradeGothicBoldTwo';
+	background-color: #00717d;
+	padding: 16px 0 16px 27px;
+	font-size: 18px;
+}
+div.page_table_clear{
+	clear: both; 
+	height: 0;
+}
+div#page_welcome_content{
+	padding-top: 130px;
+}
+div#page_detecting_content, div#page_setting_content{
+	padding-top: 160px;
+}
+div#page_set_modem_residential_content{
+	padding-top: 5px;
+}
+div.page_form_name_set_modem_residential{
+	width: 100px;
+}
+div#page_set_modem_commercial_content{
+	padding-top: 105px;
+}
+div.page_form_name_set_modem_commercial{
+	width: 50px;
+}
+div#page_host_content{
+	padding-top: 130px;
+}
+div#page_authentication_failure_content{
+	padding-top: 45px;
+}
+div.page_authentication_failure_description{
+	font-family: 'TradeGothicBoldTwo';
+	font-size: 14px;
+	margin-top: 38px;
+}
+div#page_authentication_failure_velox_content, div#page_authentication_failure_velox_video_content{
+	background-image: url(../../include/images/page_modem_image.png);
+	background-repeat: no-repeat;
+	background-position: right;
+	min-height: 435px;
+	*height: 435px; /*IE7*/ 
+}
+div.page_authentication_failure_velox_help{
+	margin-top: 225px;
+}
+div#page_interface_failure_content{
+	padding-top: 120px;
+}
+div#page_troubleshooting_content{
+	padding-top: 45px;
+}
+div.page_troubleshooting_title{
+	font-family: 'TradeGothicBoldTwo';
+	font-size: 30px;
+	margin-bottom: 42px;
+}
+div#page_modem_off_problem_content{
+	padding-top: 55px;
+}
+div#page_adsl_off_problem_content{
+	padding-top: 10px;
+}
+div#page_ethernet_shield_problem_content{
+	padding-top: 5px;
+}
+div#page_user_password_problem_content{
+	padding-top: 5px;
+}
+div#page_connectionless_problem_content{
+	padding-top: 20px;
+}
+div#page_no_navigation_problem_content{
+	padding-top: 0;
+}
+div#page_slow_browsing_problem_content{
+	padding-top: 90px;
+
+}
+div#page_configure_wifi_content{
+	padding-top: 60px;
+
+}
+div.page_form_name_configure_wifi{
+	width: 104px;
+}
+
+select.page_form_encryption{
+	width: 242px;
+}
+div#page_configured_content{
+	padding-top: 150px;
+
+}
+div.page_configured_title{
+	text-align: center;
+	margin-bottom: 16px;
+}
+
+div.page_configured_txt{
+	text-align: center;
+}
+div#page_blank_content{
+	padding-top: 0;
+}
+div#page_rede_fon_content{
+	padding-top: 0;
+}
+div.page_form_rede_fon{
+	margin-top: 25px;
+}
+div#page_registered_residential_content{
+	padding-top: 10px;
+}
+div#page_registered_commercial_content{
+	padding-top: 40px;
+}
+div#page_modem_installed_content{
+	padding-top: 160px;
+}
+div.page_modem_installed_title{
+	text-align: center;
+	margin-bottom: 5px;
+}
+div.page_modem_installed_subtitle{
+	text-align: center;
+}

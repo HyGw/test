@@ -1,0 +1,9 @@
+# PPP options for the PPPoE server
+# LIC: GPL
+require-pap
+login
+noipdefault
+lcp-echo-interval 1
+lcp-echo-failure 20
+ms-dns 192.168.1.1
+ms-dns 192.168.239.1

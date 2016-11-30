@@ -1,0 +1,40 @@
+##################################
+#####Configured directories#######
+##################################
+INCLUDE			= -I$(KERNEL_DIR)/arch/mips/include \
+				  -I$(APP_API_LIB_OUTPUT_DIR)
+				  
+LIBDIR			= -L $(APP_API_LIB_OUTPUT_DIR) -lapi_lib_utility -lapi_lib_qdmamgr_lan
+USRBINDIR		= $(FILESYSTEM_DIR)/userfs/bin
+
+##################################
+########Configured flags##########
+##################################
+RM				= /bin/rm -f
+QDMAMGR_CFLAGS	= -O2 -Wall $(INCLUDE) $(TC_CFLAGS)
+QDMAMGR_CFLAGS	+= -D QDMA_LAN
+#QDMAMGR_CFLAGS	+= -D API_CMD_QDMAMGR_DBG
+
+##################################
+########Configured output#########
+##################################
+OBJS	=	qdmamgr.o qdmamgr_get.o qdmamgr_set.o
+TARGETS	=	qdmamgr_lan
+
+all: $(TARGETS) install
+
+.SUFFIXES:  .c .o
+.c.o:
+	$(CC) $(QDMAMGR_CFLAGS) -c $<
+	
+$(TARGETS): clean $(OBJS)
+	$(CC) $(QDMAMGR_CFLAGS) -o $(TARGETS) $(OBJS) $(LIBDIR)
+	$(STRIP) --strip-unneeded $(TARGETS)
+
+install:
+	install $(TARGETS) $(USRBINDIR)
+	
+clean:
+	$(RM) $(OBJS) $(TARGETS)
+	$(RM) $(USRBINDIR)/$(TARGETS)
+

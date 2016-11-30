@@ -1,0 +1,7 @@
+- If you do not receive any packets over the dvb0 device the reason could
+  be the rp_filter.
+  Check if your distribution enables this or disable it with:
+
+  "echo 0 > /proc/sys/net/ipv4/conf/dvb0/rp_filter"
+
+  This disables source validation by reversed path lookup.

@@ -1,0 +1,17 @@
+***************
+*** 58,64 ****
+  CFLAGS = @CFLAGS@
+  CPPFLAGS = @CPPFLAGS@
+  DEFS = @DEFS@ -DSYSTEM_WGETRC=\"$(sysconfdir)/wgetrc\" -DLOCALEDIR=\"$(localedir)\"
+- LIBS = @LIBS@ @LIBSSL@ @LIBGNUTLS@
+  LDFLAGS = @LDFLAGS@
+  
+  #
+--- 58,64 ----
+  CFLAGS = @CFLAGS@
+  CPPFLAGS = @CPPFLAGS@
+  DEFS = @DEFS@ -DSYSTEM_WGETRC=\"$(sysconfdir)/wgetrc\" -DLOCALEDIR=\"$(localedir)\"
++ LIBS = @LIBS@ @LIBSSL@ @LIBGNUTLS@ @LIBMATRIXSSL@ 
+  LDFLAGS = @LDFLAGS@
+  
+  #

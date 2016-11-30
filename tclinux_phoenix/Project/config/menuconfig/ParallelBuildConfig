@@ -1,0 +1,24 @@
+menu "Beta feature: Parallel Build"
+
+config TCSUPPORT_PARALLEL_BUILD_KERNEL_OFF
+	bool "Disable parallel build kernel"
+	default n 
+	help
+		parallel build the kernel
+
+config TCSUPPORT_PARALLEL_BUILD_CUSTOM_JOB_NUM_ENABLE
+	bool "Eable custom max job number"
+	default n
+	depends !TCSUPPORT_PARALLEL_BUILD_KERNEL_OFF
+	help
+		customize maximum parallel job number
+
+config TCSUPPORT_PARALLEL_BUILD_JOB_NUM
+	int "Custom max job number"
+	default 16
+	depends TCSUPPORT_PARALLEL_BUILD_CUSTOM_JOB_NUM_ENABLE
+	help
+		specify maximum parallel build job number
+
+endmenu
+

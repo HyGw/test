@@ -1,0 +1,1 @@
+cmd_/opt/tclinux_phoenix/modules/private/tcphy/eth_ephy.o := mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o /opt/tclinux_phoenix/modules/private/tcphy/eth_ephy.o /opt/tclinux_phoenix/modules/private/tcphy/tcetherphy_7512.o /opt/tclinux_phoenix/modules/private/tcphy/tcetherphy_hook.o 

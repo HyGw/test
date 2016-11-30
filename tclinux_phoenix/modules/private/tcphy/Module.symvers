@@ -1,0 +1,2 @@
+0x00000000	mtMiiRegWrite	/opt/tclinux_phoenix/modules/private/tcphy/eth_ephy	EXPORT_SYMBOL
+0x00000000	mtMiiRegRead	/opt/tclinux_phoenix/modules/private/tcphy/eth_ephy	EXPORT_SYMBOL

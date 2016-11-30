@@ -1,0 +1,19 @@
+#!/bin/sh
+
+#		$1         $2  $3      $4         $5          $6    
+#/etc/ppp/ip-up interface tty speed local-IP local-IP-mask remote-IP
+
+#echo "$1 is up:$0 $1 $2 $3 $4 $5 $6 $7 $8 $9" > /var/tmp/pppparam
+echo $4 > /var/run/$1/ip
+echo $5 > /var/run/$1/netmask
+echo $6 > /var/run/$1/gateway
+
+if [ -n "$DNS1" ] ; then
+echo "$DNS1" > /var/run/$1/dns
+fi
+if [ -n "$DNS2" ] ; then
+echo "$DNS2" >> /var/run/$1/dns
+fi
+
+echo "up" > /var/run/$1/status
+/userfs/bin/tcapi commit WanInfo_Message_$1/4

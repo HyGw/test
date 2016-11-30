@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# This script is called with the following parameters:
+# interface tty speed local-address prefix-length remote-address ipparam
+#
+
+WAN_IF=$1
+
+#Enable SLAAC mode
+echo 1 > /proc/sys/net/ipv6/conf/$WAN_IF/autoconf	

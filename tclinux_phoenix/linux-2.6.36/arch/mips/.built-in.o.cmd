@@ -1,0 +1,1 @@
+cmd_arch/mips/built-in.o :=  mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o arch/mips/built-in.o arch/mips/ralink/built-in.o arch/mips/softfloat/built-in.o arch/mips/kernel/built-in.o arch/mips/mm/built-in.o arch/mips/math-emu/built-in.o 

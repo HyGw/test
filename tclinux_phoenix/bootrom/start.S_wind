@@ -1,0 +1,2595 @@
+        
+#include <asm/asm.h>
+#include <asm/regdef.h>
+#include <asm/mipsregs.h>        
+
+#define	CR_ARB_BASE			0xBFB00000
+#define	CR_TIMER_BASE			0xBFBF0100
+#define	GPIOBASE			0xBFBF0200
+//B:add 
+#define GPIOCTRL	    (GPIOBASE + 0x00)
+#define GPIODATA	    (GPIOBASE + 0x04)
+#define GPIODRAIN	    (GPIOBASE + 0x14)
+//E:add 
+#define	CR_SMC_BASE			0xBFB10000
+#define	CR_DMC_BASE			0xBFB20000
+#define	ROUND_ROBIN_ARBITER	1
+
+// 16-bit SDRAM or not
+#define SDRAM16          	1 
+// CAS 2T or 3T
+//#define CAS_2T            1
+// 16MB size SDRAM or not
+//#define SDRAM_16M        	1
+
+/* TC3262 speicific configuration */
+//#define UNCACHE_MODE
+
+#if 1
+
+#define DISPLAYLED(d0,d1) 	nop
+
+#else
+
+#define DISPLAYLED(d0,d1) \
+    la v0, GPIOBASE; \
+    li t5, d0; \
+	li t6, d1; \
+	sw t5, 0x4(v0); \
+2:  addi t6, -1; \
+	bnez t6, 2b;\
+	nop; \
+	nop
+
+#endif
+					 
+        .text
+        .set noreorder
+		.globl __start              
+__start:
+		j	boot_start
+		nop
+
+header_start:
+		nop
+		nop
+		nop
+		nop
+		nop						// for boot_start address
+		nop						// for boot_end	address
+		nop						// for lzma_start address
+		nop						// for lzma_end address
+
+boot_start:
+#if 1//ndef 
+
+// configure GPIO4 for dying gasp
+		la		v0,		GPIOBASE
+		li		a0,		0x00000000
+// configure GPIO4 as input
+		li		a1,		0x0000
+// also set it as open drain
+		sw		a0,		0(v0)
+		sw		a1,		0x14(v0)
+		DISPLAYLED(0x50, 0x1000)
+
+//B:add   configure GPIO1 ,set high(low is effect)
+// configure GPIO1 as output
+		li		a0,		GPIOCTRL
+		lw		t0,		0(a0)
+		or		t0,		0x4    /* set gpio1 bits  10*/
+		sw		t0,		0(a0)
+		
+		//configure GPIO1 as open drain ,output enable
+		li		a0,		GPIODRAIN
+		lw		t0,		0(a0)
+		or		t0,		0x2
+		sw		t0,		0(a0)
+		
+// set 1 to gpio1
+		li		a0,		GPIODATA
+		lw		t0,		0(a0)
+		or  	t0,		0x2
+		sw		t0,		0(a0)
+		
+		DISPLAYLED(0x60, 0x1000)
+//E:add
+#endif	
+
+#ifdef TC3262
+		/* Clear watch registers */
+		mtc0	zero, CP0_WATCHLO
+		mtc0	zero, CP0_WATCHHI
+
+		/* Disable interrupts and KSU field (power up issue) */
+		mfc0   	k0, CP0_STATUS
+		li		k1, ~(M_StatusIE | M_StatusKSU)
+		and		k0, k1
+		mtc0	k0, CP0_STATUS
+
+		/* Setup cause register (clear cause code)  */
+		li		k0, M_CauseIV
+		mtc0	k0, CP0_CAUSE
+
+		/* Set CPU clock */
+		jal 	sys_init_cpuclk
+		nop
+
+		/* Perform CPU specific initialisation */
+		jal     sys_init_processor
+		nop
+
+#ifdef SIS_DDR_PHY
+	    la		k0,	CR_ARB_BASE
+		lw		k1, 0x64(k0)
+		nop
+		srl		k1, k1, 16
+		sub 	k1,	3							/* check if RT63165 */
+		bltz   	k1, sis_ddr_init
+		nop
+
+		/* RT63165 */
+		jal		sys_init_dmc
+		nop
+		j		sis_ddr_exit	
+		nop
+
+sis_ddr_init:
+		/* TC3182/TC3262 */
+		jal		sys_init_ddr					/* Init DDR controller */
+		nop
+sis_ddr_exit:
+
+#endif
+
+		/*  Initialise caches. If compiled for simulation, we
+	 	 *  skip this since caches can be assumed to be invalidated.
+	 	 */
+		jal     sys_init_cache
+		nop
+#endif
+
+
+		/* configure arbiter */
+	    la	v1,	CR_ARB_BASE
+#ifndef TC3262
+#ifdef ROUND_ROBIN_ARBITER
+	    li	a0,	0x8000ffff		// round robin scheme
+	    li	a1,	0x0
+#else
+	    li	a0,	0x0000ffff
+      	li	a1,	0x32107777		// atm > mac > apb > cpu > others
+#endif
+	    sw	a0,	0x00(v1)
+	    sw	a1,	0x04(v1)
+
+#ifdef TC3162L2
+        lw      a0,	0xb0(v1)
+        nop
+		srl		a0, a0, 12
+		andi	a0, a0, 0xff
+        beqz    a0, tc3162u_pll_exit
+        nop   
+
+		/* set TC3162U's PLL */
+		li		t1, 0x04631000
+		li		t2, 0x18f
+		
+		//li		t3, 0x18f				/* CPU=266Mhz AHB=133Mhz */
+		//li		t3, 0x1c1				/* CPU=300Mhz AHB=150Mhz */
+		li		t3, 0x1f3				/* CPU=333Mhz AHB=166Mhz */
+
+		li		t4, 0x1c1					/* when CPU>300MHZ, set PLL gain control */
+
+tc3162u_pll:	
+		or		a0, t1, t2
+		ble		t2, t4, tc3162u_pll_gain_exit	
+		nop
+		ori		a0, (1<<15)
+tc3162u_pll_gain_exit:	
+	    sw		a0,	0xb0(v1)
+		nop
+
+// wait 50 us
+		li		t0,	5000
+1:                              		/* wait 50 us */
+		subu 	t0,	1
+		bnez	t0,	1b
+		nop
+
+    	beq  	t2, t3, tc3162u_pll_exit
+    	nop
+		addi	t2, t2, 5
+		j		tc3162u_pll
+		nop
+
+tc3162u_pll_exit:	
+
+#endif
+
+		/* configure DMC bank range */
+		/* SDRAM address:	0x80000000 to 0x807fffff  size:	8MB */
+#ifdef SDRAM16
+#ifdef SDRAM_16M
+		li  a0, 0x80000100      // bank0 --> 0000_0000 ~ 00ff_ffff
+		li  a1, 0x80000302
+		li  a2, 0x80000504
+		li  a3, 0x80000706
+#else
+	#ifdef SDRAM_32M
+		li  a0, 0x80000300      // bank0 --> 0000_0000 ~ 01ff_ffff
+		li  a1, 0x80000504
+		li  a2, 0x80000706
+		li  a3, 0x80000908
+	#else
+		li 	a0,	0x80000000
+		li 	a1,	0x80000101      // bank1 --> 0000_0000 ~ 007f_ffff
+		li 	a2,	0x80000202
+		li 	a3,	0x80000303
+	#endif
+#endif
+#else
+		li 	a0,	0x80000000      // bank0 --> 0000_0000 ~ 007f_ffff
+		li  a1,	0x80000101
+		li  a2,	0x80000202
+		li  a3,	0x80000303
+#endif
+		sw	a0, 0x10(v1)
+		sw	a1,	0x14(v1)
+		sw	a2,	0x18(v1)
+		sw	a3,	0x1c(v1)
+
+		DISPLAYLED(0x51, 0x1000)
+#endif
+
+		/* configure SMC */
+		/* SRAM address: */
+		/*	1. FLASH	 16bit begin at 0x1fc00000 to 0x1fffffff  size:	  4MB */
+		/*	2. SRAM    	 8bit begin at 0x1fe00000 to 0x1fe3ffff	size: 256KB   */
+		li	a0,	0x80071f1e
+		li	a1,	0x00071f1f
+		li	a2,	0x00040000
+
+		sw	a0,	0x20(v1)
+		sw	a1,	0x24(v1)
+#if !defined(TC3162L2) && !defined(TC3262)
+		sw	a2,	0x28(v1)
+#endif
+
+		DISPLAYLED(0x52, 0x1000)
+
+// SRAM rank 3,4,5
+		li	a0,	0x00040808
+		li	a1,	0xc0041010	// with bridge				
+		li	a2,	0x80050000
+#if !defined(TC3162L2) && !defined(TC3262)
+		sw	a0,	0x2c(v1)
+		sw	a1,	0x30(v1)
+#endif
+		sw	a2,	0x34(v1)		
+
+		DISPLAYLED(0x54, 0x1000)
+
+    	li	v1,	CR_SMC_BASE
+#if defined(TC3162L2) || defined(TC3262)
+		li	a0, 0x102d1040    		
+#else
+		li	a0, 0x102a9040    		
+#endif
+ 		li	a2,	0x10aa8100				/* 16-bit hpi8  configure  */
+ 		li  a3,	0x200028d0				/* 32-bit dmt   configure  */
+
+		sw	a0,	0x0(v1)      			/* CR_SMC_BANK0     */
+//		sw	a1,	0x4(v1)      			/* CR_SMC_BANK1     */
+// 		sw	a2,	0x10(v1)     			/* CR_SMC_BANK4     */
+ 		sw	a3,	0x14(v1)     			/* CR_SMC_BANK5     */
+
+		DISPLAYLED(0x58, 0x1000)
+
+#ifdef TC3262
+	    la		k0,	CR_ARB_BASE
+		lw		k1, 0x64(k0)
+		nop
+		srl		k1, k1, 16
+		sub 	k1,	3							/* check if RT63165 */
+		bgez   	k1, tc3262_dmc_exit
+		nop
+
+		la      v1, CR_ARB_BASE
+		lw      s0, 0x8c(v1)
+		nop
+		srl     s0, s0, 13
+		andi    s1, s0, 3               /* DDR memory size */
+		srl     s0, s0, 2
+		andi    s0, s0, 1               /* DDR1 or DDR2 mode */
+
+		la 		v1, CR_DMC_BASE
+		/* set DDR1 or DDR2 mode first */		
+		li 		a0, 0x33				/* DDR1 mode */
+		la      k0, CR_ARB_BASE			/* Check is rt65168*/
+		lw      k1, 0x64(k0)
+		nop
+		srl     k1, k1, 16
+		sub     k1, 2
+		bnez    k1, ddr_mode_done
+		nop
+		beqz    s0, ddr_mode_done
+		nop
+		li      a0, 0x58000433          /* DDR2 mode */
+ddr_mode_done:		
+		sw 		a0, 0x78(v1)			/* CAS=3T, Burst type and length=8 */
+
+		lw 		a1, 0x74(v1)			
+		li		t0, 0xffe0ffff
+		and		a1, a1, t0
+
+#ifdef SDRAM_64M
+		li 		a0, 0x20				/* DRAM Size 512 x 16 */
+		li 		a2, (0x12<<16)			/* DRAM Size 512 x 16 */
+#else
+		li 		a0, 0x08				/* DRAM Size 256 x 16 */
+		li 		a2, (0xe<<16)			/* DRAM Size 256 x 16 */
+#endif
+
+		or 		a1, a1, a2
+
+		sw 		a0, 0x50(v1)			/* Set DRAM size */
+		sw 		a1, 0x74(v1)			
+
+#ifndef TC3262_FPGA
+#ifndef TCSUPPORT_AUTOBENCH /*SOCKET board can't be enable ddr power saving mode*/
+		li		a0, 0x0C600C60			/* DDR control register */
+		sw 		a0, 0x100(v1)			
+		li		a0, 0xE6E60
+		sw 		a0, 0x10c(v1)			
+		li		a0, 0xA930200
+		sw 		a0, 0x110(v1)			
+		li		a0, 0xE6E60
+		sw 		a0, 0x114(v1)			
+		li		a0, 0x3230c
+		sw 		a0, 0x120(v1)
+		bnez    k1, ddr_power_done /*check is RT65168*/
+		nop
+		li		a0, 0x420E7000 /*DDR1 CK DRVP=7 DRVN=7*/
+		sw 		a0, 0x104(v1)			
+		li		a0, 0x228c8000 /*DDR1 CKE DRVP=8 DRVN=8*/
+		sw 		a0, 0x108(v1)
+
+		beqz    s0, ddr_power_done
+		nop
+		
+		li      a0, 0x8400840		/*setting for DDR2*/
+		sw      a0, 0x100(v1)
+		li	a0, 0x31986000	/*DDR2 CK DRVP=c DRVN=6*/
+		sw	a0, 0x104(v1)			
+		li      a0, 0x22626100  /*DDR2 CKE DRVP=6 DRVN=6*/
+		sw      a0, 0x108(v1)
+		li      a0, 0xE4E40
+		sw      a0, 0x10c(v1)
+		li      a0, 0xE4E40
+		sw      a0, 0x114(v1)
+		li      a0, 0x70
+		sw      a0, 0x118(v1)
+		li      a0, 0x2
+		sw      a0, 0x7c(v1)
+
+ddr_power_done:		
+		
+#endif
+#endif
+
+		li 		a0, 0xff010001			/* Set master bandwidth control */
+		sw 		a0, 0x30(v1)			
+		sw 		a0, 0x34(v1)			
+		sw 		a0, 0x38(v1)			
+		sw 		a0, 0x3c(v1)			
+		sw 		a0, 0x40(v1)			
+		sw 		a0, 0x44(v1)			
+		sw 		a0, 0x48(v1)			
+
+		li 		a0, 0x01
+		sw 		a0, 0x58(v1)			/* Enable all bandwidth token counter of DAC */
+
+#ifdef SIS_DDR_PHY
+		li		a0, 0x80000000
+		li		a1, 0x00000020			/* Test memory size=64byte */
+		jal		sys_edqs_scan			/* EDQS scan */
+		nop
+#endif
+
+tc3262_dmc_exit:
+
+#else
+// init SDRAM
+// wait 250 us
+		li		a0,	25000
+1:                              		/* wait 250 us */
+		subu 	a0,	0x01
+		bnez	a0,	1b
+		nop
+
+		DISPLAYLED(0x5c, 0x20000)
+		
+		la		v1,	CR_DMC_BASE
+#ifdef SDRAM16
+    #ifdef CAS_2T
+		#ifdef SDRAM_16M
+   		li    	a0, 0x00045500    		/* 16bit width, col 9 row 12, 2T CAS Latency (winbond w981216DH-6 16MB)*/
+		#else
+    	li    	a0,	0x00044400    		/* 16bit width, col 8 row 12, 2T CAS Latency */
+		#endif
+    #else
+		#ifdef SDRAM_16M
+    	li    	a0,	0x00e85500    		/* 16bit width, col 9 row 12, 3T CAS Latency */
+		#else
+		#ifdef SDRAM_32M
+    	li    	a0,	0x00e89900    		/* 16bit width, col 9 row 13, 3T CAS Latency */
+		#else
+		#ifdef SDRAM_2M
+    	li    	a0, 0x00e80000    		/* 16bit width, col 8 row 11, 3T CAS Latency */
+		#else
+    	li    	a0,	0x00e84400    		/* 16bit width, col 8 row 12, 3T CAS Latency */
+		#endif
+		#endif
+		#endif
+    #endif
+#endif
+		sw		a0,	0x00(v1)
+#ifdef TC3162L2
+		la      k0, CR_ARB_BASE
+		li		a0, 0x20
+        lw      k1, 0x8c(k0)
+		nop		
+		srl     k1, k1, 12
+		and		k1, k1, 0xff
+        /* check if RT63260 */
+		bne     k1, a0, 1f
+		nop
+
+		li		a0,	0x9
+		sb      a0, 0x03(v1)
+#ifndef TCSUPPORT_AUTOBENCH
+		//set ODSS0[11:10]=00 to fix ethetnet repeat link up. merge from linos.
+		lw		a0,	0xb4(k0)
+		la		a1,	0xfffff3ff
+		and		a0, a0,	a1
+		sw	a0,	0xb4(k0)
+#endif		
+
+1:
+#endif
+  		li		a0, 0x02      			/* set TC3162U tRAS=7T */
+  		sb		a0, 0x04(v1)
+
+		li		a0,	0x02
+		sb		a0,	0x07(v1)     		/* enter precharge all mode */
+
+		la		a1, 0xa0000000
+		sw		a1, 0x00(a1)
+
+		li		a0,	0x04
+		sb		a0,	0x07(v1)    		/* enter CBR mode */
+
+		li		a0,	0x08
+		la		a1,	0xa0000000
+
+		DISPLAYLED(0x58, 0x20000)
+
+1:		                        		/* additional 8 CBR Auto Refresh Cycle */
+		sub		a0,	0x01
+		sw		a1,	0x00(a1)
+		bnez	a0,	1b
+		nop
+
+		DISPLAYLED(0x54, 0x20000)
+
+		li		a0,	0x03	    		/* enter MRS mode */
+		sb		a0,	0x07(v1)
+
+#ifdef SDRAM16
+   	#ifdef CAS_2T
+		li 		a1,	0xa0000046    		/* CAS Latency */	
+	#else
+		li 		a1,	0xa0000066    		/* CAS Latency */	
+	#endif
+#endif
+
+.set at
+
+		sb		zero,	0x00(a1)
+
+		li		a0,	0x02			    /* enter precharge all mode */
+ 		sb		a0,	0x07(v1)
+
+.set noat
+ 
+		la		a0,	0xa0000000
+		nop
+
+		sb		a1,	0x03(a0)
+
+		DISPLAYLED(0x52, 0x20000)
+		
+// postive edge
+#ifdef TC3162L2
+		li		a1,	0x40
+		la      k0, CR_ARB_BASE
+		li      a0, 0x20
+		lw      k1, 0x8c(k0)
+		nop
+		srl     k1, k1, 12
+		and     k1, k1, 0xff
+		/* check if RT63260 */
+		bne     k1, a0, 1f
+		nop     
+
+		li      a1, 0x41 //63260 use post edge
+1:		
+#else
+		li		a1,	0x41
+#endif
+#ifdef TC3162L2
+	#ifdef SDRAM_32M
+		li    	a0,	0x34		
+	#else
+		li    	a0,	0x67		
+	#endif
+#else
+		li    	a0,	0x4e		
+#endif
+
+		sb		a1,		0x06(v1)     	/* page mode enable   */
+		sb		zero, 	0x07(v1)     	/* normal mode        */
+		sb		a0,		0x00(v1)     	/* dram refresh timer */
+
+		nop
+		nop
+		nop
+#endif
+
+		DISPLAYLED(0x51, 0x20000)
+
+		/* stop interrupt */
+		li		t0, 	0xbfb40000
+		nop
+
+		sw		zero, 	0x0(t0)			/* all interrupt belong to IRQ */
+		sw		zero, 	0x04(t0)		/* set all interrupt mask to 0 .. disable all interrupt */
+
+		DISPLAYLED(0x57, 0x20000)
+
+#ifndef TC3262
+		li		t0, 0x10400000 			// Initialize the status register
+		mtc0	t0, $12
+		nop
+
+		//---------------------------------------------------------------------
+		// Clear exception cause register
+		//---------------------------------------------------------------------
+		mtc0	zero, $13
+		nop
+#endif
+#if 0
+        /* zero bss */
+		move t0, zero
+		mtc0 t0, $12
+		nop
+#endif
+
+#ifdef TC3162L2
+		/* imem off */
+		mtc0	zero, $20	
+		nop
+		nop
+		li		t0, 0x00000020 
+		mtc0	t0, $20
+		nop
+		nop
+		/* dmem off */
+		mtc0	zero, $20	
+		nop
+		nop
+		li		t0, 0x00000800 
+		mtc0	t0, $20
+		nop
+		nop
+		mtc0	zero, $20
+#endif
+
+#ifndef TC3262
+		/* flush all cache */
+		mtc0	zero, $20
+		nop
+		nop
+		li	t0, 0x3
+		mtc0	t0, $20
+		nop
+		nop
+		mtc0	zero, $20
+#endif
+
+#ifdef TC3262
+#ifndef SIS_DDR_PHY
+#ifdef PLL_AUTO_SCAN
+		li		a0, 0x80000000
+		li		a1, 0x00040000					/* Test memory size=256KB */
+		jal		sys_pll_scan
+		nop
+
+		move 	t6, v0
+		move	a0, v0
+		jal 	sys_pll_choose
+		nop
+		move	t7, v0
+		move	t5, v0
+#else
+		li		t5, PLL_SPSN_VALUE
+#endif
+		li		v1, CR_DMC_BASE		
+		ori     t5,t5,0x100
+		sw		t5, 0xb0(v1)	
+		nop
+
+1:
+		lw		t5, 0xb0(v1)
+		and		t5, t5, 0x8000
+		bnez    t5, 1b
+		nop
+
+		/* save possible pll bitmap and choose pll value */
+		li		v1, 0x80020000		
+		sw		t6, -4(v1)
+		sw		t7, -8(v1)
+#endif
+#endif
+
+/* bootloader copression support */
+#ifdef LZMA_IMG
+		la t0, __boot_start
+		la t1, 0x80010000
+		sw t0, 0x0(t1)
+		la t0, __boot_end
+		la t1, 0x80010020
+		sw t0, 0x0(t1)
+
+		// Due to this is the bootloader, we prefer not to
+		// use stackframe
+		// now copy __boot_start to __boot_end
+		la	k0, __lzma_start
+		la	k1, (__lzma_end + 4)
+		la	t1, 0x80000000
+#else
+		la  k0, __boot_start
+		la  k1, (__boot_end + 4)
+		la  t1, 0x80000000
+#endif
+
+1:
+		//DISPLAYLED(0x5c, 0x1000)
+		lw	t0, 0(k0)
+		nop
+		sw	t0, 0(t1)
+		//DISPLAYLED(0x50, 0x1000)
+		addiu k0, k0, 4
+		addiu t1, t1, 4
+		bne	k1, k0, 1b
+		nop
+		nop
+		nop
+
+#ifdef TC3262
+
+#define S_ConfigK0		0			/* Kseg0 coherency algorithm (R/W) */
+#define M_ConfigK0		(0x7 << S_ConfigK0)
+
+#define K_CacheAttrU		2			/* Uncached */
+
+#define SET_MIPS3() .##set mips3
+#define SET_MIPS0() .##set mips0
+#define SET_PUSH()  .##set push
+#define SET_POP()   .##set pop
+
+/* cache operations */
+
+#define CACHE_OP( code, type )			( ((code) << 2) | (type) )
+
+#define ICACHE_INDEX_INVALIDATE			CACHE_OP(0x0, 0)
+#define ICACHE_INDEX_LOAD_TAG			CACHE_OP(0x1, 0)
+#define ICACHE_INDEX_STORE_TAG			CACHE_OP(0x2, 0)
+#define DCACHE_INDEX_WRITEBACK_INVALIDATE	CACHE_OP(0x0, 1)
+#define DCACHE_INDEX_LOAD_TAG			CACHE_OP(0x1, 1)
+#define DCACHE_INDEX_STORE_TAG			CACHE_OP(0x2, 1)
+#define SCACHE_INDEX_WRITEBACK_INVALIDATE	CACHE_OP(0x0, 3)
+#define SCACHE_INDEX_STORE_TAG			CACHE_OP(0x2, 3)
+
+#define ICACHE_ADDR_HIT_INVALIDATE		CACHE_OP(0x4, 0)
+#define ICACHE_ADDR_FILL			CACHE_OP(0x5, 0)
+#define ICACHE_ADDR_FETCH_LOCK			CACHE_OP(0x7, 0)
+#define DCACHE_ADDR_HIT_INVALIDATE		CACHE_OP(0x4, 1)
+#define DCACHE_ADDR_HIT_WRITEBACK_INVALIDATE	CACHE_OP(0x5, 1)
+#define DCACHE_ADDR_HIT_WRITEBACK		CACHE_OP(0x6, 1)
+#define DCACHE_ADDR_FETCH_LOCK			CACHE_OP(0x7, 1)
+
+#define SCACHE_ADDR_HIT_WRITEBACK_INVALIDATE	CACHE_OP(0x5, 3)
+
+#define ICACHE_INVALIDATE_WORKAROUND(reg) \
+SET_PUSH();				  \
+SET_MIPS0();				  \
+	la     reg, 999f;		  \
+SET_POP();				  \
+	cache  ICACHE_ADDR_FILL, 0(reg);  \
+	sync;				  \
+	nop; nop; nop; nop;		  \
+999:
+
+#define ICACHE_ADDR_INVALIDATE_OP(addr,scratch)			  \
+	    ICACHE_INVALIDATE_WORKAROUND(scratch);		  \
+	    cache ICACHE_ADDR_HIT_INVALIDATE, 0(addr)
+
+#ifndef UNCACHE_MODE
+		la		t1, 0x80000000
+		la		t2, 0x80020000
+1:
+SET_MIPS3()
+		cache   DCACHE_ADDR_HIT_WRITEBACK, 0(t1)
+		sync
+		cache 	ICACHE_ADDR_HIT_INVALIDATE, 0(t1)
+SET_MIPS0()
+
+		addiu 	t1, t1, 32
+		bne		t2, t1, 1b
+		nop
+#endif
+#endif
+
+		DISPLAYLED(0x5e, 0x20000)
+
+#ifndef TC3262
+		li		t0, 0xf200ff15 			// Initialize the status register
+		mtc0	t0, $12
+		nop
+		nop
+#endif
+
+		la	k0, 0x80000000
+		jr	k0
+		nop
+error:
+	/*  Error handling. Display error code (if device for this is available) and
+	 *  enter an infinite loop (from init.h)
+	 */
+		b error
+		nop
+
+#ifdef TC3262
+
+		.set noreorder
+
+/************************************************************************
+ *  sys_init_cpuclk
+ ************************************************************************/
+LEAF(sys_init_cpuclk)
+#ifndef TC3262_FPGA
+	    la		k0,	CR_ARB_BASE
+		lw		k1, 0x64(k0)
+		nop
+		srl		k1, k1, 16
+		li		k0, 0
+		beq   	k1, k0, tc3169_cpuclk
+		nop
+		li		k0, 1
+		beq   	k1, k0, tc3182_cpuclk
+		nop
+		li		k0, 4
+		beq   	k1, k0, rt63365_cpuclk
+		nop
+		j		cpuclk_exit
+		nop
+
+tc3169_cpuclk:
+		/* TC3262: Set CPU clock to 360Mhz */
+	    la		k0,	CR_ARB_BASE
+	    li		k1,	0x3b0000		
+		nop
+	    sw		k1,	0x58(k0)
+		nop
+		j		cpuclk_exit
+		nop
+
+tc3182_cpuclk:
+		/* TC3182: */
+	    la		v1,	CR_ARB_BASE
+
+		/* set TC3182's PLL */
+		li		t1, 0x95
+		li		t2, 0x53				/* CPU=252Mhz */
+
+		lw		t3, 0x8c(v1)
+		nop
+		srl		t4, t3, 8
+		andi	t4, t4, 0x1
+		beqz   	t4, tc3182_pll			/* check if TC3182LDV, set CPU clock to 252 */
+		nop
+
+		li		t2, 0x6e				/* CPU=333Mhz */
+		lw		t3, 0x64(v1)
+		nop
+		andi	t3, t3, 0xf
+		li		t4, 1
+		beq		t4, t3, tc3182_pll 		/* check if TC3182 A3, set CPU clock to 450 */
+		nop								/* else set CPU clock to 333 */
+
+		li		t2, 0x95				/* CPU=450Mhz */
+		b		tc3182_pll
+		nop
+
+		//li		t2, 0x43				/* CPU=204Mhz */
+		//li		t2, 0x53				/* CPU=252Mhz */
+		//li		t2, 0x63				/* CPU=300Mhz */
+		//li		t2, 0x6e				/* CPU=333Mhz */
+		//li		t2, 0x77				/* CPU=360Mhz */
+		//li		t2, 0x7f				/* CPU=384Mhz */
+		//li		t2, 0x85				/* CPU=402Mhz */
+		//li		t2, 0x95				/* CPU=450Mhz */
+
+tc3182_pll:	
+		sll		a0, t1, 16
+		ori		a0, 0x3 
+	    sw		a0,	0x58(v1)
+		nop
+
+// wait 50 us
+		li		t0,	5000
+1:                              		/* wait 50 us */
+		subu 	t0,	1
+		bnez	t0,	1b
+		nop
+
+    	ble  	t1, t2, tc3182_pll2
+    	nop
+		addi	t1, t1, -3
+		j		tc3182_pll
+		nop
+
+tc3182_pll2:	
+    	beq  	t1, t2, cpuclk_exit
+    	nop
+
+		sll		a0, t2, 16
+		ori		a0, 0x3 
+	    sw		a0,	0x58(v1)
+		nop
+
+// wait 50 us
+		li		t0,	5000
+1:                              		/* wait 50 us */
+		subu 	t0,	1
+		bnez	t0,	1b
+		nop
+
+		j		cpuclk_exit
+		nop
+#endif
+
+rt63365_cpuclk:
+#if 1 //modify bulk output value
+        la      k0, CR_ARB_BASE
+		lw      k1, 0x90(k0)
+		nop
+		and    k1, k1, 0x83ffffff
+		or     k1, k1, 0x48000000
+		sw      k1, 0x90(k0)
+		nop
+#endif  
+	    la		k0,	CR_ARB_BASE
+		lw		t3, 0x8c(k0)
+		nop
+		srl		s2, t3, 24
+		andi	s2, s2, 0x3				/* DRAM type */
+		srl		s3, t3, 26
+		andi	s3, s3, 0x1				/* Clock ratio */
+		srl		s4, t3, 8
+		andi	s4, s4, 0x3				/* Package selection */
+
+		andi	t3, s2, 0x2				/* only SDR needs to lower/higher CPU clock */
+		bnez   	t3, cpuclk_exit			
+		nop
+
+		andi	t0, s4, 0x2				/* check package is RT6855/RT63365 or RT6856/RT63368 */	
+		bnez	t0, rt63368_pll
+		nop
+
+		bnez	s3, rt63365_ratio4_pll
+		nop
+
+#define DIVF			s5
+#define DIVQ  			s6
+
+rt63365_ratio3_pll:
+
+		/* RT6855/RT63365 : 500Mhz to 420Mhz */
+
+		/* DIVF from 99 downto 83 */
+		/* DIVQ is 2 */
+		li		DIVF, 99
+		li		DIVQ, 2
+
+rt63365_ratio3_pll_loop:
+		lw		t0, 0x1d0(k0)
+		nop
+		li		t1, 0xff00f8ff
+		and		t0, t0, t1
+		sll		t1, DIVF, 16
+		or		t0, t0, t1
+		sll		t1, DIVQ, 8
+		or		t0, t0, t1
+		sw		t0, 0x1d0(k0)
+		nop
+
+// wait 50 us
+		li		t0,	5000
+1:                              		/* wait 50 us */
+		subu 	t0,	1
+		bnez	t0,	1b
+		nop
+
+		li		t0, 83
+    	beq  	DIVF, t0, cpuclk_exit
+    	nop
+		addi	DIVF, -1
+		j		rt63365_ratio3_pll_loop
+		nop
+
+rt63365_ratio4_pll:
+
+		/* RT6855/RT63365 : 500Mhz to 560Mhz */
+
+		/* DIVF from 99 downto 111 */
+		/* DIVQ is 2 */
+		li		DIVF, 99
+		li		DIVQ, 2
+
+rt63365_ratio4_pll_loop:
+		lw		t0, 0x1d0(k0)
+		nop
+		li		t1, 0xff00f8ff
+		and		t0, t0, t1
+		sll		t1, DIVF, 16
+		or		t0, t0, t1
+		sll		t1, DIVQ, 8
+		or		t0, t0, t1
+		sw		t0, 0x1d0(k0)
+		nop
+
+// wait 50 us
+		li		t0,	5000
+1:                              		/* wait 50 us */
+		subu 	t0,	1
+		bnez	t0,	1b
+		nop
+
+		li		t0, 111
+    	beq  	DIVF, t0, cpuclk_exit
+    	nop
+		addi	DIVF, 1
+		j		rt63365_ratio4_pll_loop
+		nop
+
+rt63368_pll:
+		/* RT6856/RT63368 : 665Mhz to 560Mhz */
+
+		/* DIVF from 132 downto 119 */
+		/* DIVQ is 1 */
+		li		DIVF, 132
+		li		DIVQ, 1
+
+rt63368_pll_loop1:
+		lw		t0, 0x1cc(k0)
+		nop
+		nop
+		li		t1, 0xff00f8ff
+		and		t0, t0, t1
+		sll		t1, DIVF, 16
+		or		t0, t0, t1
+		sll		t1, DIVQ, 8
+		or		t0, t0, t1
+		sw		t0, 0x1cc(k0)
+		nop
+
+// wait 50 us
+		li		t0,	5000
+1:                              		/* wait 50 us */
+		subu 	t0,	1
+		bnez	t0,	1b
+		nop
+
+		li		t0, 119
+    	beq  	DIVF, t0, rt63368_pll_loop1_exit
+    	nop
+		addi	DIVF, -1
+		j		rt63368_pll_loop1
+		nop
+
+rt63368_pll_loop1_exit:
+
+		/* DIVF from 237 downto 223 */
+		/* DIVQ is 2 */
+		li		DIVF, 237
+		li		DIVQ, 2
+
+rt63368_pll_loop2:
+		lw		t0, 0x1cc(k0)
+		nop
+		nop
+		li		t1, 0xff00f8ff
+		and		t0, t0, t1
+		sll		t1, DIVF, 16
+		or		t0, t0, t1
+		sll		t1, DIVQ, 8
+		or		t0, t0, t1
+		sw		t0, 0x1cc(k0)
+		nop
+
+// wait 50 us
+		li		t0,	5000
+1:                              		/* wait 50 us */
+		subu 	t0,	1
+		bnez	t0,	1b
+		nop
+
+		li		t0, 223
+    	beq  	DIVF, t0, cpuclk_exit
+    	nop
+		addi	DIVF, -2
+		j		rt63368_pll_loop2
+		nop
+
+cpuclk_exit:
+
+		jr		ra
+		move	v0, zero
+END(sys_init_cpuclk)
+
+/*
+ * Cache attribute values in the C field of EntryLo and the
+ * K0 field of Config
+ */
+#define K_CacheAttrCWTnWA	0			/* Cacheable, write-thru, no write allocate */
+#define K_CacheAttrCWTWA	1			/* Cacheable, write-thru, write allocate */
+#define K_CacheAttrU		2			/* Uncached */
+#define K_CacheAttrC		3			/* Cacheable */
+#define K_CacheAttrCN		3			/* Cacheable, non-coherent */
+#define K_CacheAttrCCE		4			/* Cacheable, coherent, exclusive */
+#define K_CacheAttrCCS		5			/* Cacheable, coherent, shared */
+#define K_CacheAttrCCU		6			/* Cacheable, coherent, update */
+#define K_CacheAttrUA		7			/* Uncached accelerated */
+
+#define S_ConfigMM              18     /* 24K specific, merging enable/disable */
+#define M_ConfigMM              (0x1 << S_ConfigMM)
+
+/*  Generic MIPS32/MIPS64 fields of CONFIG0 register (ie the ones not
+ *  reserved for implementations)
+ */
+#define CONFIG0_MIPS32_64_MSK  0x8000ffff
+
+/* MIPS 34K specifics */
+#define STATUS_MIPS34K	    0
+#define CONFIG0_MIPS34K  ((K_CacheAttrCN << S_ConfigK23) |\
+			  (K_CacheAttrCN << S_ConfigKU)  |\
+			  (M_ConfigMM))
+
+/*  Generic MIPS32/MIPS64 fields of STATUS register (ie the ones not 
+ *  reserved for implementations)
+ */
+#define STATUS_MIPS32_64_MSK   0xfffcffff
+
+/*  Setup of STATUS register used for MIPS32/MIPS64 processors
+ *  FR field only relevant for MIPS64 (Read only for MIPS32)
+ */
+#define STATUS_MIPS32_64   (M_StatusBEV | M_StatusFR)
+
+#ifdef UNCACHE_MODE
+#define CONFIG0_MIPS32_64    (K_CacheAttrU << S_ConfigK0)
+#else
+#define CONFIG0_MIPS32_64    (K_CacheAttrCN << S_ConfigK0)
+//#define CONFIG0_MIPS32_64    (K_CacheAttrCWTnWA << S_ConfigK0)
+#endif
+
+/*
+ *************************************************************************
+ *                S O F T W A R E   G P R   I N D I C E S                *
+ *************************************************************************
+ *
+ * These definitions provide the index (number) of the GPR, as opposed
+ * to the assembler register name ($n).
+ */
+
+#define R_zero			 0
+#define R_AT			 1
+#define R_v0			 2
+#define R_v1			 3
+#define R_a0			 4
+#define R_a1			 5
+#define R_a2			 6
+#define R_a3			 7
+#define R_t0			 8
+#define R_t1			 9
+#define R_t2			10
+#define R_t3			11
+#define R_t4			12
+#define R_t5			13
+#define R_t6			14
+#define R_t7			15
+#define R_s0			16
+#define R_s1			17
+#define R_s2			18
+#define R_s3			19
+#define R_s4			20
+#define R_s5			21
+#define R_s6			22
+#define R_s7			23
+#define R_t8			24
+#define R_t9			25
+#define R_k0			26
+#define R_k1			27
+#define R_gp			28
+#define R_sp			29
+#define R_fp			30
+#define R_s8			30
+#define R_ra			31
+
+
+#define KSEG0BASE		  0x80000000
+
+/*  We use ssnop instead of nop operations in order to handle 
+ *  superscalar CPUs.
+ *  The "sll zero,zero,1" notation is compiler backwards compatible.
+ */
+#define SSNOP   sll zero,zero,1
+#define EHB     sll zero,zero,3
+#define NOPS	SSNOP; SSNOP; SSNOP; EHB
+
+#define MFC0_SEL_OPCODE(dst, src, sel)\
+	  	.##word (0x40000000 | ((dst)<<16) | ((src)<<11) | (sel))
+
+#define MTC0_SEL_OPCODE(src, dst, sel)\
+	  	.##word (0x40800000 | ((src)<<16) | ((dst)<<11) | (sel));\
+		NOPS
+
+/************************************************************************
+ *  sys_init_processor
+ ************************************************************************/
+LEAF(sys_init_processor)
+#if 0
+		MFC0_SEL_OPCODE(R_t0, 16, 7)
+		li  	t1, (1<<8)
+		or		t0, t1
+		MTC0_SEL_OPCODE(R_t0, 16, 7)
+#endif
+		/* Setup MIPS34K specifics (implementation dependent fields) */
+		mfc0 	t0, C0_Config 
+		li		t1, CONFIG0_MIPS32_64_MSK
+		and		t0, t1
+		li		t1, CONFIG0_MIPS34K
+		or		t0, t1
+		mtc0	t0, C0_Config 
+
+		mfc0   	t0, C0_Status 
+		li		t1, STATUS_MIPS32_64_MSK
+		and		t0, t1
+		li		t1, STATUS_MIPS34K
+		or		t0, t1
+		mtc0	t0, C0_Status 
+
+		/* Setup generic MIPS32/MIPS64 fields of STATUS register */
+		mfc0   	t0, C0_Status 
+		li		t1, ~STATUS_MIPS32_64_MSK
+		and		t0, t1
+		li		t1, STATUS_MIPS32_64
+		or		t0, t1
+		mtc0	t0, C0_Status 
+
+		/* Setup generic MIPS32 fields of CONFIG0 register */
+		mfc0   	t0, C0_Config 
+		li		t1, ~CONFIG0_MIPS32_64_MSK
+		and		t0, t1
+		li		t1, CONFIG0_MIPS32_64
+		or		t0, t1
+		mtc0	t0, C0_Config 
+
+		jr		ra
+		move	v0, zero
+END(sys_init_processor)
+
+/************************************************************************
+ *  sys_init_cache
+ ************************************************************************/
+LEAF(sys_init_cache)
+
+#define RA					t4
+#define icache_size			t3
+#define icache_linesize		t2
+#define dcache_size			t1
+#define dcache_linesize		t0
+
+		move	RA, ra
+
+		/* set icache, dcache size to 32KB only for FPGA board */
+#ifdef TC3262_FPGA
+		mfc0    s5, C0_Config 
+		MFC0_SEL_OPCODE( R_s6, R_C0_Config1, R_C0_SelConfig1 )
+
+		/* Enable write access to config1 */
+		li		t0, 1<<19
+		or		t0, s5, t0
+		mtc0	t0, C0_Config 
+
+		li  	s0, 2
+
+		/* Set Icache settings to requested values */
+		li		t0, ~(M_Config1IS | M_Config1DS)
+		and		t0, s6, t0
+
+		li		t1, S_Config1IS
+		sllv	t1, s0, t1
+		or		t0, t1
+
+		/* Set Dcache settings to requested values */
+		li		t1, S_Config1DS
+		sllv	t1, s0, t1
+		or		t0, t1
+
+		/* Write CONFIG1 register */
+		MTC0_SEL_OPCODE( R_t0, R_C0_Config1, R_C0_SelConfig1 )
+
+		/* Disable write access to config1 */
+		mtc0	s5, C0_Config 
+
+		/* Empty pipeline */
+		nop; nop; nop; nop; nop; nop
+#endif
+
+		/* L1 cache */
+		bal		sys_determine_icache_linesize
+		nop
+		move	icache_linesize, v0
+
+		bal		sys_determine_icache_lines
+		nop
+		multu	icache_linesize, v0
+		mflo	icache_size
+
+		bal		sys_determine_dcache_linesize
+		nop
+		move	dcache_linesize, v0
+
+		bal		sys_determine_dcache_lines
+		nop
+		multu	dcache_linesize, v0
+		mflo	dcache_size
+
+		/* Initialise instruction cache */
+		move	a0, icache_size
+		move	a1, icache_linesize
+		bal		sys_init_icache
+		nop
+	
+		/* Initialise data cache */
+		move	a0, dcache_size
+		move	a1, dcache_linesize
+		bal		sys_init_dcache
+		nop
+
+		/* Done */
+		jr		RA
+		move	v0, zero
+END(sys_init_cache)
+
+
+#define R_C0_DTagLo	      	28
+#define R_C0_SelDTagLo	    2
+
+#define R_C0_ITagLo			28
+#define R_C0_SelITagLo		0
+
+LEAF( sys_init_icache )
+		/* 24K/24KE/34K : Clear ITagLo */
+		MTC0_SEL_OPCODE( R_zero, R_C0_ITagLo, R_C0_SelITagLo )
+
+		/* Calc an address that will correspond to the first cache line */
+		li		a2, KSEG0BASE
+
+		/* Calc an address that will correspond to the last cache line  */
+		addu	a3, a2, a0
+		subu    a3, a1
+
+		/* Loop through all lines, invalidating each of them */
+1:	
+SET_MIPS3()
+		cache	ICACHE_INDEX_STORE_TAG, 0(a2)	/* clear tag */
+SET_MIPS0()
+		bne		a2, a3, 1b
+		addu	a2, a1
+
+		jr		ra
+		nop
+END(sys_init_icache )
+
+LEAF(sys_init_dcache )
+		/* 24K/24KE/34K : Clear DTagLo */
+		MTC0_SEL_OPCODE( R_zero, R_C0_DTagLo, R_C0_SelDTagLo )
+
+		/* Calc an address that will correspond to the first cache line */
+		li		a2, KSEG0BASE
+	
+		/* Calc an address that will correspond to the last cache line  */
+		addu	a3, a2, a0
+		subu    a3, a1
+
+		/* Loop through all lines, invalidating each of them */
+1:	
+SET_MIPS3()
+		cache	DCACHE_INDEX_STORE_TAG, 0(a2)	/* clear tag */
+SET_MIPS0()
+		bne		a2, a3, 1b
+		addu	a2, a1
+
+		jr		ra
+		nop
+END(sys_init_dcache )
+
+LEAF(sys_determine_icache_linesize)	
+
+		/* Read CONFIG1 register, which holds implementation data */
+		MFC0_SEL_OPCODE( R_t9, R_C0_Config1, R_C0_SelConfig1 )
+
+#define config1	t9
+
+		/* I-cache line size */
+		li		t8, M_Config1IL
+		and		t8, config1
+		li		t7, S_Config1IL
+		srl		t8, t7
+		li		t7, 0x2
+		sll		v0, t7, t8
+
+		jr		ra
+		nop
+END(sys_determine_icache_linesize)	
+	
+LEAF(sys_determine_icache_lines)	
+
+		/* Read CONFIG1 register, which holds implementation data */
+		MFC0_SEL_OPCODE( R_t9, R_C0_Config1, R_C0_SelConfig1 )
+
+#define config1	t9
+
+		/* I-cache lines
+		 * Calculated as associativity * sets per way
+		 */
+		li		t8, M_Config1IA
+		and		t8, config1
+		li		t7, S_Config1IA
+		srl		t8, t7
+		addiu	t8,1				/* t8 = associativity	*/
+
+		li		t7, M_Config1IS
+		and		t7, config1
+		li		t9, S_Config1IS
+		srl		t7, t9
+		li		t9, 0x40
+		sll		t7, t9, t7			/* t7 = sets per way	*/
+
+		multu	t8, t7
+		mflo    v0
+
+		jr		ra
+		nop
+END(sys_determine_icache_lines)
+
+LEAF(sys_determine_dcache_linesize)	
+
+		/* Read CONFIG1 register, which holds implementation data */
+		MFC0_SEL_OPCODE( R_t9, R_C0_Config1, R_C0_SelConfig1 )
+
+#define config1	t9
+
+		/* D-cache line size */
+		li		t8, M_Config1DL
+		and		t8, config1
+		li		t7, S_Config1DL
+		srl		t8, t7
+		li		t7, 0x2
+		sll		v0, t7, t8
+
+		jr		ra
+		nop
+END(sys_determine_dcache_linesize)	
+
+LEAF(sys_determine_dcache_lines)	
+		/* Read CONFIG1 register, which holds implementation data */
+		MFC0_SEL_OPCODE( R_t9, R_C0_Config1, R_C0_SelConfig1 )
+
+#define config1	t9
+
+		/* D-cache lines
+		 * Calculated as associativity * sets per way
+		 */
+		li		t8, M_Config1DA
+		and		t8, config1
+		li		t7, S_Config1DA
+		srl		t8, t7
+		addiu	t8,1				/* t8 = associativity	*/
+
+		li		t7, M_Config1DS
+		and		t7, config1
+		li		t9, S_Config1DS
+		srl		t7, t9
+		li		t9, 0x40
+		sll		t7, t9, t7			/* t7 = sets per way	*/
+
+		multu	t8, t7
+		mflo    v0
+
+		jr		ra
+		nop
+END(sys_determine_dcache_lines)
+
+/************************************************************************
+ *
+ *                          sys_init_dmc
+ *  Description :
+ *  -------------
+ *  Perform DMC initialization
+ *
+ *  Parameters :
+ *  ------------
+ *
+ *  Return values :
+ *  ---------------
+ *  0 If OK, error code != 1 if error
+ *
+ ************************************************************************/
+LEAF(sys_init_dmc)
+
+	    la		k0,	CR_ARB_BASE
+		lw		k1, 0x64(k0)
+		nop
+		srl		k1, k1, 16
+		li		k0, 4					/* RT63365 */
+		beq   	k1, k0, rt63365_pre_init_dmc
+		nop
+		j		pre_init_dmc_done
+		nop
+
+rt63365_pre_init_dmc:
+	    la		v1,	CR_ARB_BASE
+		lw		t3, 0x8c(v1)
+		nop
+		srl		s2, t3, 24
+		andi	s2, s2, 0x3				/* DRAM type */
+		li		t3, 3					/* check if DDR2 type */
+		bne   	s2, t3, pre_init_dmc_done			
+		nop
+
+		/* set DDR2 pin re-shuffle enable */
+		lw		t0, 0x4(v1)
+		nop
+		li		t1, (1<<23)
+		or		t0, t0, t1
+		sw		t0, 0x4(v1)
+		nop
+		j		pre_init_dmc_done
+		nop
+
+pre_init_dmc_done:
+
+		/* de-assert DRAM controller reset */
+	    la		v1,	CR_ARB_BASE
+		li  	t0, 0x00000000      
+		sw		t0, 0x40(v1)
+		nop
+
+	    la		k0,	CR_ARB_BASE
+		lw		k1, 0x64(k0)
+		nop
+		srl		k1, k1, 16
+		li		k0, 3					/* RT63165 */
+		beq   	k1, k0, rt63165_dmc
+		nop
+		li		k0, 4					/* RT63365 */
+		beq   	k1, k0, rt63365_dmc
+		nop
+		j		dmc_done
+		nop
+
+rt63165_dmc:
+		lw		t3, 0x8c(v1)
+		nop
+		srl		s0, t3, 13
+		andi	s0, s0, 0x7				/* DDR memory size */
+		srl		s1, t3, 31				/* FPGA indication */
+		srl		t3, t3, 25
+		andi	t3, t3, 0x1
+		bnez   	t3, ddr_init			
+		nop
+
+sdram_init:
+		li		v1, CR_DMC_BASE		
+
+		#ifdef SDRAM_16M
+    	li    	t0,	0x80110096    		/* col 9 row 12 */
+		#else
+		#ifdef SDRAM_32M
+    	li    	t0,	0x80120096    		/* col 9 row 13 */
+		#else
+    	li    	t0,	0x80010096    		/* col 8 row 12 */
+		#endif
+		#endif
+
+		sw		t0, 0x4(v1)	
+		nop
+
+1:                              		
+		lw		t0, 0x4(v1)	
+		li		t1, (1<<30)
+		and		t0,	t0, t1
+		beqz	t0,	1b
+		nop
+
+		j		dmc_done
+		nop
+
+ddr_init:
+		/* wait 200us for 50Mhz */ 
+		li		t0,	5000
+1:                              		
+		subu	t0,	0x01
+		bnez	t0,	1b
+		nop
+
+		li 		v1, CR_DMC_BASE
+
+		lw 		t1, 0x44(v1)			
+		li		t0, 0xffe0ffff
+		and		t1, t1, t0
+
+		li 		t0, (0xe<<16)			/* DRAM Size 256 x 16 */
+
+dmc_ddr_size_8mb:
+		li		t2, 1
+		bne		s0, t2, dmc_ddr_size_16mb
+		nop
+		li 		t0, (0x6<<16)			/* DRAM Size 64 x 16 */
+		b		dmc_ddr_size_done
+		nop
+		
+dmc_ddr_size_16mb:
+		li		t2, 2
+		bne		s0, t2, dmc_ddr_size_64mb
+		nop
+		li 		t0, (0xa<<16)			/* DRAM Size 128 x 16 */
+		b		dmc_ddr_size_done
+		nop
+
+dmc_ddr_size_64mb:
+		li		t2, 4
+		bne		s0, t2, dmc_ddr_size_128mb
+		nop
+		li 		t0, (0x12<<16)			/* DRAM Size 512 x 16 */
+		b		dmc_ddr_size_done
+		nop
+
+dmc_ddr_size_128mb:
+		li		t2, 5
+		bne		s0, t2, dmc_ddr_size_256mb
+		nop
+		li 		t0, (0x16<<16)			/* DRAM Size 1024 x 16 */
+		b		dmc_ddr_size_done
+		nop
+
+dmc_ddr_size_256mb:
+		li		t2, 6
+		bne		s0, t2, dmc_ddr_size_done
+		nop
+		li 		t0, (0x1a<<16)			/* DRAM Size 2048 x 16 */
+		b		dmc_ddr_size_done
+		nop
+
+dmc_ddr_size_done:
+		or 		t0, t0, t1
+		sw 		t0, 0x44(v1)			/* Set DRAM size */
+		nop
+
+		/* Only for FPGA */
+		beqz	s1,	dmc_done
+		nop
+
+		li		t1, 0x002a0400
+		sw 		t1, 0x8(v1)				
+		nop
+
+		li		t1, 0x24984186
+		sw 		t1, 0x40(v1)			/* Set DDR Refresh Interval to 0x186 */
+		nop
+
+		lw 		t1, 0x4c(v1)			
+		ori		t1, 1
+		sw 		t1, 0x4c(v1)			/* Set DLL disabled on FPGA */
+		nop
+
+		j		dmc_done
+		nop
+
+rt63365_dmc:
+		lw		t3, 0x8c(v1)
+		nop
+		srl		s0, t3, 13
+		andi	s0, s0, 0x7				/* DDR memory size */
+		srl		s1, t3, 31				/* FPGA indication */
+		srl		s2, t3, 24
+		andi	s2, s2, 0x3				/* DRAM type */
+		srl		s3, t3, 26
+		andi	s3, s3, 0x1				/* Clock ratio */
+		srl		s4, t3, 8
+		andi	s4, s4, 0x3				/* Package selection */
+		andi	t3, s2, 0x2
+		bnez   	t3, rt63365_ddr_init			
+		nop
+
+rt63365_sdram_init:
+		li		v1, CR_DMC_BASE		
+
+		/* write SDRAM_CFG0 */
+		la		t0, rt63365_sdram_cfg0			/* load config from cfg0 */
+		lw		t0, 0(t0)
+		nop
+		sw		t0, 0x0(v1)	
+		nop
+
+		/* write SDRAM_CFG1 */
+		la		t0, rt63365_140mhz_sdram_cfg1	/* load config from cfg1+4*(DRAM size) */
+		sll		s0, s0, 2
+		add 	t0, t0, s0
+		lw		t0, 0(t0)
+		nop
+		sw		t0, 0x4(v1)	
+		nop
+
+		/* Only for FPGA */
+		beqz	s1,	1f
+		nop
+
+		lw		t0, 0x4(v1)	
+		li		t1, 0xffff0000
+		and		t0, t0, t1
+		ori		t0, 0xc3				/* set FPGA SDRAM refresh to 0xc3 */
+		sw 		t0, 0x4(v1)				
+		nop
+
+1:                              		
+		lw		t0, 0x4(v1)	
+		li		t1, (1<<30)
+		and		t0,	t0, t1
+		beqz	t0,	1b
+		nop
+
+		j		dmc_done
+		nop
+
+rt63365_ddr_init:
+		/* wait 200us for 50Mhz */ 
+		li		t0,	5000
+1:                              		
+		subu	t0,	0x01
+		bnez	t0,	1b
+		nop
+
+		li 		v1, CR_DMC_BASE
+
+		/* wait until DDR_CFG1 bit21 becomes 1 */
+1:
+		lw 		t0, 0x44(v1)		
+		nop
+		li		t1, (1<<21)	
+		and		t0, t0, t1
+		beqz	t0, 1b
+		nop
+
+		/* DDR1 or DDR2 */
+		andi	s2, s2, 0x1	
+		beqz	s2,	ddr1_adjust_size
+		nop
+
+		/* DDR2 support 32/64/128/256MB */
+		addiu	s0, -3
+		j		ddr_adjust_size_done
+		nop
+
+ddr1_adjust_size:
+		/* DDR1 support 8/16/32/64MB */
+		addiu	s0, -1
+
+ddr_adjust_size_done:
+
+		/* Clock ratio: 233 (0), 175 (1), 166 (2), 125 (3) */
+		andi	t0, s4, 0x2				
+		bnez	t0, 1f
+		nop
+		addi	s3, 2
+1:
+
+		/* write DDR_CFG0 */
+		la		t0, rt63365_233mhz_ddr1_cfg0	
+		beqz	s2,	1f
+		nop
+		la		t0, rt63365_233mhz_ddr2_cfg0	
+1:
+		sll		t1, s3, 4
+		add		t0, t0, t1
+		sll		t1, s0, 2
+		add		t0, t0, t1
+		lw 		t0, 0x0(t0)			
+		nop
+		sw 		t0, 0x40(v1)			
+		nop
+
+		/* write DDR_CFG1 */
+		la		t0, rt63365_233mhz_ddr1_cfg1	
+		beqz	s2,	1f
+		nop
+		la		t0, rt63365_233mhz_ddr2_cfg1	
+1:
+		sll		t1, s3, 4
+		add		t0, t0, t1
+		sll		t1, s0, 2
+		add		t0, t0, t1
+		lw 		t0, 0x0(t0)			
+		nop
+		sw 		t0, 0x44(v1)			
+		nop
+
+		/* write DDR_CFG2 */
+		la		t0, rt63365_233mhz_ddr1_cfg2	
+		beqz	s2,	1f
+		nop
+		la		t0, rt63365_233mhz_ddr2_cfg2	
+1:
+		sll		t1, s3, 2
+		add		t0, t0, t1
+		lw 		t0, 0x0(t0)			
+		nop
+		sw 		t0, 0x48(v1)			
+		nop
+
+		/* write DDR_CFG3 */
+		la		t0, rt63365_233mhz_ddr1_cfg3	
+		beqz	s2,	1f
+		nop
+		la		t0, rt63365_233mhz_ddr2_cfg3	
+1:
+		sll		t1, s3, 2
+		add		t0, t0, t1
+		lw 		t0, 0x0(t0)			
+		nop
+		sw 		t0, 0x4c(v1)			
+		nop
+
+		/* write DDR_CFG4 */
+		la		t0, rt63365_233mhz_ddr1_cfg4	
+		beqz	s2,	1f
+		nop
+		la		t0, rt63365_233mhz_ddr2_cfg4	
+1:
+		sll		t1, s3, 2
+		add		t0, t0, t1
+		lw 		t0, 0x0(t0)			
+		nop
+		sw 		t0, 0x50(v1)			
+		nop
+
+#if 1
+		beqz    s2, 1f
+		/* Only run with DDR2*/
+		/* DQS delay use DLL detected value then fixed the delay with a constant delay 8 */
+		la		t0, CR_ARB_BASE + 0x18
+		lw		t2, 0(t0)
+		andi	t3,	t2, 0x1F
+		srl		t2, t2, 5
+		addiu	t6, zero, 5
+		mul		t0, t2, t6	
+		addu	t0, t0, t3
+		subu	t0, t0, 8
+		div		t0, t6
+		mflo	t2	
+		mfhi	t3
+		nop
+		nop
+		/*Write delay to ddrcfg4 [22:14] and [13:5]*/
+		sll		t2, t2, 5
+		or		t2, t2, t3
+		sll		t4, t2, 9
+		or		t2, t2, t4
+		sll		t2, t2, 5
+		li		t3, ~(((0x1FF<<14)|0x1FF)<<5)
+		and		t1, t1, t3
+		or		t1, t1, t2
+		la		t0, CR_DMC_BASE
+		lw      t2, 0x50(t0)
+		or 		t1, t1, t2
+		sw		t1, 0x50(t0)
+		nop
+		/*Enable DQS delay*/
+		la      t0, CR_DMC_BASE
+		lw		t1, 0x4c(t0)
+		li		t2, (1<<28)
+		or		t1, t1, t2
+		sw		t1, 0x4c(t0)
+		nop
+
+1:	
+#endif
+
+		/* Only for FPGA */
+		beqz	s1,	dmc_done
+		nop
+
+		li		t1, 0x002a0400
+		sw 		t1, 0x8(v1)				
+		nop
+
+		lw 		t1, 0x40(v1)			
+		li		t2, 0xffffe000
+		and		t1, t1, t2
+		ori		t1, 0x186
+		sw 		t1, 0x40(v1)			/* Set DDR Refresh Interval to 0x186 */
+		nop
+
+		lw 		t1, 0x4c(v1)			
+		ori		t1, 1
+		sw 		t1, 0x4c(v1)			/* Set DLL disabled on FPGA */
+		nop
+		j		dmc_done
+		nop
+
+dmc_done:
+		jr		ra
+		nop
+
+rt63365_sdram_cfg0:
+			/*      140Mhz,     125Mhz */
+		.word	0x11825282, 0x11826282 
+rt63365_140mhz_sdram_cfg1:
+			/* 140Mhz */
+			/*         2MB,        8MB,       16MB,       32MB */
+		.word	0x8000088A, 0x8001088A, 0x8011088A, 0x80120444
+rt63365_125mhz_sdram_cfg1:
+			/* 125Mhz */
+			/*         2MB,        8MB,       16MB,       32MB */
+		.word	0x800007A0, 0x800107A0, 0x801107A0, 0x801203CF
+
+rt63365_233mhz_ddr1_cfg0:
+			/*         8MB,       16MB,       32MB,       64MB */
+		.word	0x24A1CE3E, 0x35222E32, 0x25222719, 0x35222719
+rt63365_175mhz_ddr1_cfg0:
+			/*         8MB,       16MB,       32MB,       64MB */
+		.word	0x23A1AAAF, 0x33A1AAAA, 0x2399A555, 0x2399A555
+rt63365_166mhz_ddr1_cfg0:
+			/*         8MB,       16MB,       32MB,       64MB */
+		.word	0x23998A2D, 0x23998A28, 0x23998514, 0x23998514
+rt63365_125mhz_ddr1_cfg0:
+			/*         8MB,       16MB,       32MB,       64MB */
+		.word	0x231927A2, 0x2319279E, 0x231923CF, 0x229123CF
+
+rt63365_233mhz_ddr1_cfg1:
+			/*         8MB,       16MB,       32MB,       64MB */
+		.word	0x22262424, 0x202A2424, 0x202E2424, 0x30322424
+rt63365_175mhz_ddr1_cfg1:
+			/*         8MB,       16MB,       32MB,       64MB */
+		.word	0x22262324, 0x202A2324, 0x202E2323, 0x30322323
+rt63365_166mhz_ddr1_cfg1:
+			/*         8MB,       16MB,       32MB,       64MB */
+		.word	0x12262323, 0x202A2323, 0x202E2323, 0x30322323
+rt63365_125mhz_ddr1_cfg1:
+			/*         8MB,       16MB,       32MB,       64MB */
+		.word	0x12262223, 0x202A2223, 0x202E2223, 0x30322222
+
+rt63365_233mhz_ddr1_cfg2:
+		.word	0x00000033
+rt63365_175mhz_ddr1_cfg2:
+		.word	0x00000033
+rt63365_166mhz_ddr1_cfg2:
+		.word	0x00000033
+rt63365_125mhz_ddr1_cfg2:
+		.word	0x00000033
+
+rt63365_233mhz_ddr1_cfg3:
+		.word	0x00000002
+rt63365_175mhz_ddr1_cfg3:
+		.word	0x00000002
+rt63365_166mhz_ddr1_cfg3:
+		.word	0x00000002
+rt63365_125mhz_ddr1_cfg3:
+		.word	0x00000002
+
+rt63365_233mhz_ddr1_cfg4:
+		.word	0x00000000
+rt63365_175mhz_ddr1_cfg4:
+		.word	0x00000000
+rt63365_166mhz_ddr1_cfg4:
+		.word	0x00000000
+rt63365_125mhz_ddr1_cfg4:
+		.word	0x00000000
+
+rt63365_233mhz_ddr2_cfg0:
+			/*        32MB,       64MB,      128MB,      256MB */
+		.word	0x35A3271B, 0x35A3271B, 0x35A3C71B, 0x35A5C71B
+rt63365_175mhz_ddr2_cfg0:
+			/*        32MB,       64MB,      128MB,      256MB */
+		.word	0x241A6555, 0x241A6555, 0x241AE555, 0x241C6555
+rt63365_166mhz_ddr2_cfg0:
+			/*        32MB,       64MB,      128MB,      256MB */
+		.word	0x241A4513, 0x241A4513, 0x241AC513, 0x241C2513
+rt63365_125mhz_ddr2_cfg0:
+			/*        32MB,       64MB,      128MB,      256MB */
+		.word	0x2311C3Cf, 0x2311C3Cf, 0x231203CF, 0x231323CF
+                            
+rt63365_233mhz_ddr2_cfg1:
+			/*        32MB,       64MB,      128MB,      256MB */
+		.word	0x222E2424, 0x22322424, 0x22362424, 0x223A2424
+rt63365_175mhz_ddr2_cfg1:
+			/*        32MB,       64MB,      128MB,      256MB */
+		.word	0x222E2323, 0x22322323, 0x22362323, 0x223A2323
+rt63365_166mhz_ddr2_cfg1:
+			/*        32MB,       64MB,      128MB,      256MB */
+		.word	0x222E2323, 0x22322323, 0x22362323, 0x223A2323
+rt63365_125mhz_ddr2_cfg1:
+			/*        32MB,       64MB,      128MB,      256MB */
+		.word	0x112E2222, 0x11322222, 0x11362222, 0x113A2222
+
+rt63365_233mhz_ddr2_cfg2:
+		.word	0x40000843
+rt63365_175mhz_ddr2_cfg2:
+		.word	0x40000643
+rt63365_166mhz_ddr2_cfg2:
+		.word	0x40000643
+rt63365_125mhz_ddr2_cfg2:
+		.word	0x40000443
+
+rt63365_233mhz_ddr2_cfg3:
+		.word	0x00000402
+rt63365_175mhz_ddr2_cfg3:
+		.word	0x00000402
+rt63365_166mhz_ddr2_cfg3:
+		.word	0x00000402
+rt63365_125mhz_ddr2_cfg3:
+		.word	0x00000402
+
+rt63365_233mhz_ddr2_cfg4:
+		.word	0x0000000C
+rt63365_175mhz_ddr2_cfg4:
+		.word	0x00000009
+rt63365_166mhz_ddr2_cfg4:
+		.word	0x00000009
+rt63365_125mhz_ddr2_cfg4:
+		.word	0x00000007
+
+END(sys_init_dmc)
+
+#ifdef SIS_DDR_PHY
+
+/************************************************************************
+ *
+ *                          sys_init_ddr
+ *  Description :
+ *  -------------
+ *  Perform DDR PHY initialization
+ *
+ *  Parameters :
+ *  ------------
+ *
+ *  Return values :
+ *  ---------------
+ *  0 If OK, error code != 1 if error
+ *
+ ************************************************************************/
+LEAF(sys_init_ddr)
+
+		/* de-assert R_DQSDLL_RSTN */
+		li		v1, CR_DMC_BASE		
+		lw		t0, 0x110(v1)	
+		nop
+		li		t1, (1<<27)
+		or		t0, t0, t1
+		sw		t0, 0x110(v1)	
+		nop
+
+		/* Enable CK output */
+		lw		t0, 0x108(v1)	
+		nop
+		li		t1, (1<<25)
+		or		t0, t0, t1
+		sw		t0, 0x108(v1)	
+		nop
+
+		/* Enable DQS input delay (DQS DLL) initialization */
+		/* Enable DQ output driving calibration */
+		/* Enable EDQS window calibration */
+		/* Enable DQ input duty calibration */
+
+		/* Enable CMD output */
+		lw		t0, 0x108(v1)	
+		nop
+		li		t1, (1<<29)
+		or		t0, t0, t1
+		sw		t0, 0x108(v1)	
+		nop
+
+		/* wait 200us for 50Mhz */ 
+		li		t0,	5000
+1:                              		
+		subu	t0,	0x01
+		bnez	t0,	1b
+		nop
+
+		/* Enable DDR controller */
+		lw		t0, 0x120(v1)	
+		nop
+		li		t1, (1<<2)
+		or		t0, t0, t1
+		sw		t0, 0x120(v1)	
+		nop
+
+		/* RDPOP delay=3 and enable dynamic input buffer */
+		lw		t0, 0x120(v1)	
+		nop
+		li		t1, ~(0x7<<8)
+		and		t0, t0, t1
+		li		t1, (0x3<<8)
+		or		t0, t0, t1
+		/*
+		li		t1, (0x1<<3)
+		or		t0, t0, t1
+		*/
+		sw		t0, 0x120(v1)	
+		nop
+
+		/* DQS INDLY=8 */
+		lw		t0, 0x110(v1)	
+		nop
+		ori		t0, t0, (0x8<<6)
+		sw		t0, 0x110(v1)	
+		nop
+
+		jr		ra
+		nop
+
+END(sys_init_ddr)
+
+/************************************************************************
+ *
+ *                          sys_edqs_scan
+ *  Description :
+ *  -------------
+ *  Perform simple memory test
+ *
+ *  Parameters :
+ *  ------------
+ *  a0 = RAM start address
+ *  a1 = RAM size
+ *
+ *  Return values :
+ *  ---------------
+ *  0 If OK, error code != 1 if error
+ *
+ ************************************************************************/
+LEAF(sys_edqs_scan)
+
+#define ADDR     		t0
+#define LAST     		t1
+#define DATA     		t2
+
+#define MIN_VALID     	t3
+#define MAX_FAIL     	t4
+#define OFFSET	     	t5
+#define OFFSET_MAX     	t6
+#define OFFSET_MIN     	t7
+
+#define RD_DQS_WIN_DLY1	s0
+#define EDQS_PHASE		s1
+#define EDQS_DLY		s2
+#define RDPOP_DLY		s3
+#define RDRDY_DLY		s4
+
+#define W_R_MATCH		s5
+#define CL_FACTOR  		s6
+
+		move	v0, zero
+
+		li		v1, CR_DMC_BASE		
+
+edqs_scan_init:
+		move	MIN_VALID, zero
+		move	MAX_FAIL, zero
+		move	OFFSET, zero
+		move	OFFSET_MAX, zero
+		move	OFFSET_MIN, zero
+
+edqs_scan_loop:
+		/* edqs_dly       = edqs_offset & 0x00000007; */
+		andi	EDQS_DLY, OFFSET, 0x7
+		/* edqs_phase     = (edqs_offset & 0x00000018) >> 3; */
+		andi	EDQS_PHASE, OFFSET, 0x18
+		srl		EDQS_PHASE, EDQS_PHASE, 3
+		/* rd_dqs_win_dly = (edqs_offset & 0x000000e0) >> 5; */
+		andi	RD_DQS_WIN_DLY1, OFFSET, 0xe0
+		srl		RD_DQS_WIN_DLY1, RD_DQS_WIN_DLY1, 5
+
+		/* VPint(0xbfb20108) = (VPint(0xbfb20108) & 0xfff1fcff) | (edqs_dly << 17) | (edqs_phase << 8); */
+		lw 		t8, 0x108(v1)
+		li		t9, 0xfff1fcff
+		and		t8, t8, t9
+		sll		t9, EDQS_DLY, 17
+		or		t8, t8, t9
+		sll		t9, EDQS_PHASE, 8
+		or		t8, t8, t9
+		sw 		t8, 0x108(v1)
+		nop
+
+		/* VPint(0xbfb20120) = (VPint(0xbfb20120) & 0xfff8ffff) | (rd_dqs_win_dly1 << 16); */
+		lw 		t8, 0x120(v1)
+		nop
+		/* rdpop_dly = (VPint(0xbfb20120) & 0x00000700) >> 8; */
+		andi	RDPOP_DLY, t8, 0x700
+		srl		RDPOP_DLY, RDPOP_DLY, 8
+		li		t9, 0xfff8ffff
+		and		t8, t8, t9
+		sll 	t9, RD_DQS_WIN_DLY1, 16
+		or		t8, t8, t9
+		sw 		t8, 0x120(v1)
+		nop
+
+		move 	RDRDY_DLY, zero
+		move	W_R_MATCH, zero
+
+edqs_mem_test:
+		/* VPint(0xbfb20120) = (VPint(0xbfb20120) & 0xffff8fff) | (rdrdy_dly << 12); */
+		lw 		t8, 0x120(v1)
+		nop
+		li		t9, 0xffff8fff
+		and		t8, t8, t9
+		sll 	t9, RDRDY_DLY, 12
+		or		t8, t8, t9
+		sw 		t8, 0x120(v1)
+		nop
+		
+		/* Memory test */
+		addu	LAST, a0, a1
+		addiu	LAST, -4
+
+		/* Write */
+		la		k0, pattern
+		move	ADDR, a0
+		sll		DATA, OFFSET, 2
+		andi	DATA, DATA, 0x3f
+1:
+		add		t9, DATA, k0
+		lw		t9, 0(t9)
+		nop
+		sw		t9, 0(ADDR)
+		addiu	DATA, 4
+		andi	DATA, DATA, 0x3f
+		bne		ADDR, LAST, 1b
+		addiu	ADDR, 4
+
+		/* dcache write-back invalidate */
+		move	ADDR, a0
+1:
+SET_MIPS3()
+		cache   DCACHE_ADDR_HIT_WRITEBACK_INVALIDATE, 0(ADDR)
+		sync
+SET_MIPS0()
+		addiu 	ADDR, ADDR, 32
+		bgeu	LAST, ADDR, 1b
+		nop
+
+		/* Read */
+		la		k0, pattern
+		move	ADDR, a0
+		sll		DATA, OFFSET, 2
+		andi	DATA, DATA, 0x3f
+1:
+		add		t9, DATA, k0
+		lw		t9, 0(t9)
+		lw		t8, 0(ADDR)
+		nop
+		bne		t8, t9, 1f
+		addiu	DATA, 4
+		andi	DATA, DATA, 0x3f
+		bne		ADDR, LAST, 1b
+		addiu	ADDR, 4
+
+		/* No error */
+		ori		W_R_MATCH, W_R_MATCH, 1	
+		b		2f
+		nop
+1:	
+		/**** DONE ****/
+    	li   	t8, 7
+    	beq  	RDRDY_DLY, t8, 2f
+    	nop
+    	addi 	RDRDY_DLY, 0x1
+ 
+    	j    	edqs_mem_test
+    	nop
+
+2:
+		/* if (edqs_min_valid == 0) */
+		bnez   	MIN_VALID, edqs_min_valid_not_zero
+		nop
+		/* 		if (w_r_match) */
+		beqz   	W_R_MATCH, edqs_max_fail_not_zero
+		nop
+		/* 			edqs_min_valid = 1; */
+		ori		MIN_VALID, MIN_VALID, 1
+		/* 			edqs_offset_min = edqs_offset; */
+		move	OFFSET_MIN, OFFSET
+		j 		edqs_max_fail_not_zero
+		nop
+
+		/* else if (edqs_max_fail == 0) */
+edqs_min_valid_not_zero:
+		bnez   	MAX_FAIL, edqs_max_fail_not_zero
+		nop
+		/* 		if (w_r_match) */
+		beqz   	W_R_MATCH, 1f
+		nop
+		/* 			edqs_offset_max = edqs_offset; */
+		move	OFFSET_MAX, OFFSET
+		j		edqs_max_fail_not_zero
+		nop
+1:
+		/* 			edqs_max_fail = 1; */
+		ori		MAX_FAIL, MAX_FAIL, 1
+
+edqs_max_fail_not_zero:
+		/* if (edqs_offset == 223) */
+		li		t8, 223
+		bne		OFFSET, t8, 1f
+		nop
+		bnez	MAX_FAIL, edqs_scan_done
+		nop
+		/* edqs_offset_max = edqs_offset; */
+		move	OFFSET_MAX, OFFSET;
+		j		edqs_scan_done
+		nop
+
+1:
+		/* edqs_offset++; */
+		addiu   OFFSET, OFFSET, 1	
+
+		/* while ((edqs_min_valid == 0) || (edqs_max_fail == 0)) */
+		beqz   	MIN_VALID, edqs_scan_loop
+		nop
+		beqz   	MAX_FAIL, edqs_scan_loop
+		nop
+
+edqs_scan_done:		
+		/* edqs_offset    = (edqs_offset_max + edqs_offset_min) / 2; */
+		addu	OFFSET, OFFSET_MAX, OFFSET_MIN
+		srl		OFFSET, OFFSET, 1
+		/* edqs_dly       = edqs_offset & 0x00000007; */
+		andi	EDQS_DLY, OFFSET, 0x7
+		/* edqs_phase     = (edqs_offset & 0x00000018) >> 3; */
+		andi	EDQS_PHASE, OFFSET, 0x18
+		srl		EDQS_PHASE, EDQS_PHASE, 3
+		/* rd_dqs_win_dly = (edqs_offset & 0x000000e0) >> 5; */
+		andi	RD_DQS_WIN_DLY1, OFFSET, 0xe0
+		srl		RD_DQS_WIN_DLY1, RD_DQS_WIN_DLY1, 5
+
+		/* VPint(0xbfb20108) = (VPint(0xbfb20108) & 0xfff1fcff) | (edqs_dly << 17) | (edqs_phase << 8); */
+		lw 		t8, 0x108(v1)
+		li		t9, 0xfff1fcff
+		and		t8, t8, t9
+		sll		t9, EDQS_DLY, 17
+		or		t8, t8, t9
+		sll		t9, EDQS_PHASE, 8
+		or		t8, t8, t9
+		sw 		t8, 0x108(v1)
+		nop
+
+		/* VPint(0xbfb20120) = (VPint(0xbfb20120) & 0xfff8ffff) | (rd_dqs_win_dly1 << 16); */
+		lw 		t8, 0x120(v1)
+		nop
+		/* rdpop_dly = (VPint(0xbfb20120) & 0x00000700) >> 8; */
+		andi	RDPOP_DLY, t8, 0x700
+		srl		RDPOP_DLY, RDPOP_DLY, 8
+		li		t9, 0xfff8ffff
+		and		t8, t8, t9
+		sll 	t9, RD_DQS_WIN_DLY1, 16
+		or		t8, t8, t9
+		sw 		t8, 0x120(v1)
+		nop
+
+		move 	RDRDY_DLY, zero
+
+edqs_mem_test2:
+		/* VPint(0xbfb20120) = (VPint(0xbfb20120) & 0xffff8fff) | (rdrdy_dly << 12); */
+		lw 		t8, 0x120(v1)
+		nop
+		li		t9, 0xffff8fff
+		and		t8, t8, t9
+		sll 	t9, RDRDY_DLY, 12
+		or		t8, t8, t9
+		sw 		t8, 0x120(v1)
+		nop
+		
+		/* Memory test */
+		addu	LAST, a0, a1
+		addiu	LAST, -4
+
+		/* Write */
+		la		k0, pattern
+		move	ADDR, a0
+		sll		DATA, OFFSET, 2
+		andi	DATA, DATA, 0x3f
+1:
+		add		t9, DATA, k0
+		lw		t9, 0(t9)
+		nop
+		sw		t9, 0(ADDR)
+		addiu	DATA, 4
+		andi	DATA, DATA, 0x3f
+		bne		ADDR, LAST, 1b
+		addiu	ADDR, 4
+
+		/* dcache write-back invalidate */
+		move	ADDR, a0
+1:
+SET_MIPS3()
+		cache   DCACHE_ADDR_HIT_WRITEBACK_INVALIDATE, 0(ADDR)
+		sync
+SET_MIPS0()
+		addiu 	ADDR, ADDR, 32
+		bgeu	LAST, ADDR, 1b
+		nop
+
+		/* Read */
+		la		k0, pattern
+		move	ADDR, a0
+		sll		DATA, OFFSET, 2
+		andi	DATA, DATA, 0x3f
+1:
+		add		t9, DATA, k0
+		lw		t9, 0(t9)
+		lw		t8, 0(ADDR)
+		nop
+		bne		t8, t9, 1f
+		addiu	DATA, 4
+		andi	DATA, DATA, 0x3f
+		bne		ADDR, LAST, 1b
+		addiu	ADDR, 4
+
+		/* No error */
+		b		edqs_scan_exit
+		nop
+1:	
+		/**** DONE ****/
+    	li   	t8, 7
+		/* When edqs scan fail, restart to reboot and do edqs again. */
+    	beq  	RDRDY_DLY, t8, __start
+/*    	beq  	RDRDY_DLY, t8, edqs_scan_exit */
+    	nop
+    	addi 	RDRDY_DLY, 0x1
+ 
+    	j    	edqs_mem_test2
+    	nop
+
+edqs_scan_exit:		
+		/* save EDQS min/max and result */
+		li		v1, 0x80020000		
+		sw		OFFSET_MIN, -4(v1)
+		sw		OFFSET_MAX, -8(v1)
+		sw		OFFSET, -12(v1)
+		nop
+
+		jr		ra
+		nop
+
+pattern:
+		.word	0x5A5A5A5A, 0xA5A5A5A5, 0x5555AAAA, 0xAAAA5555
+		.word	0xF0F0F0F0, 0x0F0F0F0F, 0x00FF00FF, 0xFF00FF00
+		.word	0x12345678, 0x87654321, 0x11223344, 0x55667788
+		.word	0x01020304, 0x05060708, 0x09101112, 0x13141516
+
+END(sys_edqs_scan)
+
+#else
+
+/************************************************************************
+ *
+ *                          sys_pll_scan
+ *  Description :
+ *  -------------
+ *  Perform simple memory test
+ *
+ *  Parameters :
+ *  ------------
+ *  a0 = RAM start address
+ *  a1 = RAM size
+ *
+ *  Return values :
+ *  ---------------
+ *  0 If OK, error code != 1 if error
+ *
+ ************************************************************************/
+LEAF(sys_pll_scan)
+
+#define MAGIC_DATA1	0xA5A5A5A5
+#define MAGIC_DATA2	0x5A5A5A5A
+
+#define ADDR     t0
+#define LAST     t1
+#define DATA     t2
+
+		move	v0, zero
+
+		move	t4, zero
+pll_scan_loop:
+
+		li		v1, CR_DMC_BASE		
+		ori     t5, t4, 0x100
+		sw		t5, 0xb0(v1)	
+		nop
+
+1:
+		lw		t5, 0xb0(v1)
+		and		t5, t5, 0x8000
+		bnez    t5, 1b
+		nop
+		
+		addu	LAST, a0, a1
+		addiu	LAST, -4
+
+		/* Write */
+		move	ADDR, a0
+#if 1
+		move	DATA, t4
+#else
+		andi 	v1, t4, 0x1
+		beqz	v1, 2f
+		nop
+		li		DATA, MAGIC_DATA2
+		b		1f
+		nop
+2:
+		li		DATA, MAGIC_DATA1
+#endif
+1:
+		sw	DATA, 0(ADDR)
+#if 1
+		addiu	DATA, 1
+#endif
+		bne		ADDR, LAST, 1b
+		addiu	ADDR, 4
+
+		/* Read */
+		move	ADDR, a0
+#if 1
+		move	DATA, t4
+#else
+		andi 	v1, t4, 0x1
+		beqz	v1, 2f
+		nop
+		li		DATA, MAGIC_DATA2
+		b		1f
+		nop
+2:
+		li		DATA, MAGIC_DATA1
+#endif
+1:
+		lw		t3, 0(ADDR)
+		bne		t3, DATA, 1f
+#if 1
+		addiu	DATA, 1
+#else
+		nop
+#endif
+		bne		ADDR, LAST, 1b
+		addiu	ADDR, 4
+
+		/* No error */
+		li		v1, 1
+		sllv    v1, v1, t4
+		or      v0, v0, v1
+1:	
+		/**** DONE ****/
+		addiu   t4, t4, 1	
+		slti    v1, t4, 32
+		bnez    v1, pll_scan_loop
+		nop
+
+pll_scan_done:		
+		jr	ra
+		nop
+
+END(sys_pll_scan)
+
+/************************************************************************
+ *
+ *                          sys_pll_choose
+ *  Description :
+ *  -------------
+ *  Perform simple memory test
+ *
+ *  Parameters :
+ *  ------------
+ *  a0 = possible PLL bitmap
+ *
+ *  Return values :
+ *  ---------------
+ *  0 If OK, error code != 1 if error
+ *
+ ************************************************************************/
+LEAF(sys_pll_choose)
+
+#define LOW      t0
+#define HIGH     t1
+#define MAXBITS  t2
+#define BITS	 t3
+#define PLLVAL	 t4
+
+		li		v0, 32
+		move	MAXBITS, zero
+		move	PLLVAL, zero
+
+pll_choose_loop:
+
+1:
+		beqz	v0, 1f
+		nop
+		addiu   v0, v0, -1
+		li		v1, 1
+		sllv	v1, v1, v0
+		and		v1, a0, v1
+		beqz	v1, 1b
+		nop
+
+1:
+		move	HIGH, v0
+
+2:
+		beqz	v0, 2f
+		nop
+		addiu   v0, v0, -1
+		li		v1, 1
+		sllv	v1, v1, v0
+		and		v1, a0, v1
+		bnez	v1, 2b
+		nop
+
+2:
+		move	LOW, v0
+3:
+		subu	BITS, HIGH, LOW
+		slt		v1, MAXBITS, BITS
+		beqz	v1, 3f
+		nop
+
+		move 	MAXBITS, BITS
+		addu	v1, HIGH, LOW
+		addiu	v1, v1, 1
+		sra		PLLVAL, v1, 0x1
+3:
+		bnez    v0, pll_choose_loop
+		nop
+
+pll_choose_done:		
+		move 	v0, PLLVAL
+		jr		ra
+		nop
+END(sys_pll_choose)
+
+#endif
+
+#endif

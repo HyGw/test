@@ -1,0 +1,1 @@
+cmd_drivers/net/built-in.o :=  mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o drivers/net/built-in.o drivers/net/mii.o drivers/net/Space.o drivers/net/loopback.o drivers/net/ppp_generic.o drivers/net/ppp_deflate.o drivers/net/bsd_comp.o drivers/net/pppox.o drivers/net/pppoe.o drivers/net/slhc.o drivers/net/wireless/built-in.o 

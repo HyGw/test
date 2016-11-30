@@ -1,0 +1,39 @@
+printf-args.o: printf-args.c config.h printf-args.h \
+ /usr/lib/gcc/i486-linux-gnu/4.7/include/stddef.h /usr/include/wchar.h \
+ /usr/include/features.h /usr/include/i386-linux-gnu/bits/predefs.h \
+ /usr/include/i386-linux-gnu/sys/cdefs.h \
+ /usr/include/i386-linux-gnu/bits/wordsize.h \
+ /usr/include/i386-linux-gnu/gnu/stubs.h \
+ /usr/include/i386-linux-gnu/gnu/stubs-32.h stdio.h /usr/include/stdio.h \
+ /usr/lib/gcc/i486-linux-gnu/4.7/include/stdarg.h \
+ /usr/include/i386-linux-gnu/bits/wchar.h /usr/include/xlocale.h
+
+config.h:
+
+printf-args.h:
+
+/usr/lib/gcc/i486-linux-gnu/4.7/include/stddef.h:
+
+/usr/include/wchar.h:
+
+/usr/include/features.h:
+
+/usr/include/i386-linux-gnu/bits/predefs.h:
+
+/usr/include/i386-linux-gnu/sys/cdefs.h:
+
+/usr/include/i386-linux-gnu/bits/wordsize.h:
+
+/usr/include/i386-linux-gnu/gnu/stubs.h:
+
+/usr/include/i386-linux-gnu/gnu/stubs-32.h:
+
+stdio.h:
+
+/usr/include/stdio.h:
+
+/usr/lib/gcc/i486-linux-gnu/4.7/include/stdarg.h:
+
+/usr/include/i386-linux-gnu/bits/wchar.h:
+
+/usr/include/xlocale.h:

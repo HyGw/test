@@ -1,0 +1,12 @@
+prefix=/proj/mtk11339/Perforce/joyme_project_v1/BBN_Linux/Branch/Branch_for_CTC_JOYME_20150610/tclinux_phoenix/apps/public/openssl-1.0.1p/apps/public/openssl-1.0.1p/OPSSL
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: OpenSSL
+Description: Secure Sockets Layer and cryptography libraries and tools
+Version: 1.0.1p
+Requires: 
+Libs: -L${libdir} -lssl -lcrypto
+Libs.private: 
+Cflags: -I${includedir} 

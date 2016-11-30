@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<!-- SECTION: Man Pages -->
+<head>
+	<style type='text/css'><!--
+	h1, h2, h3, p { font-family: sans-serif; text-align: justify; }
+	tt, pre a:link, pre a:visited, tt a:link, tt a:visited { font-weight: bold; color: #7f0000; }
+	pre { font-weight: bold; color: #7f0000; margin-left: 2em; }
+	h1.title, h2.title, h3.title { border-bottom: solid 2px #000000; }
+	--></style>
+	<title>cups-config(1)</title>
+</head>
+<body>
+<h2><a name='NAME'>Name</a></h2>
+cups-config - get cups api, compiler, directory, and link information.
+<h2><a name='SYNOPSIS'>Synopsis</a></h2>
+<b>cups-config
+</b>--api-version
+<br>
+<b>cups-config
+</b>--cflags
+<br>
+<b>cups-config
+</b>--datadir
+<br>
+<b>cups-config
+</b>--help
+<br>
+<b>cups-config
+</b>--ldflags
+<br>
+<b>cups-config
+</b>[
+<i>--image
+</i>] [
+<i>--static
+</i>] --libs
+<br>
+<b>cups-config
+</b>--serverbin
+<br>
+<b>cups-config
+</b>--serverroot
+<br>
+<b>cups-config
+</b>--version
+<br>
+<h2><a name='DESCRIPTION'>Description</a></h2>
+<b>cups-config</b> is the CUPS program configuration utility. It should be
+used by application developers to determine the necessary command-line
+options for the compiler and linker, as well as determining installation
+directories for filters, configuration files, and drivers.
+<h2><a name='OPTIONS'>Options</a></h2>
+<dl>
+<dt>--api-version
+</dt>
+<dd>Displays the current API version (major.minor).
+</dd>
+<dt>--cflags
+</dt>
+<dd>Displays the necessary compiler options.
+</dd>
+<dt>--datadir
+</dt>
+<dd>Displays the default CUPS data directory.
+</dd>
+<dt>--help
+</dt>
+<dd>Displays the program usage message.
+</dd>
+<dt>--image
+</dt>
+<dd>When used with <i>--libs</i>, adds the CUPS imaging library to the
+list of displayed libraries.
+</dd>
+<dt>--ldflags
+</dt>
+<dd>Displays the necessary linker options.
+</dd>
+<dt>--libs
+</dt>
+<dd>Displays the necessary librarys to link to.
+</dd>
+<dt>--serverbin
+</dt>
+<dd>Displays the default CUPS binary directory,
+where filters and backends are stored.
+</dd>
+<dt>--serverroot
+</dt>
+<dd>Displays the default CUPS configuration file directory.
+</dd>
+<dt>--static
+</dt>
+<dd>When used with <i>--libs</i>, shows the static libraries instead
+of the default (shared) libraries.
+</dd>
+<dt>--version
+</dt>
+<dd>Displays the full version number of the CUPS installation
+(major.minor.patch).
+</dd>
+</dl>
+<h2><a name='SEE_ALSO'>See Also</a></h2>
+<a href='http://localhost:631/help'>http://localhost:631/help</a>
+<h2><a name='COPYRIGHT'>Copyright</a></h2>
+Copyright 2007-2008 by Apple Inc.
+
+</body>
+</html>

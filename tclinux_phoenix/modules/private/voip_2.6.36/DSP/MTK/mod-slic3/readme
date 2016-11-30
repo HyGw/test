@@ -1,0 +1,7 @@
+custom need to compile slic, then 
+1. Modify Makefile.release to Makefile
+2. custom can add compile option in Makefile,example:
+	#custom add compile option here
+	#EXTRA_CFLAGS += -Dxxx
+	
+	

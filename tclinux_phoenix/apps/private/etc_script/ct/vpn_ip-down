@@ -1,0 +1,40 @@
+#!/bin/sh
+
+#		$1         $2  $3      $4         $5          $6    
+
+# vpn node
+vpn_node=`expr $8 - 100`
+vpn_entry="VPN_Entry$vpn_node"
+route_table_node=`expr $8 - 100 + 300`
+interface=$1
+ip=$4
+mask=$5
+gateway=$6
+fw_mark=$7
+
+if [ -f /var/run/$vpn_node/ip ]; then
+	rm /var/run/$vpn_node/ip
+fi
+if [ -f /var/run/$vpn_node/netmask ]; then
+	rm /var/run/$vpn_node/netmask
+fi
+if [ -f /var/run/$vpn_node/gateway ]; then
+	rm /var/run/$vpn_node/gateway
+fi
+if [ -f /var/run/$vpn_node/dns ]; then
+	rm /var/run/$vpn_node/dns
+fi
+
+echo "down" > /var/run/$vpn_node/status
+old_ip=`/userfs/bin/tcapi get $vpn_entry ip`
+
+/usr/bin/iptables -t mangle -D OUTPUT -o $interface -j MARK --set-mark 0x$fw_mark/0x7f0000
+/usr/bin/ip rule del from $old_ip/32 table $route_table_node
+/usr/bin/ip rule del fwmark 0x$fw_mark/0x7f0000 table $route_table_node
+/usr/bin/ip route flush table $route_table_node
+
+/userfs/bin/tcapi set $vpn_entry ip ""
+/userfs/bin/tcapi set $vpn_entry netmask ""
+/userfs/bin/tcapi set $vpn_entry gateway ""
+/userfs/bin/tcapi set $vpn_entry status "down"
+/userfs/bin/tcapi set $vpn_entry vpnstatus 1

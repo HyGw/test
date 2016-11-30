@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# This script is called with the following parameters:
+# interface tty speed local-address remote-address ipparam
+#
+WAN_IF=$1
+
+if [ -f /var/run/$WAN_IF/dhcp6c.pid ]; then
+	kill -SIGTERM `cat /var/run/$WAN_IF/dhcp6c.pid`
+	rm /var/run/$WAN_IF/dhcp6c.pid
+fi
+
+#echo "down" > /var/run/$WAN_IF/status6
+#/userfs/bin/tcapi commit WanInfo_Message_$WAN_IF/6
+

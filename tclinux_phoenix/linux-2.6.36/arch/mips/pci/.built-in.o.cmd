@@ -1,0 +1,1 @@
+cmd_arch/mips/pci/built-in.o :=  mips-buildroot-linux-gnu-ld  -m elf32btsmip   -r -o arch/mips/pci/built-in.o arch/mips/pci/pci.o arch/mips/pci/ops-tc3162u.o arch/mips/pci/pci-tc3162u.o arch/mips/pci/fixup-tc3162u.o arch/mips/pci/pcie-phy.o arch/mips/pci/ops-tc3162.o arch/mips/pci/pci-tc3162.o arch/mips/pci/fixup-tc3162.o arch/mips/pci/pci-7512api.o 

@@ -1,0 +1,15 @@
+bootlzma:
+	./mic -l boot.bin tcboot.bin
+	./byteswap tcboot.bin
+	make -C ../tools/trx/
+	mv tcboot.bin tcboot.bin.swap
+	../tools/trx/trx -t tcboot.bin.swap
+
+bootload:
+	./mic -l boot.bin tcboot.bin
+	./byteswap tcboot.bin
+
+clean:
+	rm -f tcboot.bin
+	rm -f boot.bin.swap
+	rm -f tcboot.bin.swap

@@ -1,0 +1,42 @@
+#!/bin/sh
+#
+# This script is called with the following parameters:
+# interface tty speed local-address prefix-length remote-address ipparam
+#
+
+WAN_IF=$1
+
+IF_CONFFILE=/var/run/$WAN_IF/interface.conf
+if [ -f $IF_CONFFILE ] ; then
+	chmod 777 $IF_CONFFILE
+	. $IF_CONFFILE
+fi
+
+#if/*TCSUPPORT_COMPILE*/ defined(TCSUPPORT_CT_WAN_CHILD_PREFIX)
+PROFILE_CFG=/userfs/profile.cfg
+if [ -f $PROFILE_CFG ] ; then
+    . $PROFILE_CFG
+fi
+
+if [ "$TCSUPPORT_CT_WAN_CHILD_PREFIX" != "" ] ;then
+		if [ "$ChildPrefixBits" != "" ] ; then
+			echo $ChildPrefixBits > /proc/sys/net/ipv6/conf/$WAN_IF/child_prefix
+		fi
+		if [ "$DHCPv6" = "Yes" ] ; then
+			echo 2 > /proc/sys/net/ipv6/conf/$WAN_IF/child_prefix_orign
+		elif [ "$DHCPv6" = "No" ] ; then
+			echo 1 > /proc/sys/net/ipv6/conf/$WAN_IF/child_prefix_orign
+		elif [ "$DHCPv6" = "N/A" ] ; then
+			echo 3 > /proc/sys/net/ipv6/conf/$WAN_IF/child_prefix_orign
+		else
+			echo 0 > /proc/sys/net/ipv6/conf/$WAN_IF/child_prefix_orign
+		fi
+fi
+#endif/*TCSUPPORT_COMPILE*/
+
+#Enable SLAAC mode
+if [ "$DHCPv6" != "Yes" ]; then
+	echo 1 > /proc/sys/net/ipv6/conf/$WAN_IF/autoconf	
+fi
+
+

@@ -1,0 +1,2 @@
+#!/bin/sh
+PKG_CONFIG_LIBDIR=${PKG_CONFIG_LIBDIR:-/opt/trendchip/mips-linux-glibc-4.6.3/usr/mips-buildroot-linux-gnu/sysroot/usr/lib/pkgconfig:/opt/trendchip/mips-linux-glibc-4.6.3/usr/mips-buildroot-linux-gnu/sysroot/usr/share/pkgconfig} PKG_CONFIG_SYSROOT_DIR=${PKG_CONFIG_SYSROOT_DIR:-/opt/trendchip/mips-linux-glibc-4.6.3/usr/mips-buildroot-linux-gnu/sysroot} $(dirname $0)/pkgconf  $@

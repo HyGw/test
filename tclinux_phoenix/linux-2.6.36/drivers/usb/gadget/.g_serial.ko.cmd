@@ -1,0 +1,1 @@
+cmd_drivers/usb/gadget/g_serial.ko := mips-buildroot-linux-gnu-ld -r  -m elf32btsmip -T /opt/tclinux_phoenix/linux-2.6.36/scripts/module-common.lds --build-id  -o drivers/usb/gadget/g_serial.ko drivers/usb/gadget/g_serial.o drivers/usb/gadget/g_serial.mod.o
